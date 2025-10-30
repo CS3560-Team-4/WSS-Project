@@ -2,6 +2,6 @@
 Wilderness Survival System project for CS3560 
 
 ### To compile
-./run.ps1
+1. cd frontend/ -> npm run dev
+2. cd ../backend --> ./run.sh
 
-(Run from the root file, do NOT be in src/..)
