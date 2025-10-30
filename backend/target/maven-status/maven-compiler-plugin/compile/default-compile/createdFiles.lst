@@ -1,0 +1,5 @@
+GameState.class
+GameServer.class
+GameServer$MoveRequest.class
+Player.class
+GameServer$ErrorMsg.class

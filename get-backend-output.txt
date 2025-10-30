@@ -1,0 +1,21 @@
+
+
+**Linux/WSL/macOS**
+
+/state
+curl -s http://localhost:8080/state | jq
+/move
+curl -X POST http://localhost:8080/move -H "Content-Type: application/json" -d '{"direction": "up"}' | jq
+
+
+**Powershell**
+
+/state
+Invoke-WebRequest http://localhost:8080/state | Select-Object -ExpandProperty Content
+/move
+Invoke-RestMethod -Uri "http://localhost:8080/move" `
+  -Method Post `
+  -Headers @{ "Content-Type" = "application/json" } `
+  -Body '{"direction": "up"}' | ConvertTo-Json -Depth 10
+
+

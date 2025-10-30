@@ -1,0 +1,6 @@
+To run frontend:
+  
+  npm run dev
+
+  then connect to http://localhost:5173
+

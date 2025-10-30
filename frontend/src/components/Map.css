@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+@layer components {
+  .player-cell {
+    @apply bg-blue-400 border-2 border-white text-white;
+  }
+  
+  .border-cell {
+    @apply bg-gray-700 border-none;
+  }
+
+  .empty-cell {
+    @apply bg-gray-300 border border-black;
+  }
+}
