@@ -1,6 +1,6 @@
 public class GameState {
-    private static final int MAP_WIDTH = 10;
-    private static final int MAP_HEIGHT = 10;
+    private static final int MAP_WIDTH = 11;
+    private static final int MAP_HEIGHT = 11;
 
     private final String[][] map;
     private final Player player;
