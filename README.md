@@ -1,10 +1,12 @@
 # WSS-Project
 Wilderness Survival System project for CS3560
 
-This is a protoype for a React-Java App
+### Project structure
+Frontend - React and TailwindCSS
+Backend - Java
 
 
-### To compile
+### To compile and run
 1. cd frontend/ -> npm run dev
 2. cd ../backend --> ./run.sh
 
