@@ -2,47 +2,23 @@ public class GameState {
     private static final int MAP_WIDTH = 11;
     private static final int MAP_HEIGHT = 11;
 
-    private final String[][] map;
+    private final Map map;
     private final Player player;
 
     public GameState() {
-        this.map = new String[MAP_HEIGHT][MAP_WIDTH];
+        this.map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(1, 1);
         updateMap();
     }
 
-    private void fill(char ch) {
-        for (int y = 0; y < MAP_HEIGHT; y++) {
-            for (int x = 0; x < MAP_WIDTH; x++) {
-                map[y][x] = String.valueOf(ch);
-            }
-        }
-    }
-
-    private void buildWalls() {
-        // top and bottom
-        for (int x = 0; x < MAP_WIDTH; x++) {
-            map[0][x] = "#";
-            map[MAP_HEIGHT - 1][x] = "#";
-        }
-
-        for (int y = 0; y < MAP_HEIGHT; y++) {
-            map[y][0] = "#";
-            map[y][MAP_WIDTH - 1] = "#";
-        }
-    }
-
     public void updateMap() {
-        fill('.');
-        buildWalls();
-        // player positon
-        map[player.getPosY()][player.getPosX()] = "P";
+        map.updateWithPlayer(player);
     }
 
     public void initializePlayerPos(int x, int y) {
         // clamp inside walkable area
-        int px = Math.max(1, Math.min(MAP_WIDTH - 2, x));
-        int py = Math.max(1, Math.min(MAP_HEIGHT -2, y));
+        int px = Math.max(1, Math.min(map.getWidth() - 2, x));
+        int py = Math.max(1, Math.min(map.getHeight() - 2, y));
         player.setPosition(px, py);
     }
 
@@ -51,9 +27,9 @@ public class GameState {
 
         switch (dir == null ? "" : dir) {
             case "up" -> player.setPosY(Math.max(1, player.getPosY() - 1));
-            case "down" -> player.setPosY(Math.min(MAP_HEIGHT - 2, player.getPosY() + 1));
+            case "down" -> player.setPosY(Math.min(map.getHeight() - 2, player.getPosY() + 1));
             case "left" -> player.setPosX(Math.max(1, player.getPosX() - 1));
-            case "right" -> player.setPosX(Math.min(MAP_WIDTH - 2, player.getPosX() + 1));
+            case "right" -> player.setPosX(Math.min(map.getWidth() - 2, player.getPosX() + 1));
             default -> { /* ignore */ }
         }
 
@@ -62,11 +38,14 @@ public class GameState {
 
     // set an npc/item within the square
     public void setSquare(int x, int y, Object obj) {
-        if (y < 0 || y >= MAP_HEIGHT || x < 0 || x >= MAP_WIDTH) return;
-        map[x][y] = obj.toString();
+        map.setSquare(x, y, obj);
     }
 
-    public String[][] getMap() {
+    public Map getMap() {
         return map;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

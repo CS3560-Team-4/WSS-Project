@@ -1,5 +1,6 @@
 GameState.class
 GameServer.class
+Map.class
 GameServer$MoveRequest.class
 Player.class
 GameServer$ErrorMsg.class

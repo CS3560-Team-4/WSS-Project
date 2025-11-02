@@ -5,11 +5,11 @@ const Map = ({ gameState }) => {
     return <div className="text-gray-500">Loading map...</div>;
   }
   
-  const map = gameState.map;
+  const mapData = gameState.map.tiles;
 
   return (
     <div className="flex flex-col border-3 border-amber-500">
-      {map.map((row, y) => (
+      {mapData.map((row, y) => (
         <div key={y} className="flex">
           {row.map((cell, x) => (
             <div
