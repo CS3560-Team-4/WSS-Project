@@ -1,3 +1,4 @@
+import java.util.Random;
 public class Map {
     private final int width;
     private final int height;
@@ -10,6 +11,17 @@ public class Map {
         fill('.');
         buildWalls();
     }
+
+	public Terrain[][]generateMap(int length, int height){
+		if(length<=0||height<=0) {
+			System.out.println("Invalid map dimensions, generating random valid dimensions for map");
+			Random r = new Random();
+			length = r.nextInt(255)+1;
+			height = r.nextInt(255)+1;
+		}
+		Terrain[][]map = new Terrain[height][length];
+		return map;
+	}
 
     private void fill(char ch) {
         for (int y = 0; y < height; y++) {
