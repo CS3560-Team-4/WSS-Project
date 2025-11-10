@@ -12,14 +12,14 @@ public class Map {
         buildWalls();
     }
 
-	public Terrain[][]generateMap(int length, int height){
+	public Terrain[][] generateMap(int length, int height){
 		if(length<=0||height<=0) {
 			System.out.println("Invalid map dimensions, generating random valid dimensions for map");
 			Random r = new Random();
 			length = r.nextInt(255)+1;
 			height = r.nextInt(255)+1;
 		}
-		Terrain[][]map = new Terrain[height][length];
+		Terrain[][] map = new Terrain[height][length];
 		return map;
 	}
 
