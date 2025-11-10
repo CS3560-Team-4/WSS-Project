@@ -1,16 +1,19 @@
 public class Player {
     private int x;
     private int y;
-    private double hp = 100;
+    private double hp;
+    public String terrainStringBuffer;
 
-    public Player(int x, int y) {
+    public Player(int x, int y, Map map) {
         this.x = x;
         this.y = y;
+        hp = 100;
     }
 
-    public void setPosition(int x, int y) {
+    public void setPosition(int x, int y, Map map) {
         this.x = x;
         this.y = y;
+        terrainStringBuffer = map.getTerrain(x,y).stringRep;
     }
 
     public void setHP(double hp) {

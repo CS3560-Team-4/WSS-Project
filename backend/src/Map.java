@@ -1,67 +1,99 @@
 import java.util.Random;
 public class Map {
-    private final int width;
-    private final int height;
-    private final String[][] tiles;
+    Terrain[][] map;
     
-    public Map(int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.tiles = new String[height][width];
-        fill('.');
-        buildWalls();
-    }
+    //to access height, use mapName.length
+    // to access width, use mapName[i].length such that i is a non-negative int
 
-	public Terrain[][]generateMap(int length, int height){
-		if(length<=0||height<=0) {
+    //This constructor makes a matrix of terrain objects to form our map, accounts for invalid inputs, initially the matrix has null objects
+    public Map(int width, int height) {
+        if(width<=0||height<=0) {
 			System.out.println("Invalid map dimensions, generating random valid dimensions for map");
 			Random r = new Random();
-			length = r.nextInt(255)+1;
+			width = r.nextInt(255)+1;
 			height = r.nextInt(255)+1;
 		}
-		Terrain[][]map = new Terrain[height][length];
-		return map;
-	}
-
-    private void fill(char ch) {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                tiles[y][x] = String.valueOf(ch);
+        map = new Terrain[height][width];
+        populate();
+    }
+    //fills the map (a matrix of terrain) with actual instances of terrain
+    //use this to spawn a map and actually have it not be full of null objects
+    //since this is a private, use it only in map.java, and this method should only be used to create a map, not to constantly refill as we use randomization to make the map
+    private void populate() {
+        int n;
+        Random r = new Random();
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map[0].length; x++) {
+                n = r.nextInt(100);
+                if(0 <= n && n < 40){
+                    map[y][x] = new Terrain();
+                }
+                else if(40 <= n && n< 65){
+                    map[y][x] = new Desert();
+                }
+                else if(65 <= n && n < 80){
+                    map[y][x] = new Frost();
+                }
+                else if(80 <= n && n < 98){
+                    map[y][x] = new Mountain();
+                }
+                else{
+                    map[y][x] = new DMV();
+                }
             }
         }
     }
 
-    private void buildWalls() {
+    /*private void buildWalls() {
         // top and bottom
-        for (int x = 0; x < width; x++) {
+        for (int x = 0; x < map[0].length; x++) {
             tiles[0][x] = "#";
             tiles[height - 1][x] = "#";
         }
 
         // sides
-        for (int y = 0; y < height; y++) {
+        for (int y = 0; y < map.length; y++) {
             tiles[y][0] = "#";
             tiles[y][width - 1] = "#";
         }
-    }
+    }*/
 
     public void updateWithPlayer(Player player) {
-        fill('.');
-        buildWalls();
-        tiles[player.getPosY()][player.getPosX()] = "P";
+        //fill('.',map);
+        //buildWalls();
+        print();
+        player.terrainStringBuffer = map[player.getPosY()][player.getPosX()].stringRep;
+        map[player.getPosY()][player.getPosX()].stringRep = "P";
+        print();
     }
 
-    // set npc/item within square
+    /*// set npc/item within square
     public void setSquare(int x, int y, Object obj) {
-        if (y < 0 || y >= height || x < 0 || x >= width) return;
-        tiles[y][x] = obj.toString();
+        if (y < 0 || y >= map.length || x < 0 || x >= map[0].length) return;
+        map[y][x] = obj.toString();
+    }*/
+
+    //print the map
+    //use this to show where things are
+    public void print(){
+        for(int y = 0; y < map.length;y++){
+            for(int x = 0; x < map[0].length;x++){
+                System.out.print(map[y][x].stringRep + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 
-    public int getWidth() { 
-        return width; 
+    public int getHeight(){
+        return map.length;
     }
 
-    public int getHeight() { 
-        return height; 
+    public int getWidth(){
+        return map[0].length;
+    }
+
+    public Terrain getTerrain(int x, int y){
+        return map[y][x];
     }
 }

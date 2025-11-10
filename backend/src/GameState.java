@@ -6,8 +6,8 @@ public class GameState {
     private final Player player;
 
     public GameState() {
-        this.map = new Map(MAP_WIDTH, MAP_HEIGHT);
-        this.player = new Player(1, 1);
+        map = new Map(MAP_WIDTH,MAP_HEIGHT);
+        this.player = new Player(1, 1,map);
         updateMap();
     }
 
@@ -19,27 +19,28 @@ public class GameState {
         // clamp inside walkable area
         int px = Math.max(1, Math.min(map.getWidth() - 2, x));
         int py = Math.max(1, Math.min(map.getHeight() - 2, y));
-        player.setPosition(px, py);
+        player.setPosition(px, py,map);
     }
 
     public void movePlayer(String dir) {
         if (player == null) return;
 
+        map.getTerrain(player.getPosX(),player.getPosY()).stringRep = player.terrainStringBuffer;
         switch (dir == null ? "" : dir) {
             case "up" -> player.setPosY(Math.max(1, player.getPosY() - 1));
             case "down" -> player.setPosY(Math.min(map.getHeight() - 2, player.getPosY() + 1));
             case "left" -> player.setPosX(Math.max(1, player.getPosX() - 1));
             case "right" -> player.setPosX(Math.min(map.getWidth() - 2, player.getPosX() + 1));
-            default -> { /* ignore */ }
+            default -> {  /*ignore*/  }
         }
 
         updateMap();
     }
 
     // set an npc/item within the square
-    public void setSquare(int x, int y, Object obj) {
+    /*public void setSquare(int x, int y, Object obj) {
         map.setSquare(x, y, obj);
-    }
+    }*/
 
     public Map getMap() {
         return map;
