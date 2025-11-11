@@ -1,4 +1,4 @@
-public class Desert extends Plain {
+public class Desert extends Terrain {
     public Desert() {
 		waterCost = 5;
 		energyCost = 2;

@@ -29,7 +29,7 @@ public class Map {
             for (int x = 0; x < map[0].length; x++) {
                 n = r.nextInt(100);
                 if(0 <= n && n < 40){
-                    map[y][x] = new Plain();
+                    map[y][x] = new Terrain();
                 }
                 else if(40 <= n && n< 55){
                     map[y][x] = new Desert();

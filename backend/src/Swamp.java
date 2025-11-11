@@ -1,4 +1,4 @@
-public class Swamp extends Plain {
+public class Swamp extends Terrain {
     public Swamp() {
 		waterCost = 1;
 		energyCost = 3;

@@ -8,4 +8,5 @@ GameState.class
 Frost.class
 Desert.class
 Mountain.class
+Swamp.class
 GameServer$ErrorMsg.class

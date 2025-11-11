@@ -1,10 +1,10 @@
-public class Plain {
+public class Terrain {
 	int waterCost;
 	int energyCost;
 	int movementCost;
     String stringRep;
 
-	public Plain() {
+	public Terrain() {
 		waterCost = 1;
 		energyCost = 1;
 		movementCost = 1;
