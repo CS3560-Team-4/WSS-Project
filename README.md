@@ -2,7 +2,7 @@
 Wilderness Survival System project for CS3560
 
 ### Project structure
-Frontend - React and TailwindCSS
+Frontend - React.js and TailwindCSS
 
 Backend - Java
 
