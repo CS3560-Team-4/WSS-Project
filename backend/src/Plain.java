@@ -8,7 +8,7 @@ public class Plain {
 		waterCost = 1;
 		energyCost = 1;
 		movementCost = 1;
-        stringRep = "P";
+        stringRep = "T";
 	}
 
     public String getSymbol() {
