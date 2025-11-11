@@ -22,6 +22,7 @@ const Map = ({ gameState }) => {
                   cell === '!' ? 'dmv-cell' :
                   cell === 'F' ? 'frost-cell' :
                   cell === 'M' ? 'mountain-cell' :
+                  cell === 'S' ? 'swamp-cell' :
                   'empty-cell'
                 }`}
             >

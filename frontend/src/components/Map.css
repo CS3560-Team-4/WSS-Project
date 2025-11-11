@@ -28,4 +28,8 @@
   .mountain-cell {
     @apply bg-amber-700 border-2 border-green-600;
   }
+
+  .swamp-cell {
+    @apply bg-green-800 border-2 border-black;
+  }
 }
