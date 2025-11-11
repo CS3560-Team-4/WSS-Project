@@ -3,11 +3,12 @@ public class Map {
     Terrain[][] map;
     
     //to access height, use mapName.length
-    // to access width, use mapName[i].length such that i is a non-negative int
+    //to access width, use mapName[i].length such that i is a non-negative int
 
-    //This constructor makes a matrix of terrain objects to form our map, accounts for invalid inputs, initially the matrix has null objects
+    //This constructor makes a matrix of terrain objects to form our map, accounts for 
+    //invalid inputs, initially the matrix has null objects
     public Map(int width, int height) {
-        if(width<=0||height<=0) {
+        if (width<=0||height<=0) {
 			System.out.println("Invalid map dimensions, generating random valid dimensions for map");
 			Random r = new Random();
 			width = r.nextInt(255)+1;
@@ -18,7 +19,9 @@ public class Map {
     }
     //fills the map (a matrix of terrain) with actual instances of terrain
     //use this to spawn a map and actually have it not be full of null objects
-    //since this is a private, use it only in map.java, and this method should only be used to create a map, not to constantly refill as we use randomization to make the map
+    //since this is a private, use it only in map.java, and this method 
+    //should only be used to create a map, not to constantly refill as 
+    //we use randomization to make the map
     private void populate() {
         int n;
         Random r = new Random();
@@ -59,25 +62,33 @@ public class Map {
     }*/
 
     public void updateWithPlayer(Player player) {
-        //fill('.',map);
-        //buildWalls();
+        // only update map if position actually changed
+        if (player.getPrevX() != player.getPosX() || player.getPrevY() != player.getPosY()) {
+            map[player.getPrevY()][player.getPrevX()].stringRep = player.terrainStringBuffer;
+        }
+        
+
+        // save current terrain and set player icon
         print();
         player.terrainStringBuffer = map[player.getPosY()][player.getPosX()].stringRep;
         map[player.getPosY()][player.getPosX()].stringRep = "P";
         print();
     }
 
-    /*// set npc/item within square
-    public void setSquare(int x, int y, Object obj) {
-        if (y < 0 || y >= map.length || x < 0 || x >= map[0].length) return;
-        map[y][x] = obj.toString();
-    }*/
+    //**may or may not need
+    //**come back to this if item classes are being implemented
+    //
+    // set npc/item within square
+    // public void setSquare(int x, int y, Object obj) {
+    //     if (y < 0 || y >= map.length || x < 0 || x >= map[0].length) return;
+    //     map[y][x] = obj.toString();
+    // }
 
     //print the map
     //use this to show where things are
-    public void print(){
-        for(int y = 0; y < map.length;y++){
-            for(int x = 0; x < map[0].length;x++){
+    public void print() {
+        for (int y = 0; y < map.length;y++) {
+            for (int x = 0; x < map[0].length;x++) {
                 System.out.print(map[y][x].stringRep + " ");
             }
             System.out.println();
@@ -85,15 +96,19 @@ public class Map {
         System.out.println();
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return map.length;
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return map[0].length;
     }
 
-    public Terrain getTerrain(int x, int y){
+    public Terrain getTerrain(int x, int y) {
         return map[y][x];
+    }
+
+    public Terrain[][] getBoard() {
+        return map;
     }
 }

@@ -1,4 +1,4 @@
-public class Frost extends Terrain{
+public class Frost extends Terrain {
     public Frost() {
 		waterCost = 1;
 		energyCost = 6;

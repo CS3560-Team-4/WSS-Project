@@ -6,8 +6,11 @@ public class GameState {
     private final Player player;
 
     public GameState() {
-        map = new Map(MAP_WIDTH,MAP_HEIGHT);
-        this.player = new Player(1, 1,map);
+        map = new Map(MAP_WIDTH, MAP_HEIGHT);
+        this.player = new Player(1, 1, map);
+
+        player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
+
         updateMap();
     }
 
@@ -19,19 +22,35 @@ public class GameState {
         // clamp inside walkable area
         int px = Math.max(1, Math.min(map.getWidth() - 2, x));
         int py = Math.max(1, Math.min(map.getHeight() - 2, y));
-        player.setPosition(px, py,map);
+        player.setPosition(px, py, map);
     }
 
     public void movePlayer(String dir) {
         if (player == null) return;
 
+        // restore old terrain first
         map.getTerrain(player.getPosX(),player.getPosY()).stringRep = player.terrainStringBuffer;
+
+        // move
         switch (dir == null ? "" : dir) {
-            case "up" -> player.setPosY(Math.max(1, player.getPosY() - 1));
-            case "down" -> player.setPosY(Math.min(map.getHeight() - 2, player.getPosY() + 1));
-            case "left" -> player.setPosX(Math.max(1, player.getPosX() - 1));
-            case "right" -> player.setPosX(Math.min(map.getWidth() - 2, player.getPosX() + 1));
+            case "up" -> {
+                if (player.getPosY() > 0) player.moveUp();
+            }
+            case "down" -> {
+                if (player.getPosY() < map.getHeight() - 1) player.moveDown();
+            }
+            case "left" -> {
+                if (player.getPosX() > 0) player.moveLeft();
+            }
+            case "right" -> {
+                if (player.getPosX() < map.getWidth() - 1) player.moveRight();
+            }
             default -> {  /*ignore*/  }
+        }
+
+        if (player.getPosX() >= 0 && player.getPosX() < map.getWidth() &&
+            player.getPosY() >= 0 && player.getPosY() < map.getHeight()) {
+            player.setPosition(player.getPosX(), player.getPosY(), map);
         }
 
         updateMap();

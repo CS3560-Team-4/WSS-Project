@@ -1,6 +1,11 @@
-GameState.class
+DMV.class
 GameServer.class
 Map.class
+Terrain.class
 GameServer$MoveRequest.class
 Player.class
+GameState.class
+Frost.class
+Desert.class
+Mountain.class
 GameServer$ErrorMsg.class
