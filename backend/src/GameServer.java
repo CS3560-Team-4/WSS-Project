@@ -1,8 +1,17 @@
 import io.javalin.Javalin;
+
+import java.util.HashMap;
+import java.util.Map;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 
 public class GameServer {
-    static final Gson gson = new Gson();
+    // static final Gson gson = new Gson();
+    static final Gson gson = new GsonBuilder()
+        .registerTypeHierarchyAdapter(Terrain.class, (JsonSerializer<Terrain>) (src, typeOfSrc, context) -> 
+            new JsonPrimitive(src.stringRep)).setPrettyPrinting().create();
     static final GameState game = new GameState();
 
     public static void main(String[] args) {
@@ -13,8 +22,14 @@ public class GameServer {
         // GET /state
         app.get("/state", ctx -> {
             game.updateMap();
+            Terrain[][] board = game.getMap().getBoard();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("rows", board.length);
+            response.put("cols", board[0].length);
+            response.put("board", board);
             ctx.contentType("application/json");
-            ctx.result(gson.toJson(game));
+            ctx.result(gson.toJson(response));
         });
 
         // POST /move
@@ -23,9 +38,18 @@ public class GameServer {
         app.post("/move", ctx -> {
             MoveRequest move = gson.fromJson(ctx.body(), MoveRequest.class);
             game.movePlayer(move.direction);
-            game.updateMap();
+
+            // Get the latest board from map
+            Terrain[][] board = game.getMap().getBoard();
+
+            // configure response
+            Map<String, Object> response = new HashMap<>();
+            response.put("rows", board.length);
+            response.put("cols", board[0].length);
+            response.put("board", board);
+
             ctx.contentType("application/json");
-            ctx.result(gson.toJson(game));
+            ctx.result(gson.toJson(response));
         });
     }
 

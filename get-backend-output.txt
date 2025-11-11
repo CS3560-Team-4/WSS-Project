@@ -4,7 +4,7 @@
 
 /state
 curl -s http://localhost:8080/state | jq
-/move
+/move (calls up on the board)
 curl -X POST http://localhost:8080/move -H "Content-Type: application/json" -d '{"direction": "up"}' | jq
 
 

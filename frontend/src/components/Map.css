@@ -2,14 +2,30 @@
 
 @layer components {
   .player-cell {
-    @apply bg-blue-400 border-2 border-white text-white;
+    @apply bg-gray-800 border-3 border-white text-white box-border;
   }
   
-  .border-cell {
-    @apply bg-gray-700 border-none;
+  .terrain-cell {
+    @apply bg-gray-300 border border-black;
   }
 
   .empty-cell {
     @apply bg-gray-300 border border-black;
+  }
+
+  .desert-cell {
+    @apply bg-amber-200 border border-black;
+  }
+
+  .dmv-cell {
+    @apply bg-green-400 border border-black;
+  }
+
+  .frost-cell {
+    @apply bg-blue-400 border border-black;
+  }
+
+  .mountain-cell {
+    @apply bg-amber-700 border-2 border-green-600;
   }
 }

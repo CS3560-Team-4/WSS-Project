@@ -5,7 +5,7 @@ const Map = ({ gameState }) => {
     return <div className="text-gray-500">Loading map...</div>;
   }
   
-  const mapData = gameState.map.tiles;
+  const mapData = gameState.board;
 
   return (
     <div className="flex flex-col border-3 border-amber-500">
@@ -16,8 +16,12 @@ const Map = ({ gameState }) => {
               key={x}
               className={`w-11 h-11 flex items-center justify-center font-mono text-3xl
                 ${
-                  cell === '#' ? 'border-cell' :
+                  cell === 'T' ? 'terrain-cell' :
                   cell === 'P' ? 'player-cell' :
+                  cell === 'D' ? 'desert-cell' :
+                  cell === '!' ? 'dmv-cell' :
+                  cell === 'F' ? 'frost-cell' :
+                  cell === 'M' ? 'mountain-cell' :
                   'empty-cell'
                 }`}
             >
