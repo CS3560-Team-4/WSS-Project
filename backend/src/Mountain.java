@@ -1,4 +1,4 @@
-public class Mountain extends Terrain {
+public class Mountain extends Plain {
     public Mountain() {
 		waterCost = 2;
 		energyCost = 3;

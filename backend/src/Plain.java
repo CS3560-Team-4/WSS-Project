@@ -1,14 +1,14 @@
-public class Terrain {
+public class Plain {
 	int waterCost;
 	int energyCost;
 	int movementCost;
     String stringRep;
 
-	public Terrain() {
+	public Plain() {
 		waterCost = 1;
 		energyCost = 1;
 		movementCost = 1;
-        stringRep = "T";
+        stringRep = "P";
 	}
 
     public String getSymbol() {

@@ -29,10 +29,13 @@ public class Map {
             for (int x = 0; x < map[0].length; x++) {
                 n = r.nextInt(100);
                 if(0 <= n && n < 40){
-                    map[y][x] = new Terrain();
+                    map[y][x] = new Plain();
                 }
-                else if(40 <= n && n< 65){
+                else if(40 <= n && n< 55){
                     map[y][x] = new Desert();
+                }
+                else if(55 <= n && n< 65){
+                    map[y][x] = new Swamp();
                 }
                 else if(65 <= n && n < 80){
                     map[y][x] = new Frost();
