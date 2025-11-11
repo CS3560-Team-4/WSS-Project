@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560cs/wss-project/backend/src/GameServer.java
-/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560cs/wss-project/backend/src/GameState.java
-/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560cs/wss-project/backend/src/Map.java
-/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560cs/wss-project/backend/src/Player.java
-/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560cs/wss-project/backend/src/Terrain.java
-=======
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/DMV.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Desert.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Frost.java
@@ -14,4 +7,3 @@
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Mountain.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Player.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Terrain.java
->>>>>>> test

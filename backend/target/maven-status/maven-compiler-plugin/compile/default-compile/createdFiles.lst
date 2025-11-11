@@ -1,17 +1,11 @@
-<<<<<<< HEAD
-=======
 DMV.class
->>>>>>> test
 GameServer.class
 Map.class
 Terrain.class
 GameServer$MoveRequest.class
 Player.class
 GameState.class
-<<<<<<< HEAD
-=======
 Frost.class
 Desert.class
 Mountain.class
->>>>>>> test
 GameServer$ErrorMsg.class

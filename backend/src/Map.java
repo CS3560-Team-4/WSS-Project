@@ -5,30 +5,15 @@ public class Map {
     //to access height, use mapName.length
     //to access width, use mapName[i].length such that i is a non-negative int
 
-<<<<<<< HEAD
-	public Terrain[][] generateMap(int length, int height){
-		if(length<=0||height<=0) {
-=======
     //This constructor makes a matrix of terrain objects to form our map, accounts for 
     //invalid inputs, initially the matrix has null objects
     public Map(int width, int height) {
         if (width<=0||height<=0) {
->>>>>>> test
 			System.out.println("Invalid map dimensions, generating random valid dimensions for map");
 			Random r = new Random();
 			width = r.nextInt(255)+1;
 			height = r.nextInt(255)+1;
 		}
-<<<<<<< HEAD
-		Terrain[][] map = new Terrain[height][length];
-		return map;
-	}
-
-    private void fill(char ch) {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                tiles[y][x] = String.valueOf(ch);
-=======
         map = new Terrain[height][width];
         populate();
     }
@@ -58,7 +43,6 @@ public class Map {
                 else{
                     map[y][x] = new DMV();
                 }
->>>>>>> test
             }
         }
     }
