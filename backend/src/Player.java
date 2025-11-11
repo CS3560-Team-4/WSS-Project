@@ -69,4 +69,12 @@ public class Player {
     public int getPrevY() {
         return prevY;
     }
+
+    public void setPrevX(int x) {
+        this.prevX = x;
+    }
+
+    public void setPrevY(int y) {
+        this.prevY = y;
+    }
 }

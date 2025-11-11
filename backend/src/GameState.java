@@ -28,8 +28,9 @@ public class GameState {
     public void movePlayer(String dir) {
         if (player == null) return;
 
-        // restore old terrain first
-        map.getTerrain(player.getPosX(),player.getPosY()).stringRep = player.terrainStringBuffer;
+        // remember prev coords
+        player.setPrevX(player.getPosX());
+        player.setPrevY(player.getPosY());
 
         // move
         switch (dir == null ? "" : dir) {
@@ -48,10 +49,10 @@ public class GameState {
             default -> {  /*ignore*/  }
         }
 
-        if (player.getPosX() >= 0 && player.getPosX() < map.getWidth() &&
-            player.getPosY() >= 0 && player.getPosY() < map.getHeight()) {
-            player.setPosition(player.getPosX(), player.getPosY(), map);
-        }
+        // if (player.getPosX() >= 0 && player.getPosX() < map.getWidth() &&
+        //     player.getPosY() >= 0 && player.getPosY() < map.getHeight()) {
+        //     player.setPosition(player.getPosX(), player.getPosY(), map);
+        // }
 
         updateMap();
     }

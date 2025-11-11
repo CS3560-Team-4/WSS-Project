@@ -65,16 +65,25 @@ public class Map {
     }*/
 
     public void updateWithPlayer(Player player) {
-        // only update map if position actually changed
-        if (player.getPrevX() != player.getPosX() || player.getPrevY() != player.getPosY()) {
-            map[player.getPrevY()][player.getPrevX()].stringRep = player.terrainStringBuffer;
+        int prevX = player.getPrevX();
+        int prevY = player.getPrevY();
+        int x = player.getPosX();
+        int y = player.getPosY();
+
+        // restore the previous tile, only if valid
+        if (prevX >= 0 && prevY >= 0) {
+            map[prevY][prevX].stringRep = player.terrainStringBuffer;
         }
         
 
-        // save current terrain and set player icon
-        print();
-        player.terrainStringBuffer = map[player.getPosY()][player.getPosX()].stringRep;
-        map[player.getPosY()][player.getPosX()].stringRep = "P";
+        // record what's under the new tile
+        String newTerrain = map[y][x].stringRep;
+
+        // place player by overwriting the new position with "P"
+        map[y][x].stringRep = "P";
+
+        // store that newTerrain for next time
+        player.terrainStringBuffer = newTerrain;
         print();
     }
 
