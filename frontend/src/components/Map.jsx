@@ -2,7 +2,13 @@ import "./Map.css";
 
 const Map = ({ gameState }) => {
   if (!gameState) {
-    return <div className="text-gray-500">Loading map...</div>;
+    return (
+      <div className="border-gray-500 font-mono w-121 h-121 flex items-center justify-center border text-center">
+        <div className="text-white">
+          Loading map...
+        </div>
+      </div>
+    );
   }
   
   const mapData = gameState.board;

@@ -45,7 +45,7 @@ const App = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mt-30">
+    <div className="flex flex-col items-center justify-center mt-40 font-mono mb-10">
       <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS Map</h1>
 
       <div className="flex flex-row items-center justify-center gap-10">
