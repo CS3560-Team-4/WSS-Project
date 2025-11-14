@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import GameControls from './components/GameControls.jsx';
 import Map from './components/Map.jsx';
+import Legend from './components/Legend.jsx';
 
 const App = () => {
   const [gameState, setGameState] = useState(null);
@@ -44,13 +45,16 @@ const App = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center mt-30">
       <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS Map</h1>
 
       <div className="flex flex-row items-center justify-center gap-10">
         <Map gameState={gameState} />
 
         <GameControls move={move} />
+      </div>
+      <div>
+        <Legend />
       </div>
     </div>
   )
