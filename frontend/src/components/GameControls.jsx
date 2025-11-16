@@ -1,4 +1,4 @@
-import './GameControls.css';
+import './css/GameControls.css';
 
 const GameControls = ({ move }) => { 
   return (

@@ -1,4 +1,4 @@
-import "./Map.css";
+import "./css/Map.css";
 
 const Map = ({ gameState }) => {
   if (!gameState) {
