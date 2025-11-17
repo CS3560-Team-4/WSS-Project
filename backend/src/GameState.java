@@ -7,7 +7,7 @@ public class GameState {
 
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
-        this.player = new Player(1, 1, map);
+        this.player = new Player(0, 0, map);
 
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
 
@@ -55,6 +55,9 @@ public class GameState {
         // }
 
         updateMap();
+        if(player.terrainStringBuffer.equals("E")){
+            System.out.println("A WINNER IS YOU");
+        }
     }
 
     // set an npc/item within the square

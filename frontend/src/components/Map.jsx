@@ -33,6 +33,7 @@ const Map = forwardRef(({ gameState }, ref) => {
                   cell === 'F' ? 'frost-cell' :
                   cell === 'M' ? 'mountain-cell' :
                   cell === 'S' ? 'swamp-cell' :
+                  cell === 'E' ? 'goal-cell' :
                   'empty-cell'
                 }`}
             >

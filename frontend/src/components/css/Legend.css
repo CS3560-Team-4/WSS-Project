@@ -36,4 +36,8 @@
   .swamp-icon {
     @apply bg-green-800;
   }
+
+    .goal-icon {
+    @apply bg-yellow-800;
+  }
 }

@@ -32,4 +32,8 @@
   .swamp-cell {
     @apply bg-green-800 border-2 border-black;
   }
+
+  .goal-cell {
+    @apply bg-yellow-800 border-2 border-black;
+  }
 }

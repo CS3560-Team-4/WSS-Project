@@ -47,6 +47,13 @@ const Legend = () => {
           <div className="legend-icon swamp-icon">
           </div>
         </div>
+
+        <div className="icon-div">
+          Goal
+          <div className="legend-icon goal-icon">
+          </div>
+        </div>
+        
       </div>
     </div>
   )
