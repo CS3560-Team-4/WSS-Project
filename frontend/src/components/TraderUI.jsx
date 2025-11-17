@@ -7,43 +7,47 @@ const TraderUI = () => {
   const [tItemSelected, setTSelected] = useState(null);
   const [pItemSelected, setPSelected] = useState(null);
 
+  // trader info test variable
+  const traderType = 'Generous';
+
+  // player currency test variable
+  const playerCurrency = 27;
+
   // test items for now
-  const traderItems = ["T-Item1", "T-Item2", "T-Item3"];
-  const playerItems = ["P-Item1", "P-Item2", "P-Item3"];
+  const traderItems = ["I", "I", "I"];
+  const playerItems = ["I", "I", "I"];
 
   return (
     <>
-      <div className="">
-        <div className="trade-label">TRADE</div>
-        <div className="info border-2 py-2 px-4">
-          <div>Trader: Generous</div>
-          <div>Currency: 27</div>
+      <div className="trade-label">TRADE</div>
+      <div className="info border-2 py-2 px-4">
+        <div>Trader: {`${traderType}`}</div>
+        <div>Your currency: {`${playerCurrency}`}</div>
+      </div>
+      <div className="inventories flex flex-col items-center justify-center mt-6 mb-3">
+        <div>Select an item to trade for</div>
+        <div className="trade-items">
+          {traderItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => setTSelected(index)}
+              className={`${ tItemSelected === index ? "trade-item-cell-selected" : "trade-item-cell" }`}
+            >
+              {item}
+            </button>
+          ))}
         </div>
-        <div className="inventories flex flex-col items-center justify-center mt-6 mb-3">
-          <div>Select an item to trade for</div>
-          <div className="trader-items">
-            {traderItems.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => setTSelected(index)}
-                className={`${ tItemSelected === index ? "item-cell-selected" : "item-cell" }`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-          <div className="mt-5">Select your item to trade</div>
-          <div className="trader-items">
-            {playerItems.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => setPSelected(index)}
-                className={`${ pItemSelected === index ? "item-cell-selected": "item-cell" }`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
+        <div className="mt-5">Select your item to trade</div>
+        <div className="trade-items">
+          {playerItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => setPSelected(index)}
+              className={`${ pItemSelected === index ? "trade-item-cell-selected": "trade-item-cell" }`}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </div>
     </>

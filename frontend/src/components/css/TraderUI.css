@@ -1,11 +1,11 @@
 @import 'tailwindcss';
 
 @layer components {
-  .item-cell {
+  .trade-item-cell {
     @apply border border-white p-1 px-3 mt-2 hover:outline-3 hover:font-bold cursor-pointer;
   }
 
-  .item-cell-selected {
+  .trade-item-cell-selected {
     @apply outline-3 border-white p-1 px-3 mt-2 font-bold cursor-pointer;
   }
 
@@ -13,7 +13,7 @@
     @apply text-amber-600 text-center text-3xl font-extrabold mb-6;
   }
 
-  .trader-items {
-    @apply flex gap-2;
+  .trade-items {
+    @apply flex flex-row gap-2;
   }
 }

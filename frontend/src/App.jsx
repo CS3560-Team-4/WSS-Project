@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './css/App.css';
 import GameControls from './components/GameControls.jsx';
 import Map from './components/Map.jsx';
 import Legend from './components/Legend.jsx';
 import Modal from './components/Modal.jsx';
 import TraderUI from './components/TraderUI.jsx';
+import BrainUI from './components/BrainUI.jsx';
+import InventoryUI from './components/InventoryUI.jsx';
 
 const App = () => {
   const [gameState, setGameState] = useState(null);
   
+  //**Fetching Data
   const fetchMapData = async () => {
     try {
       const response = await fetch('http://localhost:8080/state');
@@ -45,15 +48,39 @@ const App = () => {
       console.error(`Error moving player: ${err}`);
     }
   }
-  
-  // Modal Functionality
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
+  // todo:
+  // add fetch playerInventory
+  // add fetch brain hint answer
+  // -----------------------------------------------------------
+
+  //**Inventory functionality
+  // prevent deselect of inventory item when clicking on map or arrows
+  const mapRef = useRef();
+  const arrowRef = useRef();
+  
+  //**Modal Functionality
+  const [isTraderModalOpen, setIsTraderModalOpen] = useState(false); 
+  const openTraderModal = () => setIsTraderModalOpen(true);
+  const closeTraderModal = () => setIsTraderModalOpen(false);
+
+  const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
+  const openBrainModal = () => setIsBrainModalOpen(true);
+  const closeBrainModal = () => setIsBrainModalOpen(false);
+
+  // check if any modals are open
+  const anyModalsOpen = () => {
+    if (isTraderModalOpen 
+      || isBrainModalOpen) {
+      return true;
+    }
+
+    return false;
+  }
+  
   // disable scrolling when modals are open
   useEffect(() => {
-    if (isModalOpen) {
+    if (anyModalsOpen()) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -62,16 +89,19 @@ const App = () => {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [isModalOpen]);
+  }, [anyModalsOpen]);
 
   return (
     <div className="flex flex-col items-center justify-center pt-40 font-mono pb-10">
-      <h1 className="text-5xl font-bold mb-8 -translate-x-20 pt-20">WSS Map</h1>
+      <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS</h1>
 
       <div className="flex flex-row items-center justify-center gap-10">
-        <Map gameState={gameState} />
+        <div className="flex flex-row items-center justify-center -translate-x-5">
+          <InventoryUI mapRef={mapRef} arrowRef={arrowRef} />
+          <Map ref={mapRef} gameState={gameState} />
+        </div>
 
-        <GameControls move={move} />
+        <GameControls ref={arrowRef} move={move} />
       </div>
 
       <div>
@@ -79,21 +109,32 @@ const App = () => {
       </div>
 
       {/* Test buttons for Modals*/}
-      <div className="p-6">
+      <div className="fixed right-8 flex flex-col gap-2 p-6 -translate-y-20">
+        <div className="text-center">Dev buttons</div>
         <button
-          onClick={openModal}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer"
+          onClick={openTraderModal}
+          className="dev-button"
         >
           Open Trader UI 
         </button>
+        <button
+          onClick={openBrainModal}
+          className="dev-button"
+        >
+          Open Brain UI 
+        </button>
       </div>
+
+      {/* Player Inventory */}
+      
       
       {/* Modals */}
-      <div>
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
-          <TraderUI />
-        </Modal>
-      </div>
+      <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal}>
+        <TraderUI />
+      </Modal>
+      <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal}>
+        <BrainUI />
+      </Modal>
     </div>
   );
 };
