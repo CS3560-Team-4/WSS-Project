@@ -3,8 +3,8 @@ import './css/Legend.css'
 const Legend = () => {
 
   return (
-    <div className="flex flex-col items-center justify-center p-5 mt-10 border gap-5 -translate-x-20">
-      <div className="text-center w-full font-bold text-2xl mb-1">Legend</div>
+    <div className="flex flex-col items-center justify-center p-3 border gap-5 mb-10 -translate-x-20">
+      {/* <div className="text-center w-full font-bold text-2xl mb-1">Legend</div> */}
       <div className="flex flex-row items-center justify-center gap-4 w-full h-full">
         <div className="icon-div">
           Player
@@ -24,8 +24,6 @@ const Legend = () => {
           <div className="legend-icon desert-icon">
           </div>
         </div>
-      </div>
-      <div className="flex flex-row gap-4 w-full h-full">
         <div className="icon-div">
           DMV
           <div className="legend-icon dmv-icon">

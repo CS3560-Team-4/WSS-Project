@@ -22,7 +22,7 @@ const TraderUI = () => {
       <div className="trade-label">TRADE</div>
       <div className="info border-2 py-2 px-4">
         <div>Trader: {`${traderType}`}</div>
-        <div>Your currency: {`${playerCurrency}`}</div>
+        <div>Your gold: {`${playerCurrency}`}</div>
       </div>
       <div className="inventories flex flex-col items-center justify-center mt-6 mb-3">
         <div>Select an item to trade for</div>

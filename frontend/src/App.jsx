@@ -7,6 +7,7 @@ import Modal from './components/Modal.jsx';
 import TraderUI from './components/TraderUI.jsx';
 import BrainUI from './components/BrainUI.jsx';
 import InventoryUI from './components/InventoryUI.jsx';
+import StatsUI from './components/StatsUI.jsx';
 
 const App = () => {
   const [gameState, setGameState] = useState(null);
@@ -92,24 +93,24 @@ const App = () => {
   }, [anyModalsOpen]);
 
   return (
-    <div className="flex flex-col items-center justify-center pt-40 font-mono pb-10">
-      <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS</h1>
+    <div className="flex flex-col items-center justify-center font-mono pb-10">
+      {/* <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS</h1> */}
+      <Legend />
 
       <div className="flex flex-row items-center justify-center gap-10">
-        <div className="flex flex-row items-center justify-center -translate-x-5">
-          <InventoryUI mapRef={mapRef} arrowRef={arrowRef} />
-          <Map ref={mapRef} gameState={gameState} />
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-row items-center justify-center -translate-x-5">
+            <InventoryUI mapRef={mapRef} arrowRef={arrowRef} />
+            <Map ref={mapRef} gameState={gameState} />
+          </div>
+          <StatsUI />
         </div>
 
         <GameControls ref={arrowRef} move={move} />
       </div>
 
-      <div>
-        <Legend />
-      </div>
-
       {/* Test buttons for Modals*/}
-      <div className="fixed right-8 flex flex-col gap-2 p-6 -translate-y-20">
+      <div className="fixed right-8 flex flex-col gap-2 p-6">
         <div className="text-center">Dev buttons</div>
         <button
           onClick={openTraderModal}

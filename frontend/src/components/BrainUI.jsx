@@ -11,7 +11,7 @@ const BrainUI = () => {
           The brain will point you towards the right direction...
         </div>
         <div className="brain-desc mt-4">
-          Cost: 15 currency
+          Cost: 15 gold
         </div>
       </div>
       
