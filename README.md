@@ -8,6 +8,7 @@ Backend - Java
 
 
 ### To compile and run
-1. cd frontend/ -> npm run dev
-2. cd backend/ -> ./run.sh for Linux/Mac OR .\run.ps1 for Windows
+1. npm install
+2. cd frontend/ -> npm run dev
+3. cd backend/ -> ./run.sh for Linux/Mac OR .\run.ps1 for Windows
 
