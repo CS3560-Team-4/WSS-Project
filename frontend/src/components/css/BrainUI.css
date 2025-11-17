@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+@layer components {
+  .brain-label {
+    @apply text-amber-600 text-center text-3xl font-extrabold mb-6;
+  }
+  
+  .brain-desc {
+    @apply text-center text-lg;
+  }
+
+  .hint-button {
+    @apply border border-white hover:outline-3 hover:font-bold cursor-pointer p-2;
+  }
+}

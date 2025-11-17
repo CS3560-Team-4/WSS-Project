@@ -1,9 +1,10 @@
-import './GameControls.css';
+import { forwardRef } from 'react';
+import './css/GameControls.css';
 
-const GameControls = ({ move }) => { 
+const GameControls = forwardRef(({ move }, ref) => { 
   return (
-    <div className="mt-8 flex flex-col items-center gap-2 mb-20">
-      <button 
+    <div ref={ref} className="mt-8 flex flex-col items-center gap-2 mb-20">
+      <button  
         className="button" 
         onClick={() => move('up')}
       >^</button>
@@ -14,6 +15,6 @@ const GameControls = ({ move }) => {
       <button className="button" onClick={() => move('down')}>⌄</button>
     </div>
   );
-}
+});
 
 export default GameControls;

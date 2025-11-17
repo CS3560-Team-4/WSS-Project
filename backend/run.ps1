@@ -3,4 +3,3 @@ Write-Host "Cleaning and compiling backend..."
 
 Write-Host "Running Java backend..."
 .\mvnw.cmd exec:java
-
