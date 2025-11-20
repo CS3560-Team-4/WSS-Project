@@ -94,7 +94,6 @@ const App = () => {
 
   return (
     <div className="flex flex-col items-center justify-center font-mono pb-10">
-      {/* <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS</h1> */}
       <Legend />
 
       <div className="flex flex-row items-center justify-center gap-10">
