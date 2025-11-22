@@ -1,18 +1,25 @@
-import { useState, useEffect } from 'react';
-import './App.css';
+import { useState, useEffect, useRef } from 'react';
+import './css/App.css';
 import GameControls from './components/GameControls.jsx';
 import Map from './components/Map.jsx';
+import Legend from './components/Legend.jsx';
+import Modal from './components/Modal.jsx';
+import TraderUI from './components/TraderUI.jsx';
+import BrainUI from './components/BrainUI.jsx';
+import InventoryUI from './components/InventoryUI.jsx';
+import StatsUI from './components/StatsUI.jsx';
 
 const App = () => {
   const [gameState, setGameState] = useState(null);
-
+  
+  //**Fetching Data
   const fetchMapData = async () => {
     try {
       const response = await fetch('http://localhost:8080/state');
       const data = await response.json();
-
+      
       setGameState(data);
-
+      
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -20,11 +27,11 @@ const App = () => {
       console.log(`Error fetching map state: ${err}`);
     }
   }
-
+  
   useEffect(() => {
     fetchMapData();
   }, []);
-
+  
   const move = async (direction) => {
     try {
       const response = await fetch('http://localhost:8080/move', {
@@ -34,39 +41,155 @@ const App = () => {
         },
         body: JSON.stringify({ direction }),
       });
-
+      
       const data = await response.json();
       setGameState(data);
-
+      
     } catch (err) {
       console.error(`Error moving player: ${err}`);
     }
   }
 
+  const [brainHint, setBrainHint] = useState(null);
+  const [brainLoading, setBrainLoading] = useState(false);
+
   const brainMove = async () => {
     try {
+      setBrainLoading(true); // start animation
+
       const response = await fetch('http://localhost:8080/brain', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' }
       });
+      const data = await response.json();
+
+      console.log(`Brain says: ${data}`);
+      setBrainHint(data.brainMove);
+
+      // artificial delay 
+      setTimeout(() => {
+        setBrainLoading(false);
+      }, 850); // <-- adjust delay
+
     } catch (err) {
       console.log(`Error getting brain move: ${err}`);
+    } 
+  }
+
+  const resetGame = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/reset', {
+        method: 'POST',
+        headers: { 'Content-Type' : 'application/json' }
+      });
+
+      const data = await response.json();
+      setGameState(data);
+
+      // Clear hint if open
+      setBrainHint(null);
+    } catch (err) {
+      console.log(`Error resetting game: ${err}`);
     }
   }
 
+  // todo:
+  // add fetch playerInventory
+  // -----------------------------------------------------------
+
+  //**Inventory functionality
+  // prevent deselect of inventory item when clicking on map or arrows
+  const mapRef = useRef();
+  const arrowRef = useRef();
+  
+  //**Modal Functionality
+  const [isTraderModalOpen, setIsTraderModalOpen] = useState(false); 
+  const openTraderModal = () => setIsTraderModalOpen(true);
+  const closeTraderModal = () => setIsTraderModalOpen(false);
+
+  const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
+  const openBrainModal = () => {
+    setBrainHint(null);
+    setBrainLoading(false);
+    setIsBrainModalOpen(true);
+  }
+  const closeBrainModal = () => setIsBrainModalOpen(false);
+
+  // check if any modals are open
+  const anyModalsOpen = () => {
+    if (isTraderModalOpen 
+      || isBrainModalOpen) {
+      return true;
+    }
+
+    return false;
+  }
+  
+  // disable scrolling when modals are open
+  useEffect(() => {
+    if (anyModalsOpen()) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [anyModalsOpen]);
+
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS Map</h1>
+    <div className="flex flex-col items-center justify-center font-mono pb-10">
+      <Legend />
 
       <div className="flex flex-row items-center justify-center gap-10">
-        <Map gameState={gameState} />
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-row items-center justify-center -translate-x-5">
+            <InventoryUI mapRef={mapRef} arrowRef={arrowRef} />
+            <Map ref={mapRef} gameState={gameState} />
+          </div>
+          <StatsUI />
+        </div>
 
-        <GameControls move={move} />
+        <GameControls ref={arrowRef} move={move} />
       </div>
+
+      {/* Test buttons for Modals*/}
+      <div className="fixed right-8 flex flex-col gap-2 p-6">
+        <div className="text-center">Dev buttons</div>
+        <button
+          onClick={openTraderModal}
+          className="dev-button"
+        >
+          Open Trader UI 
+        </button>
+        <button
+          onClick={openBrainModal}
+          className="dev-button"
+        >
+          Open Brain UI 
+        </button>
+
+        <button
+          onClick={resetGame}
+          className="dev-button bg-red-600 hover:bg-red-700"
+        >
+          Reset Game
+        </button>
+      </div>
+
+      {/* Player Inventory */}
+      
+      
+      {/* Modals */}
+      <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal}>
+        <TraderUI />
+      </Modal>
+      <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal}>
+        <BrainUI hint={brainHint} onHintRequest={brainMove} loading={brainLoading} />
+      </Modal>
     </div>
-  )
+  );
 };
 
 export default App;

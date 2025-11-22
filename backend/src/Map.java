@@ -48,6 +48,9 @@ public class Map {
                 }
             }
         }
+        //map[map.length-1][map[map.length-1].length-1]= new Goal();
+        map[1][1] = null;
+        map[1][1] = new Goal();
     }
 
     /*private void buildWalls() {

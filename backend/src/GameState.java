@@ -2,12 +2,12 @@ public class GameState {
     private static final int MAP_WIDTH = 11;
     private static final int MAP_HEIGHT = 11;
 
-    private final Map map;
+    private Map map;
     private final Player player;
 
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
-        this.player = new Player(1, 1, map);
+        this.player = new Player(0, 0, map);
 
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
 
@@ -54,6 +54,25 @@ public class GameState {
         //     player.setPosition(player.getPosX(), player.getPosY(), map);
         // }
 
+        updateMap();
+        if(player.terrainStringBuffer.equals("E")){
+            System.out.println("A WINNER IS YOU");
+        }
+    }
+
+    public void reset() {
+        // regen the entire map
+        Map newMap = new Map(MAP_WIDTH, MAP_HEIGHT);
+
+        // reset player position
+        player.setPrevX(1);
+        player.setPrevY(1);
+        player.setPosition(1, 1, newMap);
+
+        // replace old map
+        this.map = newMap;
+
+        // player's new location
         updateMap();
     }
 

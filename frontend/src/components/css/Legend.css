@@ -1,0 +1,43 @@
+@import 'tailwindcss';
+
+@layer components {
+  .icon-div {
+    @apply flex flex-row items-center gap-2;
+  }
+
+  .legend-icon {
+    @apply size-6 border border-black;
+  }
+
+  .player-icon {
+    @apply bg-gray-800 border-3 border-white text-white flex justify-center items-center; 
+  }
+  
+  .terrain-icon {
+    @apply bg-gray-300;
+  }
+
+  .desert-icon {
+    @apply bg-amber-200;
+  }
+
+  .dmv-icon {
+    @apply bg-green-400;
+  }
+
+  .frost-icon {
+    @apply bg-blue-400;
+  }
+
+  .mountain-icon {
+    @apply bg-amber-700 border-2 border-green-600;
+  }
+
+  .swamp-icon {
+    @apply bg-green-800;
+  }
+
+    .goal-icon {
+    @apply bg-yellow-800;
+  }
+}

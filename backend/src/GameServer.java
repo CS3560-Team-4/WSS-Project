@@ -32,6 +32,22 @@ public class GameServer {
             ctx.result(gson.toJson(response));
         });
 
+        // POST /reset
+        // hard resets entire game
+        app.post("/reset", ctx -> {
+            game.reset();
+            
+            Terrain[][] board= game.getMap().getBoard();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("rows", board.length);
+            response.put("cols", board[0].length);
+            response.put("board", board);
+
+            ctx.contentType("application/json");
+            ctx.result(gson.toJson(response));
+        });
+
         // POST /move
         // **expected return
         // body: {"direction": "up|down|left|right"}
@@ -52,31 +68,17 @@ public class GameServer {
             ctx.result(gson.toJson(response));
         });
 
+        // POST /brain
+        // for brain hints, not a total AI takeover
         app.post("/brain", ctx -> {
-            // build the visions + brain
             Vision vision = new CautiousVision(game);
             Brain brain = new BalancedBrain(game, vision);
 
-            // Decide AI move
-            Move aiMove = brain.decideMove();
+            // chosen move that the brain decides
+            Move chosen = brain.decideMove();
 
-            // convert Move enum into string used by GameState.movePlayer()
-            String direction = switch (aiMove) {
-                case MoveNorth -> "up";
-                case MoveSouth -> "down";
-                case MoveEast -> "right";
-                case MoveWest -> "left";
-                default -> "up";
-            };
-
-            game.movePlayer(direction);
-
-            Terrain[][] board = game.getMap().getBoard();
             Map<String, Object> response = new HashMap<>();
-            response.put("rows", board.length);
-            response.put("cols", board[0].length);
-            response.put("board", board);
-            response.put("brainMove", aiMove.name());
+            response.put("brainMove", chosen.name());
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
