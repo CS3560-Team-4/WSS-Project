@@ -32,8 +32,12 @@ const App = () => {
     fetchMapData();
   }, []);
   
+  const [lastMoveDirection, setLastMoveDirection] = useState("right");
+
   const move = async (direction) => {
     try {
+      setLastMoveDirection(direction); // track last direction
+
       const response = await fetch('http://localhost:8080/move', {
         method: 'POST',
         headers: {
@@ -146,7 +150,7 @@ const App = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-row items-center justify-center -translate-x-5">
             <InventoryUI mapRef={mapRef} arrowRef={arrowRef} />
-            <Map ref={mapRef} gameState={gameState} />
+            <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
           </div>
           <StatsUI />
         </div>

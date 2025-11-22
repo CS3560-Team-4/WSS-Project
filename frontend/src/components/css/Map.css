@@ -36,4 +36,8 @@
   .goal-cell {
     @apply bg-yellow-800 border-2 border-black;
   }
+
+  .flip-horizontal {
+    transform: scaleX(-1);
+  }
 }

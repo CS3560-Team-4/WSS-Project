@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import "./css/Map.css";
 import playerImg from '../assets/player.png';
 
-const Map = forwardRef(({ gameState }, ref) => {
+const Map = forwardRef(({ gameState, lastMove }, ref) => {
   if (!gameState) {
     return (
       <div 
@@ -55,9 +55,10 @@ const Map = forwardRef(({ gameState }, ref) => {
                   <img
                     src={playerImg}
                     alt="Player"
-                    className="absolute left-1/2 top-1/2 w-8 h-8 
+                    className={`absolute left-1/2 top-1/2 w-8 h-8 
                                -translate-x-1/2 -translate-y-1/2 
-                               pixelated pointer-events-none"
+                               pixelated pointer-events-none
+                               ${lastMove === 'left' ? 'flip-horizontal' : ''}`}
                   />
                 )}
               </div>
