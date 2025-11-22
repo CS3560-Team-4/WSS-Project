@@ -2,7 +2,7 @@
 
 @layer components {
   .player-cell {
-    @apply bg-gray-800 border-3 border-white text-white box-border;
+    @apply text-white bg-transparent border-black border-2;
   }
   
   .terrain-cell {

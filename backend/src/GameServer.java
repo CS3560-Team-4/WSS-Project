@@ -28,6 +28,15 @@ public class GameServer {
             response.put("rows", board.length);
             response.put("cols", board[0].length);
             response.put("board", board);
+        
+            // player info
+            Player p = game.getPlayer();
+            Map<String, Object> playerInfo = new HashMap<>();
+            playerInfo.put("x", p.getPosX());
+            playerInfo.put("y", p.getPosY());
+            playerInfo.put("terrainStringBuffer", p.terrainStringBuffer);
+            response.put("player", playerInfo);
+
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
         });
@@ -43,6 +52,14 @@ public class GameServer {
             response.put("rows", board.length);
             response.put("cols", board[0].length);
             response.put("board", board);
+
+            // player info
+            Player p = game.getPlayer();
+            Map<String, Object> playerInfo = new HashMap<>();
+            playerInfo.put("x", p.getPosX());
+            playerInfo.put("y", p.getPosY());
+            playerInfo.put("terrainStringBuffer", p.terrainStringBuffer);
+            response.put("player", playerInfo);
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -64,6 +81,14 @@ public class GameServer {
             response.put("cols", board[0].length);
             response.put("board", board);
 
+            // player info
+            Player p = game.getPlayer();
+            Map<String, Object> playerInfo = new HashMap<>();
+            playerInfo.put("x", p.getPosX());
+            playerInfo.put("y", p.getPosY());
+            playerInfo.put("terrainStringBuffer", p.terrainStringBuffer);
+            response.put("player", playerInfo);
+
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
         });
@@ -72,7 +97,7 @@ public class GameServer {
         // for brain hints, not a total AI takeover
         app.post("/brain", ctx -> {
             Vision vision = new CautiousVision(game);
-            Brain brain = new BalancedBrain(game, vision);
+            Brain brain = new BalancedBrain(game, vision); // choose brain here
 
             // chosen move that the brain decides
             Move chosen = brain.decideMove();
