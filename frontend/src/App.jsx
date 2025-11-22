@@ -43,6 +43,19 @@ const App = () => {
     }
   }
 
+  const brainMove = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/brain', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+    } catch (err) {
+      console.log(`Error getting brain move: ${err}`);
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-5xl font-bold mb-8 -translate-x-20">WSS Map</h1>

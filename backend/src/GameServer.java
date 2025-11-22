@@ -51,6 +51,36 @@ public class GameServer {
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
         });
+
+        app.post("/brain", ctx -> {
+            // build the visions + brain
+            Vision vision = new CautiousVision(game);
+            Brain brain = new BalancedBrain(game, vision);
+
+            // Decide AI move
+            Move aiMove = brain.decideMove();
+
+            // convert Move enum into string used by GameState.movePlayer()
+            String direction = switch (aiMove) {
+                case MoveNorth -> "up";
+                case MoveSouth -> "down";
+                case MoveEast -> "right";
+                case MoveWest -> "left";
+                default -> "up";
+            };
+
+            game.movePlayer(direction);
+
+            Terrain[][] board = game.getMap().getBoard();
+            Map<String, Object> response = new HashMap<>();
+            response.put("rows", board.length);
+            response.put("cols", board[0].length);
+            response.put("board", board);
+            response.put("brainMove", aiMove.name());
+
+            ctx.contentType("application/json");
+            ctx.result(gson.toJson(response));
+        });
     }
 
     static class MoveRequest {
