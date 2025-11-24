@@ -27,12 +27,16 @@ public class GameState {
 
     public void movePlayer(String dir) {
         if (player == null) return;
-        if(!player.isAlive()) return;
+        if(!player.isAlive()) {
+            System.exit(0);
+            return;
+        }
         // remember prev coords
         player.setPrevX(player.getPosX());
         player.setPrevY(player.getPosY());
 
         // move
+        System.out.println("WATER  "+ player.getWater() +" ENERGY  "+ player.getEnergy() + " HP " + player.getHP());
         switch (dir == null ? "" : dir) {
             case "up" -> {
                 if (player.getPosY() > 0) player.moveUp(this.map);
@@ -57,6 +61,7 @@ public class GameState {
         updateMap();
         if(player.terrainStringBuffer.equals("E")){
             System.out.println("A WINNER IS YOU!");
+            reset();
         }
     }
 

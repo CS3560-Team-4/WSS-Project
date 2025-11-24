@@ -31,6 +31,18 @@ public class Player {
         this.hp = hp;
     }
 
+    public int getWater(){
+        return water;
+    }
+
+    public int getEnergy(){
+        return energy;
+    }
+
+    public double getHP(){
+        return hp;
+    }
+
     public void setPrev() {
         this.prevX = this.x;
         this.prevY = this.y;
@@ -77,11 +89,12 @@ public class Player {
     }
 
     public boolean isAlive() {
+        resourceCheck();
         return hp > 0;
     }
     //in the event we run out of resources like food and energy, the player will slowly start losing HP, we run through the isALive function
     //to see if our player has any HP left to lose, 100 is a test value, if we agree on maxHP field, replace 100 with that
-    public void outofResources(){
+    public void resourceCheck(){
         if( water <=0 || energy <= 0){
             hp = hp - (100/3);
             if(isAlive()){

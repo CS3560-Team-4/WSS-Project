@@ -86,7 +86,6 @@ public class Map {
 
         // store that newTerrain for next time
         player.terrainStringBuffer = newTerrain;
-        print();
     }
 
     //**may or may not need
