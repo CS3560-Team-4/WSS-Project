@@ -87,7 +87,6 @@ public class GameServer {
         // **expected return
         // body: {"direction": "up|down|left|right"}
         app.post("/move", ctx -> {
-            
             // Get the latest board from map
             Terrain[][] board = game.getMap().getBoard();
 
@@ -109,11 +108,55 @@ public class GameServer {
             ctx.result(gson.toJson(response));
         });
 
-        // POST /brain
+        //--------------------------------------------------------------------------------
+        //**POST brains
         // for brain hints, not a total AI takeover
-        app.post("/brain", ctx -> {
+
+        // POST /balancedbrain
+        app.post("/balancedbrain", ctx -> {
+            Player p = game.getPlayer();
+            p.setGold(0);
+
             Vision vision = new CautiousVision(game);
-            Brain brain = new BalancedBrain(game, vision); // choose brain here
+            Brain brain = new BalancedBrain(game, vision); 
+
+            // chosen move that the brain decides
+            Move chosen = brain.decideMove();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("brainMove", chosen.name());
+
+            ctx.contentType("application/json");
+            ctx.result(gson.toJson(response));
+        });
+
+        // POST /explorerbrain
+        app.post("/explorerbrain", ctx -> {
+            Player p = game.getPlayer();
+            p.setGold(0);
+
+            // game.updateMap();
+            Vision vision = new CautiousVision(game);
+            Brain brain = new ExplorerBrain(game, vision); 
+
+            // chosen move that the brain decides
+            Move chosen = brain.decideMove();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("brainMove", chosen.name());
+
+            ctx.contentType("application/json");
+            ctx.result(gson.toJson(response));
+        });
+
+        // POST /greedybrain
+        app.post("/greedybrain", ctx -> {
+            Player p = game.getPlayer();
+            p.setGold(0);
+
+            // game.updateMap();
+            Vision vision = new CautiousVision(game);
+            Brain brain = new GreedyBrain(game, vision); 
 
             // chosen move that the brain decides
             Move chosen = brain.decideMove();

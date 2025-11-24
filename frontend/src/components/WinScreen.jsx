@@ -8,7 +8,7 @@ const WinScreen = ({ nextLevel, closeWinScreen }) => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <div className="text-3xl font-bold text-amber-600">Level Complete!</div>
+      <div className="text-3xl font-extrabold text-amber-600">Level Complete!</div>
       <button
         onClick={handleClick}
         className="dev-button text-xl"

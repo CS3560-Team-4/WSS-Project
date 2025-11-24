@@ -14,6 +14,7 @@ import WinScreen from './components/WinScreen.jsx';
 const App = () => {
   const [gameState, setGameState] = useState(null);
   const [gameLevel, setGameLevel] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
   
   //**Fetching Data
   const fetchMapData = async () => {
@@ -32,13 +33,24 @@ const App = () => {
     }
   }
   
+  // initial map
   useEffect(() => {
     fetchMapData();
   }, []);
+
+  useEffect(() => {
+    if (!gameLoaded) return;
+
+    if (gameState.player.health <= 0 || gameState.player.won) {
+      setGameOver(true);
+    }
+  }, [gameState]);
   
   const [lastMoveDirection, setLastMoveDirection] = useState("right");
 
   const move = async (direction) => {
+    if (gameOver) return;
+
     try {
       setLastMoveDirection(direction); // track last direction
 
@@ -62,11 +74,57 @@ const App = () => {
   const [brainHint, setBrainHint] = useState(null);
   const [brainLoading, setBrainLoading] = useState(false);
 
-  const brainMove = async () => {
+  const balancedBrainMove = async () => {
     try {
       setBrainLoading(true); // start animation
 
-      const response = await fetch('http://localhost:8080/brain', {
+      const response = await fetch('http://localhost:8080/balancedbrain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+
+      console.log(`Brain says: ${data}`);
+      setBrainHint(data.brainMove);
+
+      // artificial delay 
+      setTimeout(() => {
+        setBrainLoading(false);
+      }, 850); // <-- adjust delay
+
+    } catch (err) {
+      console.log(`Error getting brain move: ${err}`);
+    } 
+  }
+
+  const explorerBrainMove = async () => {
+    try {
+      setBrainLoading(true); // start animation
+
+      const response = await fetch('http://localhost:8080/explorerbrain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+
+      console.log(`Brain says: ${data}`);
+      setBrainHint(data.brainMove);
+
+      // artificial delay 
+      setTimeout(() => {
+        setBrainLoading(false);
+      }, 850); // <-- adjust delay
+
+    } catch (err) {
+      console.log(`Error getting brain move: ${err}`);
+    } 
+  }
+
+  const greedyBrainMove = async () => {
+    try {
+      setBrainLoading(true); // start animation
+
+      const response = await fetch('http://localhost:8080/greedybrain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -86,6 +144,8 @@ const App = () => {
   }
 
   const resetGame = async () => {
+    setGameOver(false);
+
     try {
       const response = await fetch('http://localhost:8080/reset', {
         method: 'POST',
@@ -104,6 +164,8 @@ const App = () => {
   }
 
   const nextLevel = async () => {
+    setGameOver(false);
+
     try {
       const response = await fetch('http://localhost:8080/nextlevel', {
         method: 'POST',
@@ -134,15 +196,6 @@ const App = () => {
   const [isTraderModalOpen, setIsTraderModalOpen] = useState(false); 
   const openTraderModal = () => setIsTraderModalOpen(true);
   const closeTraderModal = () => setIsTraderModalOpen(false);
-
-  // brainUI
-  const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
-  const openBrainModal = () => {
-    setBrainHint(null);
-    setBrainLoading(false);
-    setIsBrainModalOpen(true);
-  }
-  const closeBrainModal = () => setIsBrainModalOpen(false);
 
   // check if game is loaded
   const [gameLoaded, setGameLoaded] = useState(false);
@@ -179,6 +232,17 @@ const App = () => {
     }
   }, [gameState]);
 
+  // brainUI
+  const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
+  const openBrainModal = () => {
+    setBrainHint(null);
+    setBrainLoading(false);
+    setIsBrainModalOpen(true);
+  }
+  const closeBrainModal = () => setIsBrainModalOpen(false);
+
+  //**General Modal Functionality
+  // might delete since current UI does not scroll already
   // check if any modals are open
   const anyModalsOpen = () => {
     if (isTraderModalOpen 
@@ -218,7 +282,9 @@ const App = () => {
           </div>
         </div>
 
-        <GameControls ref={arrowRef} move={move} />
+        <div className={gameOver ? "pointer-events-none opacity-50" : ""}>
+          <GameControls ref={arrowRef} move={move} />
+        </div>
       </div>
 
       {/* Test buttons for Modals*/}
@@ -269,7 +335,14 @@ const App = () => {
       </Modal>
 
       <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal}>
-        <BrainUI hint={brainHint} onHintRequest={brainMove} loading={brainLoading} />
+        <BrainUI 
+          hint={brainHint} 
+          loading={brainLoading} 
+          onBalanced={balancedBrainMove}
+          onExplorer={explorerBrainMove}
+          onGreedy={greedyBrainMove}
+          gold={gameState?.player?.gold}
+        />
       </Modal>
 
       <Modal isOpen={isDeathScreenOpen} onClose={closeDeathScreen}>
