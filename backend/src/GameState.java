@@ -25,7 +25,7 @@ public class GameState {
         player.setPosition(px, py, map);
     }
 
-    public void movePlayer(String dir, Map map) {
+    public void movePlayer(String dir) {
         if (player == null) return;
         if(!player.isAlive()) return;
         // remember prev coords
@@ -35,16 +35,16 @@ public class GameState {
         // move
         switch (dir == null ? "" : dir) {
             case "up" -> {
-                if (player.getPosY() > 0) player.moveUp(map);
+                if (player.getPosY() > 0) player.moveUp(this.map);
             }
             case "down" -> {
-                if (player.getPosY() < map.getHeight() - 1) player.moveDown(map);
+                if (player.getPosY() < map.getHeight() - 1) player.moveDown(this.map);
             }
             case "left" -> {
-                if (player.getPosX() > 0) player.moveLeft(map);
+                if (player.getPosX() > 0) player.moveLeft(this.map);
             }
             case "right" -> {
-                if (player.getPosX() < map.getWidth() - 1) player.moveRight(map);
+                if (player.getPosX() < map.getWidth() - 1) player.moveRight(this.map);
             }
             default -> {  /*ignore*/  }
         }

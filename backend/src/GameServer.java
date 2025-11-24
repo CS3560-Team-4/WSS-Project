@@ -74,7 +74,7 @@ public class GameServer {
             Terrain[][] board = game.getMap().getBoard();
 
             MoveRequest move = gson.fromJson(ctx.body(), MoveRequest.class);
-            game.movePlayer(move.direction, board);
+            game.movePlayer(move.direction);
 
             // configure response
             Map<String, Object> response = new HashMap<>();
