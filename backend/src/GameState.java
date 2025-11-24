@@ -56,7 +56,7 @@ public class GameState {
 
         updateMap();
         if(player.terrainStringBuffer.equals("E")){
-            System.out.println("A WINNER IS YOU");
+            System.out.println("A WINNER IS YOU!");
         }
     }
 
