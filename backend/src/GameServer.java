@@ -24,18 +24,16 @@ public class GameServer {
             game.updateMap();
             Terrain[][] board = game.getMap().getBoard();
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("rows", board.length);
-            response.put("cols", board[0].length);
-            response.put("board", board);
+            // board info
+            Map<String, Object> response = configureBoardResponse(board);
         
             // player info
             Player p = game.getPlayer();
-            Map<String, Object> playerInfo = new HashMap<>();
-            playerInfo.put("x", p.getPosX());
-            playerInfo.put("y", p.getPosY());
-            playerInfo.put("terrainStringBuffer", p.terrainStringBuffer);
+            Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
+
+            // get the game level
+            response.put("level", game.getLevel());
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -46,20 +44,40 @@ public class GameServer {
         app.post("/reset", ctx -> {
             game.reset();
             
-            Terrain[][] board= game.getMap().getBoard();
+            Terrain[][] board = game.getMap().getBoard();
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("rows", board.length);
-            response.put("cols", board[0].length);
-            response.put("board", board);
+            // board info
+            Map<String, Object> response = configureBoardResponse(board);
 
             // player info
             Player p = game.getPlayer();
-            Map<String, Object> playerInfo = new HashMap<>();
-            playerInfo.put("x", p.getPosX());
-            playerInfo.put("y", p.getPosY());
-            playerInfo.put("terrainStringBuffer", p.terrainStringBuffer);
+            Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
+
+            // get the game level
+            response.put("level", game.getLevel());
+
+            ctx.contentType("application/json");
+            ctx.result(gson.toJson(response));
+        });
+
+        // POST /nextlevel
+        // hard resets entire game
+        app.post("/nextlevel", ctx -> {
+            game.nextLevel();
+            
+            Terrain[][] board = game.getMap().getBoard();
+
+            // board info
+            Map<String, Object> response = configureBoardResponse(board);
+
+            // player info
+            Player p = game.getPlayer();
+            Map<String, Object> playerInfo = configurePlayerInfo(p);
+            response.put("player", playerInfo);
+
+            // get the game level
+            response.put("level", game.getLevel());
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -76,19 +94,16 @@ public class GameServer {
             MoveRequest move = gson.fromJson(ctx.body(), MoveRequest.class);
             game.movePlayer(move.direction);
 
-            // configure response
-            Map<String, Object> response = new HashMap<>();
-            response.put("rows", board.length);
-            response.put("cols", board[0].length);
-            response.put("board", board);
+            // board info
+            Map<String, Object> response = configureBoardResponse(board);
 
             // player info
             Player p = game.getPlayer();
-            Map<String, Object> playerInfo = new HashMap<>();
-            playerInfo.put("x", p.getPosX());
-            playerInfo.put("y", p.getPosY());
-            playerInfo.put("terrainStringBuffer", p.terrainStringBuffer);
+            Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
+
+            // get the game level
+            response.put("level", game.getLevel());
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -109,6 +124,32 @@ public class GameServer {
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
         });
+    }
+
+    static Map<String, Object> configurePlayerInfo(Player player) {
+        Map<String, Object> playerInfo = new HashMap<>();
+
+        playerInfo.put("x", player.getPosX());
+        playerInfo.put("y", player.getPosY());
+        playerInfo.put("terrainStringBuffer", player.terrainStringBuffer);
+
+        playerInfo.put("health", player.getHP());
+        playerInfo.put("water", player.getWater());
+        playerInfo.put("energy", player.getEnergy());
+
+        playerInfo.put("status", player.isAlive());
+        playerInfo.put("won", player.getOnGoalTile());
+
+        return playerInfo;
+    }
+
+    static Map<String, Object> configureBoardResponse(Terrain[][] board) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("rows", board.length);
+        response.put("cols", board[0].length);
+        response.put("board", board);
+
+        return response;
     }
 
     static class MoveRequest {

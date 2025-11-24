@@ -5,9 +5,12 @@ public class GameState {
     private Map map;
     private final Player player;
 
+    private int level;
+
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(1, 0,map);
+        this.level = 0;
 
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
 
@@ -53,15 +56,11 @@ public class GameState {
             default -> {  /*ignore*/  }
         }
 
-        // if (player.getPosX() >= 0 && player.getPosX() < map.getWidth() &&
-        //     player.getPosY() >= 0 && player.getPosY() < map.getHeight()) {
-        //     player.setPosition(player.getPosX(), player.getPosY(), map);
-        // }
-
         updateMap();
-        if(player.terrainStringBuffer.equals("E")){
+        if (player.terrainStringBuffer.equals("E")){
             System.out.println("A WINNER IS YOU!");
-            reset();
+            player.setOnGoalTile(true);
+            // reset();
         }
     }
 
@@ -71,20 +70,45 @@ public class GameState {
 
         // reset player position
         player.setPrevX(1);
-        player.setPrevY(1);
-        player.setPosition(1, 1, newMap);
+        player.setPrevY(0);
+        player.setPosition(1, 0, newMap);
+
+        // reset player stats
+        player.setHP(100.0);
+        player.setWater(100);
+        player.setEnergy(100);
+        player.setOnGoalTile(false);
 
         // replace old map
         this.map = newMap;
 
         // player's new location
+        resetLevel();
         updateMap();
     }
 
-    // set an npc/item within the square
-    /*public void setSquare(int x, int y, Object obj) {
-        map.setSquare(x, y, obj);
-    }*/
+    public void nextLevel() {
+        // regen the entire map
+        Map newMap = new Map(MAP_WIDTH, MAP_HEIGHT);
+
+        // reset player position
+        player.setPrevX(1);
+        player.setPrevY(0);
+        player.setPosition(1, 0, newMap);
+
+        // reset player stats
+        player.setHP(100.0);
+        player.setWater(100);
+        player.setEnergy(100);
+        player.setOnGoalTile(false);
+
+        // replace old map
+        this.map = newMap;
+
+        // player's new location
+        incrementLevel();
+        updateMap();
+    }
 
     public Map getMap() {
         return map;
@@ -92,5 +116,17 @@ public class GameState {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void incrementLevel() {
+        this.level++;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public void resetLevel() {
+        this.level = 0;
     }
 }

@@ -7,6 +7,7 @@ public class Player {
     private int energy;
     private int water;
     public String terrainStringBuffer;
+    private boolean onGoalTile;
     public int turnsUntilDeath;
 
     public Player(int x, int y, Map map) {
@@ -19,6 +20,7 @@ public class Player {
         energy = 100;
         water = 100;
         turnsUntilDeath = 0;
+        this.onGoalTile = false;
     }
 
     public void setPosition(int x, int y, Map map) {
@@ -31,6 +33,14 @@ public class Player {
         this.hp = hp;
     }
 
+    public void setWater(int water) {
+        this.water = water;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
     public int getWater(){
         return water;
     }
@@ -41,6 +51,14 @@ public class Player {
 
     public double getHP(){
         return hp;
+    }
+
+    public void setOnGoalTile(boolean bool) {
+        this.onGoalTile = bool;
+    }
+
+    public boolean getOnGoalTile() {
+        return this.onGoalTile;
     }
 
     public void setPrev() {
@@ -94,6 +112,7 @@ public class Player {
     }
     //in the event we run out of resources like food and energy, the player will slowly start losing HP, we run through the isALive function
     //to see if our player has any HP left to lose, 100 is a test value, if we agree on maxHP field, replace 100 with that
+    //note: perhaps a while loop to control health loss?
     public void resourceCheck(){
         if( water <=0 || energy <= 0){
             hp = hp - (100/3);

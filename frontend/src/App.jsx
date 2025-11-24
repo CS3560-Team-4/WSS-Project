@@ -8,9 +8,12 @@ import TraderUI from './components/TraderUI.jsx';
 import BrainUI from './components/BrainUI.jsx';
 import InventoryUI from './components/InventoryUI.jsx';
 import StatsUI from './components/StatsUI.jsx';
+import DeathScreen from './components/DeathScreen.jsx';
+import WinScreen from './components/WinScreen.jsx';
 
 const App = () => {
   const [gameState, setGameState] = useState(null);
+  const [gameLevel, setGameLevel] = useState(0);
   
   //**Fetching Data
   const fetchMapData = async () => {
@@ -19,6 +22,7 @@ const App = () => {
       const data = await response.json();
       
       setGameState(data);
+      console.log("Full game state: ", data);
       
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -47,6 +51,7 @@ const App = () => {
       });
       
       const data = await response.json();
+      console.log("MOVE RESPONSE: ", data);
       setGameState(data);
       
     } catch (err) {
@@ -89,11 +94,30 @@ const App = () => {
 
       const data = await response.json();
       setGameState(data);
+      setGameLevel(data.level);
 
       // Clear hint if open
       setBrainHint(null);
     } catch (err) {
       console.log(`Error resetting game: ${err}`);
+    }
+  }
+
+  const nextLevel = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/nextlevel', {
+        method: 'POST',
+        headers: { 'Content-Type' : 'application/json' }
+      });
+
+      const data = await response.json();
+      setGameState(data);
+      setGameLevel(data.level);
+
+      // Clear hint if open
+      setBrainHint(null);
+    } catch (err) {
+      console.log(`Error getting next level: ${err}`);
     }
   }
 
@@ -111,6 +135,7 @@ const App = () => {
   const openTraderModal = () => setIsTraderModalOpen(true);
   const closeTraderModal = () => setIsTraderModalOpen(false);
 
+  // brainUI
   const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
   const openBrainModal = () => {
     setBrainHint(null);
@@ -118,6 +143,41 @@ const App = () => {
     setIsBrainModalOpen(true);
   }
   const closeBrainModal = () => setIsBrainModalOpen(false);
+
+  // check if game is loaded
+  const [gameLoaded, setGameLoaded] = useState(false);
+  useEffect(() => {
+    if (gameState && gameState.player && !gameLoaded) {
+      setGameLoaded(true);
+    }
+  }, [gameState]);
+  
+  // death screen
+  const [isDeathScreenOpen, setIsDeathScreenOpen] = useState(false);
+  const openDeathScreen = () => setIsDeathScreenOpen(true);
+  const closeDeathScreen = () => setIsDeathScreenOpen(false);
+
+  useEffect(() => {
+    if (!gameLoaded) return;
+
+    if (gameState.player.health <= 0) {
+      openDeathScreen();
+    }
+  }, [gameState]);
+
+  // win screen
+  const [isWinScreenOpen, setIsWinScreenOpen] = useState(false);
+  const openWinScreen = () => setIsWinScreenOpen(true);
+  const closeWinScreen = () => setIsWinScreenOpen(false);
+
+  useEffect(() => {
+    if (!gameLoaded) return;
+
+    if (gameState.player.won === true) {
+      console.log("win flag: ", gameState?.player?.win);
+      openWinScreen();
+    }
+  }, [gameState]);
 
   // check if any modals are open
   const anyModalsOpen = () => {
@@ -152,7 +212,10 @@ const App = () => {
             <InventoryUI mapRef={mapRef} arrowRef={arrowRef} />
             <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
           </div>
-          <StatsUI />
+          <StatsUI gameState={gameState} />
+          <div className="mt-2">
+            Level: {`${gameLevel}`}
+          </div>
         </div>
 
         <GameControls ref={arrowRef} move={move} />
@@ -167,11 +230,26 @@ const App = () => {
         >
           Open Trader UI 
         </button>
+
         <button
           onClick={openBrainModal}
           className="dev-button"
         >
           Open Brain UI 
+        </button>
+
+        <button
+          onClick={openDeathScreen}
+          className="dev-button"
+        >
+          Show Death Screen
+        </button>
+
+        <button
+          onClick={openWinScreen}
+          className="dev-button"
+        >
+          Show Win Screen
         </button>
 
         <button
@@ -189,8 +267,17 @@ const App = () => {
       <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal}>
         <TraderUI />
       </Modal>
+
       <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal}>
         <BrainUI hint={brainHint} onHintRequest={brainMove} loading={brainLoading} />
+      </Modal>
+
+      <Modal isOpen={isDeathScreenOpen} onClose={closeDeathScreen}>
+        <DeathScreen resetGame={resetGame} closeDeathScreen={closeDeathScreen}/>
+      </Modal>
+
+      <Modal isOpen={isWinScreenOpen} onClose={closeWinScreen}>
+        <WinScreen nextLevel={nextLevel} closeWinScreen={closeWinScreen}/>
       </Modal>
     </div>
   );
