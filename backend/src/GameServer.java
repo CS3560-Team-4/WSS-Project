@@ -69,11 +69,12 @@ public class GameServer {
         // **expected return
         // body: {"direction": "up|down|left|right"}
         app.post("/move", ctx -> {
-            MoveRequest move = gson.fromJson(ctx.body(), MoveRequest.class);
-            game.movePlayer(move.direction);
-
+            
             // Get the latest board from map
             Terrain[][] board = game.getMap().getBoard();
+
+            MoveRequest move = gson.fromJson(ctx.body(), MoveRequest.class);
+            game.movePlayer(move.direction, board);
 
             // configure response
             Map<String, Object> response = new HashMap<>();

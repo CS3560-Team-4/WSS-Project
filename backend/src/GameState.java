@@ -7,7 +7,7 @@ public class GameState {
 
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
-        this.player = new Player(0, 0, map);
+        this.player = new Player(1, 0,map);
 
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
 
@@ -25,9 +25,9 @@ public class GameState {
         player.setPosition(px, py, map);
     }
 
-    public void movePlayer(String dir) {
+    public void movePlayer(String dir, Map map) {
         if (player == null) return;
-
+        if(!player.isAlive()) return;
         // remember prev coords
         player.setPrevX(player.getPosX());
         player.setPrevY(player.getPosY());
@@ -35,16 +35,16 @@ public class GameState {
         // move
         switch (dir == null ? "" : dir) {
             case "up" -> {
-                if (player.getPosY() > 0) player.moveUp();
+                if (player.getPosY() > 0) player.moveUp(map);
             }
             case "down" -> {
-                if (player.getPosY() < map.getHeight() - 1) player.moveDown();
+                if (player.getPosY() < map.getHeight() - 1) player.moveDown(map);
             }
             case "left" -> {
-                if (player.getPosX() > 0) player.moveLeft();
+                if (player.getPosX() > 0) player.moveLeft(map);
             }
             case "right" -> {
-                if (player.getPosX() < map.getWidth() - 1) player.moveRight();
+                if (player.getPosX() < map.getWidth() - 1) player.moveRight(map);
             }
             default -> {  /*ignore*/  }
         }
