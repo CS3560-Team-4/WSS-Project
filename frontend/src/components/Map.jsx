@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import "./css/Map.css";
 import playerImg from '../assets/player.png';
+import goalImg from '../assets/exit.png'
 
 const Map = forwardRef(({ gameState, lastMove }, ref) => {
   if (!gameState) {
@@ -37,6 +38,7 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
         <div key={y} className="flex">
           {row.map((cell, x) => {
             const isPlayer = cell === 'P';
+            const isGoal = cell === 'E';
 
             // If player occupies this tile, use underlying terrain
             const baseTerrain = isPlayer
@@ -50,7 +52,16 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
                 key={x}
                 className={`relative w-11 h-11 flex items-center justify-center ${terrainClass}`}
               >
-                {/* ⭐ Overlay player sprite */}
+                {/** Goal Sprite*/}
+                {isGoal && (
+                  <img
+                    src={goalImg}
+                    alt="Goal"
+                    className="invert brightness-200 w-8 h-8"
+                  />
+                )}
+
+                {/* Overlay player sprite */}
                 {isPlayer && (
                   <img
                     src={playerImg}

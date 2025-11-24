@@ -51,8 +51,20 @@ public class Map {
             }
         }
 
-        //map[map.length-1][map[map.length-1].length-1]= new Goal();
-        map[r.nextInt(map.length)][r.nextInt(map[0].length)] = new Goal();
+        // prevent goal tile from spawning near the player
+        int goalTileY = r.nextInt(map.length);
+        int goalTileX = r.nextInt(map[0].length);
+
+        while (goalTileY <= 3) {
+            goalTileY = r.nextInt(map.length);
+        }
+
+        while (goalTileX <= 3) {
+            goalTileX = r.nextInt(map[0].length);
+        }
+        
+        // finally instantiate goal tile
+        map[goalTileY][goalTileX] = new Goal();
     }
 
     public void updateWithPlayer(Player player) {

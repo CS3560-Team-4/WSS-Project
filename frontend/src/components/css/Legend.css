@@ -6,7 +6,7 @@
   }
 
   .legend-icon {
-    @apply size-6 border border-black;
+    @apply size-6 border border-black flex items-center justify-center;
   }
 
   .player-icon {
@@ -37,7 +37,7 @@
     @apply bg-green-800;
   }
 
-    .goal-icon {
-    @apply bg-yellow-800;
+  .goal-icon {
+    @apply bg-black border-2 border-white;
   }
 }

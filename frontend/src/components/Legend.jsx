@@ -1,4 +1,5 @@
 import './css/Legend.css'
+import goalImg from '../assets/exit.png';
 
 const Legend = () => {
 
@@ -45,6 +46,7 @@ const Legend = () => {
         <div className="icon-div">
           Goal
           <div className="legend-icon goal-icon">
+            <img src={goalImg} className="invert brightness-200 size-4" />
           </div>
         </div>
         
