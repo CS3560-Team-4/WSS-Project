@@ -1,21 +1,20 @@
-
 const StatsUI = ({ gameState }) => {
   let playerHealth = 100;
   let playerWater = 100;
   let playerEnergy = 100;
+  let playerGold = 0;
 
   if (!gameState || !gameState.player) return null;
 
   playerHealth = gameState.player.health;
   playerWater = gameState.player.water;
   playerEnergy = gameState.player.energy;
+  playerGold = gameState.player.gold;
 
   if (playerHealth <= 0) playerHealth = 0;
   if (playerWater <= 0) playerWater = 0;
   if (playerEnergy <= 0) playerEnergy = 0;
-
-  // test variable for now
-  let playerGold = 10;
+  if (playerGold <= 0) playerGold = 0;
 
   return (
     <div className="flex gap-10 mt-2">

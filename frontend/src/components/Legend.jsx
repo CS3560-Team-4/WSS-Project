@@ -7,13 +7,6 @@ const Legend = () => {
       {/* <div className="text-center w-full font-bold text-2xl mb-1">Legend</div> */}
       <div className="flex flex-row items-center justify-center gap-4 w-full h-full">
         <div className="icon-div">
-          Player
-          <div className="legend-icon player-icon">
-            P
-          </div>
-        </div>
-
-        <div className="icon-div">
           Terrain
           <div className="legend-icon terrain-icon">
           </div>
@@ -24,6 +17,7 @@ const Legend = () => {
           <div className="legend-icon desert-icon">
           </div>
         </div>
+        
         <div className="icon-div">
           DMV
           <div className="legend-icon dmv-icon">

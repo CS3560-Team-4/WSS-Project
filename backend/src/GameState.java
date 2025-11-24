@@ -6,11 +6,14 @@ public class GameState {
     private final Player player;
 
     private int level;
+    private int playerTurnInterval;
 
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(1, 0,map);
+
         this.level = 0;
+        this.playerTurnInterval = 0;
 
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
 
@@ -30,14 +33,11 @@ public class GameState {
 
     public void movePlayer(String dir) {
         if (player == null) return;
-        if(!player.isAlive()) {
-            System.exit(0);
-            return;
-        }
+
         // remember prev coords
         player.setPrevX(player.getPosX());
         player.setPrevY(player.getPosY());
-
+        
         // move
         System.out.println("WATER  "+ player.getWater() +" ENERGY  "+ player.getEnergy() + " HP " + player.getHP());
         switch (dir == null ? "" : dir) {
@@ -56,11 +56,19 @@ public class GameState {
             default -> {  /*ignore*/  }
         }
 
+        // for every 5 turns, player will get +1 gold
+        playerTurnInterval++;
+        if (playerTurnInterval >= 5) {
+            player.incrementGoldBy(1);
+            playerTurnInterval = 0;
+        }
+        
+        // check player resources and update map status 
+        player.resourceCheck();
         updateMap();
+
         if (player.terrainStringBuffer.equals("E")){
-            System.out.println("A WINNER IS YOU!");
             player.setOnGoalTile(true);
-            // reset();
         }
     }
 
@@ -77,6 +85,7 @@ public class GameState {
         player.setHP(100.0);
         player.setWater(100);
         player.setEnergy(100);
+        player.setGold(0);
         player.setOnGoalTile(false);
 
         // replace old map
@@ -88,7 +97,7 @@ public class GameState {
     }
 
     public void nextLevel() {
-        // regen the entire map
+        // regen the map
         Map newMap = new Map(MAP_WIDTH, MAP_HEIGHT);
 
         // reset player position
@@ -96,10 +105,7 @@ public class GameState {
         player.setPrevY(0);
         player.setPosition(1, 0, newMap);
 
-        // reset player stats
-        player.setHP(100.0);
-        player.setWater(100);
-        player.setEnergy(100);
+        // reset player win condition
         player.setOnGoalTile(false);
 
         // replace old map

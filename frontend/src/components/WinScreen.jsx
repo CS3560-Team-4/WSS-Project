@@ -8,12 +8,12 @@ const WinScreen = ({ nextLevel, closeWinScreen }) => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <div className="text-xl font-bold text-amber-600">You made it!</div>
+      <div className="text-3xl font-bold text-amber-600">Level Complete!</div>
       <button
         onClick={handleClick}
-        className="dev-button"
+        className="dev-button text-xl"
       >
-        Play Again
+        Next Level
       </button>
     </div>
   )

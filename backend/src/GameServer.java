@@ -136,6 +136,7 @@ public class GameServer {
         playerInfo.put("health", player.getHP());
         playerInfo.put("water", player.getWater());
         playerInfo.put("energy", player.getEnergy());
+        playerInfo.put("gold", player.getGold());
 
         playerInfo.put("status", player.isAlive());
         playerInfo.put("won", player.getOnGoalTile());
