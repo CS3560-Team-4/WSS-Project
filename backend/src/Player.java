@@ -131,15 +131,11 @@ public class Player {
     //in the event we run out of resources like food and energy, the player will slowly start losing HP, we run through the isALive function
     //to see if our player has any HP left to lose, 100 is a test value, if we agree on maxHP field, replace 100 with that
     //note: perhaps a while loop to control health loss?
+    //this is meant to be a one time check so no i dont think that sould be a good idea
     public void resourceCheck() {
         if ( this.water <=0 || this.energy <= 0) {
-            this.hp = this.hp - Math.floor(100 / 4);
-            if (isAlive()) {
-                System.out.println("GET RESOURCES SOON, OR YOU WILL DIE");
-            }
-            else{
-                System.out.println("YOU ARE DEAD, NOT BIG SURPRISE");
-            }
+            this.hp = this.hp - 25;
+            System.out.println("GET RESOURCES SOON, OR YOU WILL DIE");
         }
     }
 
