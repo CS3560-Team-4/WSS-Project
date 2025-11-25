@@ -1,30 +1,21 @@
 public class Item {
-    public enum Kind {
-        WATER_BOTTLE,
-        MEDICINE,
-        ENERGY_DRINK,
-        TURKEY
+    private ItemType type;
+
+    public Item(ItemType type) {
+        this.type = type;
     }
 
-    private Kind kind;
-    private int restoreAmount;
-
-    public Item(Kind kind, int restoreAmount) {
-        this.kind = kind;
-        this.restoreAmount = restoreAmount;
+    public ItemType getType() {
+        return type;
     }
 
-    public Kind getKind() {
-        return kind;
-    }
-
-    public int getRestoreAmount() {
-        return restoreAmount;
+    public String toString() {
+        return type.toString().toLowerCase();
     }
 
     // Use the item on a player
     public void use(Player player) {
-        switch (kind) {
+        switch (type) {
             case TURKEY:
                 player.incrementEnergyBy(25);
                 break;

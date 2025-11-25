@@ -1,9 +1,9 @@
 public class Terrain {
-	int waterCost;
-	int energyCost;
-	int movementCost;
-    String stringRep;
-    Object tileObject;
+	public int waterCost;
+	public int energyCost;
+	public int movementCost;
+    public String stringRep;
+    public Object tileObject;
 
 	public Terrain() {
 		waterCost = 1;
@@ -13,14 +13,18 @@ public class Terrain {
 	}
 
     public String getSymbol() {
-        return stringRep;
+        return this.stringRep;
     }
 
     public String getType() {
         return this.getClass().getSimpleName();
     }
 
-    public void setTileObject() {
-        
+    public void setTileObject(Object object) {
+        this.tileObject = object;
+    }
+
+    public Object getTileObject() {
+        return this.tileObject;
     }
 }

@@ -8,14 +8,71 @@ public class Map {
     //This constructor makes a matrix of terrain objects to form our map, accounts for 
     //invalid inputs, initially the matrix has null objects
     public Map(int width, int height) {
+        Random r = new Random();
+
         if (width <=0 || height <= 0) {
 			System.out.println("Invalid map dimensions, generating random valid dimensions for map");
-			Random r = new Random();
 			width = r.nextInt(255) + 1;
 			height = r.nextInt(255) + 1;
 		}
+
         map = new Terrain[height][width];
         populate();
+
+        ItemType[] itemTypes = {
+            ItemType.WATER_BOTTLE,
+            ItemType.MEDICINE,
+            ItemType.ENERGY_DRINK,
+            ItemType.TURKEY
+        };
+
+        TraderType[] traderTypes = {
+            TraderType.Friendly,
+            TraderType.Generous,
+            TraderType.Greedy,
+            TraderType.Lowballer
+        };
+
+        MoodState[] moodStates = {
+            MoodState.Annoyed,
+            MoodState.Calm,
+            MoodState.Happy
+        };
+
+        String[] traderNames = {
+            "Albert",
+            "Samuel",
+            "John",
+            "David",
+            "Johanssen",
+            "Neil",
+            "Joe",
+            "Peter",
+            "Youseff",
+            "Jack"
+        };
+
+        // loop through all terrain tile objects
+        // then randomize if they get a tile object
+        // then randomize on what they get inside
+        for (Terrain[] t : map) {
+            for (Terrain terrain : t) {
+                if (r.nextInt(100) >= 96) {
+                    if (r.nextInt(100) <= 79) {
+                        Item item = new Item(itemTypes[r.nextInt(itemTypes.length)]);
+                        terrain.setTileObject(item);
+                    } else {
+                        Trader trader = new Trader(
+                            traderNames[r.nextInt(traderNames.length)],
+                            traderTypes[r.nextInt(traderTypes.length)],
+                            moodStates[r.nextInt(moodStates.length)],
+                            r.nextInt(100) + 1
+                        );
+                        terrain.setTileObject(trader);
+                    }
+                } 
+            }
+        }
     }
 
     //fills the map (a matrix of terrain) with actual instances of terrain
@@ -32,7 +89,7 @@ public class Map {
                 n = r.nextInt(100);
                 if (0 <= n && n < 40) {
                     map[y][x] = new Terrain();
-                }
+                } 
                 else if (40 <= n && n< 55) {
                     map[y][x] = new Desert();
                 }
@@ -77,7 +134,6 @@ public class Map {
         if (prevX >= 0 && prevY >= 0) {
             map[prevY][prevX].stringRep = player.terrainStringBuffer;
         }
-        
 
         // record what's under the new tile
         String newTerrain = map[y][x].stringRep;

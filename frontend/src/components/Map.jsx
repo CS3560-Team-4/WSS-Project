@@ -3,7 +3,23 @@ import "./css/Map.css";
 import playerImg from '../assets/player.png';
 import goalImg from '../assets/exit.png'
 
+const itemSprites = {
+  WATER_BOTTLE: new URL('../assets/items/WATER_BOTTLE.png', import.meta.url).href,
+  MEDICINE: new URL('../assets/items/MEDICINE.png', import.meta.url).href,
+  ENERGY_DRINK: new URL('../assets/items/ENERGY_DRINK.png', import.meta.url).href,
+  TURKEY: new URL('../assets/items/TURKEY.png', import.meta.url).href,
+};
+
+const traderSprites = {
+  Friendly: new URL('../assets/traders/Friendly.png', import.meta.url).href,
+  Generous: new URL('../assets/traders/Generous.png', import.meta.url).href,
+  Greedy: new URL('../assets/traders/Greedy.png', import.meta.url).href,
+  Lowballer: new URL('../assets/traders/Lowballer.png', import.meta.url).href,
+};
+
 const Map = forwardRef(({ gameState, lastMove }, ref) => {
+
+
   if (!gameState) {
     return (
       <div 
@@ -37,13 +53,16 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
       {mapData.map((row, y) => (
         <div key={y} className="flex">
           {row.map((cell, x) => {
-            const isPlayer = cell === 'P';
-            const isGoal = cell === 'E';
+            const terrain = cell.terrain;
+            const tileObject = cell.tileObject;
+
+            const isPlayer = terrain === 'P';
+            const isGoal = terrain === 'E';
 
             // If player occupies this tile, use underlying terrain
             const baseTerrain = isPlayer
               ? gameState.player.terrainStringBuffer
-              : cell;
+              : terrain;
 
             const terrainClass = getTerrainClass(baseTerrain);
 
@@ -58,6 +77,24 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
                     src={goalImg}
                     alt="Goal"
                     className="invert brightness-200 w-8 h-8"
+                  />
+                )}
+
+                {/**Render item */}
+                {tileObject && tileObject.type === "ITEM" && !isPlayer && (
+                  <img 
+                    src={itemSprites[tileObject.itemType]}
+                    alt={tileObject.itemType}
+                    className="absolute w-7 h-7 pixelated"
+                  />
+                )}
+
+                {/**Render trader */}
+                {tileObject && tileObject.type === "TRADER" && !isPlayer && (
+                  <img 
+                    src={traderSprites[tileObject.traderType]}
+                    alt={tileObject.traderType}
+                    className="absolute w-10 h-10 pixelated"
                   />
                 )}
 

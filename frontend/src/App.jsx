@@ -325,9 +325,6 @@ const App = () => {
           Reset Game
         </button>
       </div>
-
-      {/* Player Inventory */}
-      
       
       {/* Modals */}
       <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal}>

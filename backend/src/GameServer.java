@@ -189,12 +189,66 @@ public class GameServer {
     }
 
     static Map<String, Object> configureBoardResponse(Terrain[][] board) {
+        TileDTO[][] dtoBoard = new TileDTO[board.length][board[0].length];
+        
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                dtoBoard[i][j] = new TileDTO(board[i][j]);
+            }
+        }
+
         Map<String, Object> response = new HashMap<>();
         response.put("rows", board.length);
         response.put("cols", board[0].length);
-        response.put("board", board);
+        response.put("board", dtoBoard);
 
         return response;
+    }
+
+    static class TileDTO {
+        public String terrain;
+        public Object tileObject;  // Can be ItemDTO or TraderDTO
+
+        TileDTO(Terrain terrainObj) {
+            // Always send terrain symbol
+            this.terrain = terrainObj.stringRep;
+
+            // Convert tileObject depending on what it is
+            Object raw = terrainObj.getTileObject();
+
+            if (raw == null) {
+                this.tileObject = null;
+            } else if (raw instanceof Item item) {
+                this.tileObject = new ItemDTO(item);
+            } else if (raw instanceof Trader trader) {
+                this.tileObject = new TraderDTO(trader);
+            }
+        }
+    }
+
+    static class ItemDTO {
+        public String type;       // "ITEM"
+        public String itemType;   // "WATER_BOTTLE", "TURKEY", etc.
+
+        ItemDTO(Item i) {
+            this.type = "ITEM";
+            this.itemType = i.getType().name();
+        }
+    }
+
+    static class TraderDTO {
+        public String type = "TRADER";
+        public String name;
+        public String traderType;  // Friendly, Generous, etc.
+        public String mood;        // Annoyed, Calm, Happy
+        public int patience;
+
+        TraderDTO(Trader t) {
+            this.name = t.name;
+            this.traderType = t.type.name();
+            this.mood = t.mood.name();
+            this.patience = t.patience;
+        }
     }
 
     static class MoveRequest {

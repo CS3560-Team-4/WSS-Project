@@ -9,6 +9,7 @@
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Goal.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/GreedyBrain.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Item.java
+/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/ItemType.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Map.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/MoodState.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Mountain.java
@@ -19,6 +20,6 @@
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Swamp.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Terrain.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/TradeOffer.java
-/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/TraderSuperClass.java
+/mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Trader.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/TraderType.java
 /mnt/c/Users/daled/OneDrive/folders/coding-in-class/fall2025/3560CS/wss-project/backend/src/Vision.java

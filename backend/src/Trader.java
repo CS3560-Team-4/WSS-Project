@@ -1,31 +1,19 @@
-import java.util.Random;
-
-public abstract class TraderSuperClass {
-
+public class Trader {
     protected String name;
     protected TraderType type;
     protected MoodState mood;
     protected int patience;
     protected TradeOffer previousOffer;
     protected boolean inTrade;
-    protected int behavior;
-    protected int id;
-    protected Random rand = new Random();
 
-    public TraderSuperClass(String name, TraderType type, MoodState mood, int patience, int behavior, int id) {
+    public Trader(String name, TraderType type, MoodState mood, int patience) {
         this.name = name;
         this.type = type;
         this.mood = mood;
         this.patience = patience;
-        this.behavior = behavior;
-        this.id = id;
         this.inTrade = false;
         this.previousOffer = null;
     }
-
-    public abstract OfferResult evaluateOffer(TradeOffer playerOffer);
-
-    public abstract TradeOffer counterOffer(TradeOffer playerOffer);
 
     public TradeOffer acceptOffer(TradeOffer playerOffer) {
         return playerOffer;
@@ -44,15 +32,11 @@ public abstract class TraderSuperClass {
         previousOffer = null;
     }
 
-    public int getBehavior() {
-        return behavior;
-    }
-
-    public int getId() {
-        return id;
-    }
-
     public boolean isInTrade() {
         return inTrade;
+    }
+
+    public String toString() {
+        return type.toString().toLowerCase();
     }
 }
