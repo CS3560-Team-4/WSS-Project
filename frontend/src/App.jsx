@@ -6,12 +6,17 @@ import Legend from './components/Legend.jsx';
 import Modal from './components/Modal.jsx';
 import TraderUI from './components/TraderUI.jsx';
 import BrainUI from './components/BrainUI.jsx';
-import InventoryUI from './components/InventoryUI.jsx';
 import StatsUI from './components/StatsUI.jsx';
 import DeathScreen from './components/DeathScreen.jsx';
 import WinScreen from './components/WinScreen.jsx';
+import WelcomeScreen from './components/WelcomeScreen.jsx';
 
 const App = () => {
+  // Welcome screen
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(true);
+  const closeWelcomeModal = () => setIsWelcomeModalOpen(false);
+  const openWelcomeModal = () => setIsWelcomeModalOpen(true);
+
   const [gameState, setGameState] = useState(null);
   const [gameLevel, setGameLevel] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -36,8 +41,30 @@ const App = () => {
   // initial map
   useEffect(() => {
     fetchMapData();
+    openWelcomeModal();
   }, []);
 
+  // refresh the page when user reloads page
+  useEffect(() => {
+    const hasSession = sessionStorage.getItem("hasGameSession");
+
+    if (!hasSession) {
+      resetGame();
+      sessionStorage.setItem("hasGameSession", "true")
+    }
+  }, []);
+
+  useEffect(() => {
+    const clearSession = () => {
+      sessionStorage.removeItem("hasGameSession");
+    };
+
+    window.addEventListener("beforeunload", clearSession);
+
+    return () => window.removeEventListener("beforeunload", clearSession);
+  }, []);
+
+  // check for player last move direction
   useEffect(() => {
     if (!gameLoaded) return;
 
@@ -161,6 +188,7 @@ const App = () => {
     } catch (err) {
       console.log(`Error resetting game: ${err}`);
     }
+
   }
 
   const nextLevel = async () => {
@@ -330,6 +358,10 @@ const App = () => {
       </div>
       
       {/* Modals */}
+      <Modal isOpen={isWelcomeModalOpen} onClose={closeWelcomeModal} closeButton={false}>
+        <WelcomeScreen onStart={closeWelcomeModal} />
+      </Modal>
+
       <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal} closeButton={false}>
         <TraderUI
           trader={gameState?.activeTrader ?? null}
