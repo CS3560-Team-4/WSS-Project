@@ -35,11 +35,19 @@ public class Player {
         return water;
     }
 
+    public void incrementWaterBy(int amount) {
+        this.water += amount;
+    }
+
     public int getEnergy(){
         return energy;
     }
 
-    public double getHP(){
+    public void incrementEnergyBy(int amount) {
+        this.energy += amount;
+    }
+
+    public double getHP() {
         return hp;
     }
 

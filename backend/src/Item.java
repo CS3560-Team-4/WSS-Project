@@ -26,17 +26,16 @@ public class Item {
     public void use(Player player) {
         switch (kind) {
             case TURKEY:
-                player.increaseEnergy(25);
+                player.incrementEnergyBy(25);
                 break;
             case WATER_BOTTLE:
-                player.increaseWater(25);
+                player.incrementWaterBy(25);
                 break;
             case MEDICINE:
                 player.setHP(player.getHP() + 25);
                 break;
             case ENERGY_DRINK:
-                // You need to add an increaseEnergy method to Player
-                player.increaseEnergy(10);
+                player.incrementEnergyBy(10);
                 break;
         }
     }
