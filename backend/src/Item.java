@@ -32,7 +32,7 @@ public class Item {
                 player.incrementWaterBy(25);
                 break;
             case MEDICINE:
-                player.setHP(player.getHP() + 25);
+                player.incrementHpBy(25);
                 break;
             case ENERGY_DRINK:
                 player.incrementEnergyBy(10);

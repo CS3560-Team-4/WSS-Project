@@ -4,6 +4,6 @@
   .button {
     @apply px-3 py-1 bg-amber-500 rounded font-medium 
       cursor-pointer hover:bg-amber-600 hover:outline-2
-      hover:font-extrabold;
+      hover:font-extrabold hover:scale-110 transition-transform;
   }
 }

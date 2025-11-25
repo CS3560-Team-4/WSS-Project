@@ -5,9 +5,15 @@ public class GameState {
     private Map map;
     private final Player player;
 
+    private int level;
+    private int playerTurnInterval;
+
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(1, 0,map);
+
+        this.level = 0;
+        this.playerTurnInterval = 0;
 
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
 
@@ -27,14 +33,11 @@ public class GameState {
 
     public void movePlayer(String dir) {
         if (player == null) return;
-        if(!player.isAlive()) {
-            System.exit(0);
-            return;
-        }
+
         // remember prev coords
         player.setPrevX(player.getPosX());
         player.setPrevY(player.getPosY());
-
+        
         // move
         System.out.println("WATER  "+ player.getWater() +" ENERGY  "+ player.getEnergy() + " HP " + player.getHP());
         switch (dir == null ? "" : dir) {
@@ -53,15 +56,19 @@ public class GameState {
             default -> {  /*ignore*/  }
         }
 
-        // if (player.getPosX() >= 0 && player.getPosX() < map.getWidth() &&
-        //     player.getPosY() >= 0 && player.getPosY() < map.getHeight()) {
-        //     player.setPosition(player.getPosX(), player.getPosY(), map);
-        // }
-
+        // for every 5 turns, player will get +1 gold
+        playerTurnInterval++;
+        if (playerTurnInterval >= 5) {
+            player.incrementGoldBy(1);
+            playerTurnInterval = 0;
+        }
+        
+        // check player resources and update map status 
+        player.resourceCheck();
         updateMap();
-        if(player.terrainStringBuffer.equals("E")){
-            System.out.println("A WINNER IS YOU!");
-            reset();
+
+        if (player.terrainStringBuffer.equals("E")){
+            player.setOnGoalTile(true);
         }
     }
 
@@ -71,20 +78,43 @@ public class GameState {
 
         // reset player position
         player.setPrevX(1);
-        player.setPrevY(1);
-        player.setPosition(1, 1, newMap);
+        player.setPrevY(0);
+        player.setPosition(1, 0, newMap);
+
+        // reset player stats
+        player.setHP(100.0);
+        player.setWater(100);
+        player.setEnergy(100);
+        player.setGold(0);
+        player.setOnGoalTile(false);
 
         // replace old map
         this.map = newMap;
 
         // player's new location
+        resetLevel();
         updateMap();
     }
 
-    // set an npc/item within the square
-    /*public void setSquare(int x, int y, Object obj) {
-        map.setSquare(x, y, obj);
-    }*/
+    public void nextLevel() {
+        // regen the map
+        Map newMap = new Map(MAP_WIDTH, MAP_HEIGHT);
+
+        // reset player position
+        player.setPrevX(1);
+        player.setPrevY(0);
+        player.setPosition(1, 0, newMap);
+
+        // reset player win condition
+        player.setOnGoalTile(false);
+
+        // replace old map
+        this.map = newMap;
+
+        // player's new location
+        incrementLevel();
+        updateMap();
+    }
 
     public Map getMap() {
         return map;
@@ -92,5 +122,17 @@ public class GameState {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void incrementLevel() {
+        this.level++;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public void resetLevel() {
+        this.level = 0;
     }
 }

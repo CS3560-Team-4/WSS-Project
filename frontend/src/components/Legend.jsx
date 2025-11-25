@@ -1,4 +1,5 @@
 import './css/Legend.css'
+import goalImg from '../assets/exit.png';
 
 const Legend = () => {
 
@@ -6,13 +7,6 @@ const Legend = () => {
     <div className="flex flex-col items-center justify-center p-3 border gap-5 mb-10 -translate-x-20">
       {/* <div className="text-center w-full font-bold text-2xl mb-1">Legend</div> */}
       <div className="flex flex-row items-center justify-center gap-4 w-full h-full">
-        <div className="icon-div">
-          Player
-          <div className="legend-icon player-icon">
-            P
-          </div>
-        </div>
-
         <div className="icon-div">
           Terrain
           <div className="legend-icon terrain-icon">
@@ -24,6 +18,7 @@ const Legend = () => {
           <div className="legend-icon desert-icon">
           </div>
         </div>
+        
         <div className="icon-div">
           DMV
           <div className="legend-icon dmv-icon">
@@ -51,6 +46,7 @@ const Legend = () => {
         <div className="icon-div">
           Goal
           <div className="legend-icon goal-icon">
+            <img src={goalImg} className="invert brightness-200 size-4" />
           </div>
         </div>
         

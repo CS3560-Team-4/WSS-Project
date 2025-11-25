@@ -2,21 +2,22 @@ import java.util.Random;
 public class Map {
     Terrain[][] map;
     
-    //to access height, use mapName.length
-    //to access width, use mapName[i].length such that i is a non-negative int
+    //to access height, use map.getHeight()
+    //to access width, use map.getWidth() such that i is a non-negative int
 
     //This constructor makes a matrix of terrain objects to form our map, accounts for 
     //invalid inputs, initially the matrix has null objects
     public Map(int width, int height) {
-        if (width<=0||height<=0) {
+        if (width <=0 || height <= 0) {
 			System.out.println("Invalid map dimensions, generating random valid dimensions for map");
 			Random r = new Random();
-			width = r.nextInt(255)+1;
-			height = r.nextInt(255)+1;
+			width = r.nextInt(255) + 1;
+			height = r.nextInt(255) + 1;
 		}
         map = new Terrain[height][width];
         populate();
     }
+
     //fills the map (a matrix of terrain) with actual instances of terrain
     //use this to spawn a map and actually have it not be full of null objects
     //since this is a private, use it only in map.java, and this method 
@@ -25,46 +26,46 @@ public class Map {
     private void populate() {
         int n;
         Random r = new Random();
+        
         for (int y = 0; y < map.length; y++) {
             for (int x = 0; x < map[0].length; x++) {
                 n = r.nextInt(100);
-                if(0 <= n && n < 40){
+                if (0 <= n && n < 40) {
                     map[y][x] = new Terrain();
                 }
-                else if(40 <= n && n< 55){
+                else if (40 <= n && n< 55) {
                     map[y][x] = new Desert();
                 }
-                else if(55 <= n && n< 65){
+                else if (55 <= n && n< 65) {
                     map[y][x] = new Swamp();
                 }
-                else if(65 <= n && n < 80){
+                else if (65 <= n && n < 80) {
                     map[y][x] = new Frost();
                 }
-                else if(80 <= n && n < 98){
+                else if (80 <= n && n < 98) {
                     map[y][x] = new Mountain();
                 }
-                else{
+                else {
                     map[y][x] = new DMV();
                 }
             }
         }
-        //map[map.length-1][map[map.length-1].length-1]= new Goal();
-        map[r.nextInt(map.length)][r.nextInt(map[0].length)] = new Goal();
+
+        // prevent goal tile from spawning near the player
+        int goalTileY = r.nextInt(map.length);
+        int goalTileX = r.nextInt(map[0].length);
+
+        while (goalTileY <= 3) {
+            goalTileY = r.nextInt(map.length);
+        }
+
+        while (goalTileX <= 3) {
+            goalTileX = r.nextInt(map[0].length);
+        }
+        
+        // finally instantiate goal tile
+        map[goalTileY][goalTileX] = new Goal();
     }
-
-    /*private void buildWalls() {
-        // top and bottom
-        for (int x = 0; x < map[0].length; x++) {
-            tiles[0][x] = "#";
-            tiles[height - 1][x] = "#";
-        }
-
-        // sides
-        for (int y = 0; y < map.length; y++) {
-            tiles[y][0] = "#";
-            tiles[y][width - 1] = "#";
-        }
-    }*/
 
     public void updateWithPlayer(Player player) {
         int prevX = player.getPrevX();
@@ -87,15 +88,6 @@ public class Map {
         // store that newTerrain for next time
         player.terrainStringBuffer = newTerrain;
     }
-
-    //**may or may not need
-    //**come back to this if item classes are being implemented
-    //
-    // set npc/item within square
-    // public void setSquare(int x, int y, Object obj) {
-    //     if (y < 0 || y >= map.length || x < 0 || x >= map[0].length) return;
-    //     map[y][x] = obj.toString();
-    // }
 
     //print the map
     //use this to show where things are

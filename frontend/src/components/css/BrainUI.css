@@ -9,6 +9,10 @@
     @apply text-center text-lg;
   }
 
+  .brain-selected {
+    @apply font-bold border-2 border-amber-600 outline-2 outline-amber-600;
+  }
+
   .hint-button {
     @apply border border-white hover:outline-3 hover:font-bold cursor-pointer p-2;
   }

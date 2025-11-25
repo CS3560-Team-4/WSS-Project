@@ -3,6 +3,7 @@ public class Terrain {
 	int energyCost;
 	int movementCost;
     String stringRep;
+    Object tileObject;
 
 	public Terrain() {
 		waterCost = 1;
@@ -17,5 +18,9 @@ public class Terrain {
 
     public String getType() {
         return this.getClass().getSimpleName();
+    }
+
+    public void setTileObject() {
+        
     }
 }
