@@ -9,6 +9,7 @@ public class Player {
     private int water;
     private int gold;
     private boolean onGoalTile;
+    private boolean onTraderTile;
 
     public String terrainStringBuffer;
     public int turnsUntilDeath;
@@ -37,14 +38,17 @@ public class Player {
 
     public void setHP(double hp) {
         this.hp = hp;
+        clampPlayerStats();
     }
 
     public void setWater(int water) {
         this.water = water;
+        clampPlayerStats();
     }
 
     public void setEnergy(int energy) {
         this.energy = energy;
+        clampPlayerStats();
     }
 
     public int getWater() {
@@ -61,14 +65,17 @@ public class Player {
 
     public void incrementEnergyBy(int amount) {
         this.energy += amount;
+        clampPlayerStats();
     }
 
     public void incrementWaterBy(int amount) {
         this.water += amount;
+        clampPlayerStats();
     }
 
     public void incrementHpBy(int amount) {
         this.hp += amount;
+        clampPlayerStats();
     }
 
     public int getGold() {
@@ -77,18 +84,29 @@ public class Player {
 
     public void setGold(int gold) {
         this.gold = gold;
+        clampPlayerStats();
     }
 
     public void incrementGoldBy(int amount) {
         this.gold += amount;
+        clampPlayerStats();
     }
 
     public void setOnGoalTile(boolean bool) {
         this.onGoalTile = bool;
+        clampPlayerStats();
     }
 
     public boolean getOnGoalTile() {
         return this.onGoalTile;
+    }
+
+    public void setOnTraderTile(boolean bool) {
+        this.onTraderTile = bool;
+    }
+
+    public boolean getOnTraderTile() {
+        return this.onTraderTile;
     }
 
     public void setPrev() {
@@ -163,5 +181,11 @@ public class Player {
 
     public void setPrevY(int y) {
         this.prevY = y;
+    }
+
+    public void clampPlayerStats() {
+        if (this.hp > 100) this.hp = 100;
+        if (this.energy > 100) this.energy = 100;
+        if (this.water > 100) this.water = 100;
     }
 }

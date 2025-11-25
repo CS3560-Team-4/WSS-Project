@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class GameState {
     private static final int MAP_WIDTH = 11;
     private static final int MAP_HEIGHT = 11;
@@ -10,7 +12,7 @@ public class GameState {
 
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
-        this.player = new Player(1, 0,map);
+        this.player = new Player(0, 0,map);
 
         this.level = 0;
         this.playerTurnInterval = 0;
@@ -18,6 +20,7 @@ public class GameState {
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
 
         updateMap();
+        spawnTileObjects();
     }
 
     public void updateMap() {
@@ -29,6 +32,66 @@ public class GameState {
         int px = Math.max(1, Math.min(map.getWidth() - 2, x));
         int py = Math.max(1, Math.min(map.getHeight() - 2, y));
         player.setPosition(px, py, map);
+    }
+
+    public void spawnTileObjects() {
+        ItemType[] itemTypes = {
+            ItemType.WATER_BOTTLE,
+            ItemType.MEDICINE,
+            ItemType.ENERGY_DRINK,
+            ItemType.TURKEY
+        };
+
+        TraderType[] traderTypes = {
+            TraderType.Friendly,
+            TraderType.Generous,
+            TraderType.Greedy,
+            TraderType.Lowballer
+        };
+
+        MoodState[] moodStates = {
+            MoodState.Annoyed,
+            MoodState.Calm,
+            MoodState.Happy
+        };
+
+        String[] traderNames = {
+            "Albert", "Samuel", "John", "David", "Johanssen",
+            "Neil", "Joe", "Peter", "Youseff", "Jack"
+        };
+
+        // loop through all terrain tile objects
+        // then randomize if they get a tile object
+        // then randomize on what they get inside
+        Terrain[][] terrainMap = map.getBoard();
+        Terrain playerTile = terrainMap[player.getPosY()][player.getPosX()];
+
+        Random r = new Random();
+
+        for (Terrain[] t : terrainMap) {
+            for (Terrain terrain : t) {
+                // skip player tile
+                if (terrain == playerTile) continue;
+
+                // skip goal tile
+                if ("E".equals(terrain.stringRep)) continue;
+
+                if (r.nextInt(100) >= 96) {
+                    if (r.nextInt(100) <= 79) {
+                        Item item = new Item(itemTypes[r.nextInt(itemTypes.length)]);
+                        terrain.setTileObject(item);
+                    } else {
+                        Trader trader = new Trader(
+                            traderNames[r.nextInt(traderNames.length)],
+                            traderTypes[r.nextInt(traderTypes.length)],
+                            moodStates[r.nextInt(moodStates.length)],
+                            r.nextInt(100) + 1
+                        );
+                        terrain.setTileObject(trader);
+                    }
+                } 
+            }
+        }
     }
 
     public void movePlayer(String dir) {
@@ -63,8 +126,10 @@ public class GameState {
             playerTurnInterval = 0;
         }
         
-        // check player resources and update map status 
+        // check player resources, update map status 
+        // check for tile events
         player.resourceCheck();
+        checkForTileObject();
         updateMap();
 
         if (player.terrainStringBuffer.equals("E")){
@@ -77,23 +142,28 @@ public class GameState {
         Map newMap = new Map(MAP_WIDTH, MAP_HEIGHT);
 
         // reset player position
-        player.setPrevX(1);
+        player.setPrevX(0);
         player.setPrevY(0);
-        player.setPosition(1, 0, newMap);
+        player.setPosition(0, 0, newMap);
 
         // reset player stats
         player.setHP(100.0);
         player.setWater(100);
         player.setEnergy(100);
         player.setGold(0);
+
+        // reset win condition
         player.setOnGoalTile(false);
+
+        // reset player trade condition
+        player.setOnTraderTile(false);
 
         // replace old map
         this.map = newMap;
 
-        // player's new location
         resetLevel();
         updateMap();
+        spawnTileObjects();
     }
 
     public void nextLevel() {
@@ -101,19 +171,22 @@ public class GameState {
         Map newMap = new Map(MAP_WIDTH, MAP_HEIGHT);
 
         // reset player position
-        player.setPrevX(1);
+        player.setPrevX(0);
         player.setPrevY(0);
-        player.setPosition(1, 0, newMap);
+        player.setPosition(0, 0, newMap);
 
         // reset player win condition
         player.setOnGoalTile(false);
 
+        // reset player trade condition
+        player.setOnTraderTile(false);
+
         // replace old map
         this.map = newMap;
 
-        // player's new location
         incrementLevel();
         updateMap();
+        spawnTileObjects();
     }
 
     public Map getMap() {
@@ -134,5 +207,32 @@ public class GameState {
 
     public void resetLevel() {
         this.level = 0;
+    }
+
+    public boolean checkForTileObject() {
+        Terrain currentTerrain = map.getTerrain(player.getPosX(), player.getPosY());
+
+        if (currentTerrain != null) {
+            if (currentTerrain.getTileObject() instanceof Item item) {
+                handleItemEvent(item, currentTerrain);
+                return true;
+
+            } else if (currentTerrain.getTileObject() instanceof Trader trader) {
+                handleTraderEvent(trader, currentTerrain);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void handleItemEvent(Item item, Terrain terrain) {
+        item.use(player);
+        terrain.removeTileObject();
+    }
+
+    public void handleTraderEvent(Trader trader, Terrain terrain) {
+        terrain.removeTileObject();
+        // player.setOnTraderTile(true);
     }
 }

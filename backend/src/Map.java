@@ -18,61 +18,6 @@ public class Map {
 
         map = new Terrain[height][width];
         populate();
-
-        ItemType[] itemTypes = {
-            ItemType.WATER_BOTTLE,
-            ItemType.MEDICINE,
-            ItemType.ENERGY_DRINK,
-            ItemType.TURKEY
-        };
-
-        TraderType[] traderTypes = {
-            TraderType.Friendly,
-            TraderType.Generous,
-            TraderType.Greedy,
-            TraderType.Lowballer
-        };
-
-        MoodState[] moodStates = {
-            MoodState.Annoyed,
-            MoodState.Calm,
-            MoodState.Happy
-        };
-
-        String[] traderNames = {
-            "Albert",
-            "Samuel",
-            "John",
-            "David",
-            "Johanssen",
-            "Neil",
-            "Joe",
-            "Peter",
-            "Youseff",
-            "Jack"
-        };
-
-        // loop through all terrain tile objects
-        // then randomize if they get a tile object
-        // then randomize on what they get inside
-        for (Terrain[] t : map) {
-            for (Terrain terrain : t) {
-                if (r.nextInt(100) >= 96) {
-                    if (r.nextInt(100) <= 79) {
-                        Item item = new Item(itemTypes[r.nextInt(itemTypes.length)]);
-                        terrain.setTileObject(item);
-                    } else {
-                        Trader trader = new Trader(
-                            traderNames[r.nextInt(traderNames.length)],
-                            traderTypes[r.nextInt(traderTypes.length)],
-                            moodStates[r.nextInt(moodStates.length)],
-                            r.nextInt(100) + 1
-                        );
-                        terrain.setTileObject(trader);
-                    }
-                } 
-            }
-        }
     }
 
     //fills the map (a matrix of terrain) with actual instances of terrain

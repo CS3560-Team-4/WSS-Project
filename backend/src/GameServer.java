@@ -184,6 +184,7 @@ public class GameServer {
 
         playerInfo.put("status", player.isAlive());
         playerInfo.put("won", player.getOnGoalTile());
+        playerInfo.put("trading", player.getOnTraderTile());
 
         return playerInfo;
     }

@@ -10,6 +10,7 @@ public class Terrain {
 		energyCost = 1;
 		movementCost = 1;
         stringRep = "T";
+        tileObject = null;
 	}
 
     public String getSymbol() {
@@ -26,5 +27,9 @@ public class Terrain {
 
     public Object getTileObject() {
         return this.tileObject;
+    }
+
+    public void removeTileObject() {
+        this.tileObject = null;
     }
 }
