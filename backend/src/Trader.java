@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Trader {
     protected String name;
     protected TraderType type;
@@ -38,5 +40,20 @@ public class Trader {
 
     public String toString() {
         return type.toString().toLowerCase();
+    }
+
+    public TradeOffer generateOffer(Player player) {
+        Item randomItem = new Item(
+            ItemType.values()[new Random()
+                .nextInt(ItemType.values().length)]);
+        
+        int price = switch (this.type) {
+            case Friendly -> 5;
+            case Generous -> 3;
+            case Greedy -> 10;
+            case Lowballer -> 15;
+        };
+
+        return new TradeOffer(randomItem, price);
     }
 }

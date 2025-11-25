@@ -197,6 +197,23 @@ const App = () => {
   const openTraderModal = () => setIsTraderModalOpen(true);
   const closeTraderModal = () => setIsTraderModalOpen(false);
 
+  // trade calls to backend endpoints
+  const acceptTrade = async () => {
+    const response = await fetch("http://localhost:8080/accepttrade", {
+      method: "POST"
+    });
+    
+    fetchMapData(); // refresh game state
+    closeTraderModal();
+  };
+
+  const rejectTrade = async () => {
+    await fetch ("http://localhost:8080/rejecttrade", {
+      method: "POST"
+    });
+    closeTraderModal();
+  }
+
   // check if game is loaded
   const [gameLoaded, setGameLoaded] = useState(false);
   useEffect(() => {
@@ -266,16 +283,23 @@ const App = () => {
     };
   }, [anyModalsOpen]);
 
+  // check for player in trader tiles
+  useEffect(() => {
+    if (!gameState) return;
+
+    if (gameState.activeTrader) {
+      setIsTraderModalOpen(true);
+    }
+  }, [gameState?.activeTrader]);
+
   return (
     <div className="flex flex-col items-center justify-center font-mono pb-10">
       <Legend />
 
       <div className="flex flex-row items-center justify-center gap-10">
         <div className="flex flex-col items-center justify-center">
-          <div className="flex flex-row items-center justify-center -translate-x-5">
-            <InventoryUI mapRef={mapRef} arrowRef={arrowRef} />
-            <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
-          </div>
+          <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
+          
           <StatsUI gameState={gameState} />
           <div className="mt-2">
             Level: {`${gameLevel}`}
@@ -289,33 +313,12 @@ const App = () => {
 
       {/* Test buttons for Modals*/}
       <div className="fixed right-8 flex flex-col gap-2 p-6">
-        <div className="text-center">Dev buttons</div>
-        <button
-          onClick={openTraderModal}
-          className="dev-button"
-        >
-          Open Trader UI 
-        </button>
-
+        <div className="text-center">Menu</div>
         <button
           onClick={openBrainModal}
           className="dev-button"
         >
-          Open Brain UI 
-        </button>
-
-        <button
-          onClick={openDeathScreen}
-          className="dev-button"
-        >
-          Show Death Screen
-        </button>
-
-        <button
-          onClick={openWinScreen}
-          className="dev-button"
-        >
-          Show Win Screen
+          The Brain
         </button>
 
         <button
@@ -327,11 +330,17 @@ const App = () => {
       </div>
       
       {/* Modals */}
-      <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal}>
-        <TraderUI />
+      <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal} closeButton={false}>
+        <TraderUI
+          trader={gameState?.activeTrader ?? null}
+          offer={gameState?.activeOffer ?? null}
+          playerGold={gameState?.player?.gold ?? 0}
+          onAccept={acceptTrade}
+          onReject={rejectTrade}
+        />
       </Modal>
 
-      <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal}>
+      <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal} closeButton={true}>
         <BrainUI 
           hint={brainHint} 
           loading={brainLoading} 
@@ -342,11 +351,11 @@ const App = () => {
         />
       </Modal>
 
-      <Modal isOpen={isDeathScreenOpen} onClose={closeDeathScreen}>
+      <Modal isOpen={isDeathScreenOpen} onClose={closeDeathScreen} closeButton={true}>
         <DeathScreen resetGame={resetGame} closeDeathScreen={closeDeathScreen}/>
       </Modal>
 
-      <Modal isOpen={isWinScreenOpen} onClose={closeWinScreen}>
+      <Modal isOpen={isWinScreenOpen} onClose={closeWinScreen} closeButton={true}>
         <WinScreen nextLevel={nextLevel} closeWinScreen={closeWinScreen}/>
       </Modal>
     </div>

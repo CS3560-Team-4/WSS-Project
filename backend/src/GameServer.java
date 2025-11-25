@@ -35,6 +35,12 @@ public class GameServer {
             // get the game level
             response.put("level", game.getLevel());
 
+            // get trader info
+            response.put("activeTrader", 
+                game.getActiveTrader() == null ? null : new TraderDTO(game.getActiveTrader()));
+            response.put("activeOffer", 
+                game.getActiveOffer() == null ? null : new TradeOfferDTO(game.getActiveOffer()));
+
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
         });
@@ -57,6 +63,12 @@ public class GameServer {
             // get the game level
             response.put("level", game.getLevel());
 
+             // get trader info
+            response.put("activeTrader", 
+                game.getActiveTrader() == null ? null : new TraderDTO(game.getActiveTrader()));
+            response.put("activeOffer", 
+                game.getActiveOffer() == null ? null : new TradeOfferDTO(game.getActiveOffer()));
+
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
         });
@@ -78,6 +90,12 @@ public class GameServer {
 
             // get the game level
             response.put("level", game.getLevel());
+
+             // get trader info
+            response.put("activeTrader", 
+                game.getActiveTrader() == null ? null : new TraderDTO(game.getActiveTrader()));
+            response.put("activeOffer", 
+                game.getActiveOffer() == null ? null : new TradeOfferDTO(game.getActiveOffer()));
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -103,6 +121,12 @@ public class GameServer {
 
             // get the game level
             response.put("level", game.getLevel());
+
+             // get trader info
+            response.put("activeTrader", 
+                game.getActiveTrader() == null ? null : new TraderDTO(game.getActiveTrader()));
+            response.put("activeOffer", 
+                game.getActiveOffer() == null ? null : new TradeOfferDTO(game.getActiveOffer()));
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -167,6 +191,59 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
+        });
+
+        //**Trade endpoints
+        // POST /begintrade
+        app.post("/begintrade", ctx -> {
+            Trader t = game.getActiveTrader();
+            TradeOffer offer = game.getActiveOffer();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("trader", new TraderDTO(t));
+            response.put("offer", new TradeOfferDTO(offer));
+
+            ctx.json(response);
+        });
+
+        // POST /accepttrade
+        app.post("/accepttrade", ctx -> {
+            TradeOffer offer = game.getActiveOffer();
+            Player p = game.getPlayer();
+
+            // Player pays
+            p.setGold(p.getGold() - offer.goldCost);
+
+            // Player receives effects
+            offer.offeredItem.use(p);
+
+            Terrain tile = game.getMap().getTerrain(p.getPosX(), p.getPosY());
+            tile.removeTileObject();
+
+            tile.stringRep = p.terrainStringBuffer;
+
+            // End trade
+            game.clearTrade();
+
+            ctx.json(Map.of("success", true));
+        });
+
+        // POST /rejecttrade
+        app.post("/rejecttrade", ctx -> {
+            Player p = game.getPlayer();
+
+            Trader t = game.getActiveTrader();
+            t.rejectTrade(); // maybe reduce mood/patience
+
+            Terrain tile = game.getMap().getTerrain(p.getPosX(), p.getPosY());
+            tile.removeTileObject();
+
+            tile.stringRep = p.terrainStringBuffer;
+            
+            // End trade
+            game.clearTrade();
+
+            ctx.json(Map.of("success", true));
         });
     }
 
@@ -249,6 +326,16 @@ public class GameServer {
             this.traderType = t.type.name();
             this.mood = t.mood.name();
             this.patience = t.patience;
+        }
+    }
+
+    static class TradeOfferDTO {
+        public String itemType;
+        public int price;
+
+        TradeOfferDTO(TradeOffer offer) {
+            this.itemType = offer.offeredItem.getType().name();
+            this.price = offer.goldCost;
         }
     }
 

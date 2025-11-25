@@ -5,13 +5,13 @@ public class Terrain {
     public String stringRep;
     public Object tileObject;
 
-	public Terrain() {
-		waterCost = 1;
-		energyCost = 1;
-		movementCost = 1;
-        stringRep = "T";
+    public Terrain() {
+        waterCost = 1;
+        energyCost = 1;
+        movementCost = 1;
+        this.stringRep = "T";
         tileObject = null;
-	}
+    }
 
     public String getSymbol() {
         return this.stringRep;

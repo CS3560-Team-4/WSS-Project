@@ -6,6 +6,9 @@ public class TradeOffer {
     public int requestWater;
     public int requestFood;
 
+    public Item offeredItem;
+    public int goldCost;
+
     public TradeOffer(int og, int ow, int of, int rg, int rw, int rf) {
         offerGold = og;
         offerWater = ow;
@@ -13,5 +16,10 @@ public class TradeOffer {
         requestGold = rg;
         requestWater = rw;
         requestFood = rf;
+    }
+
+    public TradeOffer(Item item, int goldCost) {
+        this.offeredItem = item;
+        this.goldCost = goldCost;
     }
 }

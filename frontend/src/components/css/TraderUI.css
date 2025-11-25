@@ -1,19 +1,21 @@
 @import 'tailwindcss';
 
 @layer components {
-  .trade-item-cell {
-    @apply border border-white p-1 px-3 mt-2 hover:outline-3 hover:font-bold cursor-pointer;
-  }
-
-  .trade-item-cell-selected {
-    @apply outline-3 border-white p-1 px-3 mt-2 font-bold cursor-pointer;
-  }
-
   .trade-label {
     @apply text-amber-600 text-center text-3xl font-extrabold mb-6;
   }
 
-  .trade-items {
-    @apply flex flex-row gap-2;
+  .info {
+    background: rgba(0, 0, 0, 0.4);
+    @apply text-white border-[#87afff]
+  }
+
+  .offer-box {
+    background: rgba(0, 0, 0, 0.4);
+    @apply text-white border-amber-600;
+  }
+
+  .accept-button, .reject-button {
+    @apply text-lg cursor-pointer;
   }
 }

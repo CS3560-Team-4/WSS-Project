@@ -10,6 +10,9 @@ public class GameState {
     private int level;
     private int playerTurnInterval;
 
+    private Trader activeTrader;
+    private TradeOffer activeOffer;
+
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(0, 0,map);
@@ -76,7 +79,7 @@ public class GameState {
                 // skip goal tile
                 if ("E".equals(terrain.stringRep)) continue;
 
-                if (r.nextInt(100) >= 96) {
+                if (r.nextInt(100) >= 94) {
                     if (r.nextInt(100) <= 79) {
                         Item item = new Item(itemTypes[r.nextInt(itemTypes.length)]);
                         terrain.setTileObject(item);
@@ -129,8 +132,8 @@ public class GameState {
         // check player resources, update map status 
         // check for tile events
         player.resourceCheck();
-        checkForTileObject();
         updateMap();
+        checkForTileObject();
 
         if (player.terrainStringBuffer.equals("E")){
             player.setOnGoalTile(true);
@@ -212,15 +215,17 @@ public class GameState {
     public boolean checkForTileObject() {
         Terrain currentTerrain = map.getTerrain(player.getPosX(), player.getPosY());
 
-        if (currentTerrain != null) {
-            if (currentTerrain.getTileObject() instanceof Item item) {
-                handleItemEvent(item, currentTerrain);
-                return true;
+        if (currentTerrain == null) {
+            return false;
+        }
 
-            } else if (currentTerrain.getTileObject() instanceof Trader trader) {
-                handleTraderEvent(trader, currentTerrain);
-                return true;
-            }
+        if (currentTerrain.getTileObject() instanceof Item item) {
+            handleItemEvent(item, currentTerrain);
+            return true;
+
+        } else if (currentTerrain.getTileObject() instanceof Trader trader) {
+            handleTraderEvent(trader, currentTerrain);
+            return true;
         }
 
         return false;
@@ -232,7 +237,20 @@ public class GameState {
     }
 
     public void handleTraderEvent(Trader trader, Terrain terrain) {
-        terrain.removeTileObject();
-        // player.setOnTraderTile(true);
+        activeTrader = trader;
+        activeOffer = trader.generateOffer(player); // create an offer
+    }
+
+    public Trader getActiveTrader() {
+        return this.activeTrader;
+    }
+
+    public TradeOffer getActiveOffer() {
+        return this.activeOffer;
+    }
+
+    public void clearTrade() {
+        this.activeOffer = null;
+        this.activeTrader = null;
     }
 }

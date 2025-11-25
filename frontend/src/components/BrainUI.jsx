@@ -23,7 +23,7 @@ const BrainUI = ({ hint, loading, onBalanced, onExplorer, onGreedy, gold }) => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="brain-label">BRAIN</div>
+      <div className="brain-label">THE BRAIN</div>
 
       {/* Default desc when no hint */}
       {!hint && !loading && (
