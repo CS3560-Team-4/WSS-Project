@@ -112,10 +112,11 @@ public class GameServer {
         //**POST brains
         // for brain hints, not a total AI takeover
 
+        int hintCost = 5;
         // POST /balancedbrain
         app.post("/balancedbrain", ctx -> {
             Player p = game.getPlayer();
-            p.setGold(0);
+            p.setGold(p.getGold() - hintCost);
 
             Vision vision = new CautiousVision(game);
             Brain brain = new BalancedBrain(game, vision); 
@@ -133,7 +134,7 @@ public class GameServer {
         // POST /explorerbrain
         app.post("/explorerbrain", ctx -> {
             Player p = game.getPlayer();
-            p.setGold(0);
+            p.setGold(p.getGold() - hintCost);
 
             // game.updateMap();
             Vision vision = new CautiousVision(game);
@@ -152,7 +153,7 @@ public class GameServer {
         // POST /greedybrain
         app.post("/greedybrain", ctx -> {
             Player p = game.getPlayer();
-            p.setGold(0);
+            p.setGold(p.getGold() - hintCost);
 
             // game.updateMap();
             Vision vision = new CautiousVision(game);
