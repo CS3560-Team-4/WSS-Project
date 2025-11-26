@@ -505,6 +505,13 @@ const App = () => {
       <div className="fixed right-8 flex flex-col gap-2 p-6">
         <div className="text-center">Menu</div>
         <button
+          onClick={openLegendModal}
+          className="dev-button"
+        >
+          Guide
+        </button>
+
+        <button
           onClick={openBrainModal}
           className="dev-button"
         >
@@ -552,13 +559,6 @@ const App = () => {
         )}
 
         <button
-          onClick={openLegendModal}
-          className="dev-button"
-        >
-          Legend
-        </button>
-
-        <button
           onClick={resetGame}
           className="dev-button bg-red-600 hover:bg-red-700"
         >
@@ -592,7 +592,7 @@ const App = () => {
         />
       </Modal>
 
-      <Modal isOpen={isLegendModalOpen} onClose={closeLegendModal} closeButton={true} width={'max-w-3xl'}>
+      <Modal isOpen={isLegendModalOpen} onClose={closeLegendModal} closeButton={true} width={'max-w-6xl'}>
         <Legend />
       </Modal>
 

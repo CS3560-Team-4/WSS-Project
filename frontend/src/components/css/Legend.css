@@ -2,15 +2,35 @@
 
 @layer components {
   .icon-div {
-    @apply flex flex-row items-center gap-2;
+    @apply flex flex-row items-center gap-2 border p-3 min-w-[225px] justify-between;
+  }
+
+  .trader-div {
+    @apply flex flex-row items-center justify-center gap-2 border p-3;
   }
 
   .legend-icon {
     @apply size-6 border border-black flex items-center justify-center;
   }
 
+  .item-icon {
+    @apply size-8;
+  }
+
   .player-icon {
     @apply bg-gray-800 border-3 border-white text-white flex justify-center items-center; 
+  }
+
+  .icon-desc {
+    @apply ml-3 text-right;
+  }
+
+  .legend-sub-heading {
+    @apply underline underline-offset-4;
+  }
+
+  .legend-section {
+    @apply flex flex-row gap-6;
   }
   
   .terrain-icon {
