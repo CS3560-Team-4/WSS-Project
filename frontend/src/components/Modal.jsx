@@ -1,9 +1,9 @@
-const Modal = ({ isOpen, onClose, closeButton, children }) => {
+const Modal = ({ isOpen, onClose, closeButton, width = 'max-w-md', children }) => {
   if (!isOpen) return null;
 
   return (
     <div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50'>
-      <div className='relative bg-neutral-900 rounded-xl p-5 shadow-xl w-[90%] max-w-md'>
+      <div className={`relative bg-neutral-900 rounded-xl p-5 shadow-xl w-[90%] ${width}`}>
         {closeButton && (
           <button
             onClick={onClose}

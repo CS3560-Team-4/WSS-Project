@@ -12,15 +12,51 @@ import WinScreen from './components/WinScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
 
 const App = () => {
+  //**State Initialization */
   // Welcome screen
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(true);
   const closeWelcomeModal = () => setIsWelcomeModalOpen(false);
   const openWelcomeModal = () => setIsWelcomeModalOpen(true);
-
+  
+  // game info
   const [gameState, setGameState] = useState(null);
-  const [gameLevel, setGameLevel] = useState(0);
+  const [gameLevel, setGameLevel] = useState(1);
+  const [currentScore, setCurrentScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   
+  // death screen
+  const [isDeathScreenOpen, setIsDeathScreenOpen] = useState(false);
+  const openDeathScreen = () => setIsDeathScreenOpen(true);
+  const closeDeathScreen = () => setIsDeathScreenOpen(false);
+
+  // win screen
+  const [isWinScreenOpen, setIsWinScreenOpen] = useState(false);
+  const openWinScreen = () => setIsWinScreenOpen(true);
+  const closeWinScreen = () => setIsWinScreenOpen(false);
+
+  // trader modal
+  const [isTraderModalOpen, setIsTraderModalOpen] = useState(false); 
+  const openTraderModal = () => setIsTraderModalOpen(true);
+  const closeTraderModal = () => setIsTraderModalOpen(false);
+  
+  // check game load
+  const [gameLoaded, setGameLoaded] = useState(false);
+  
+  // brain hint and loading
+  const [brainHint, setBrainHint] = useState(null);
+  const [brainLoading, setBrainLoading] = useState(false);
+  
+  // legend modal
+  const [isLegendModalOpen, setIsLegendModalOpen] = useState(false);
+  const openLegendModal = () => setIsLegendModalOpen(true);
+  const closeLegendModal = () => setIsLegendModalOpen(false);
+
+  // brain modal
+  const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
+  
+  // default last direction
+  const [lastMoveDirection, setLastMoveDirection] = useState("right");
+
   //**Fetching Data
   const fetchMapData = async () => {
     try {
@@ -28,6 +64,7 @@ const App = () => {
       const data = await response.json();
       
       setGameState(data);
+      setCurrentScore(data.currentscore);
       console.log("Full game state: ", data);
       
       if (!response.ok) {
@@ -73,8 +110,8 @@ const App = () => {
     }
   }, [gameState]);
   
-  const [lastMoveDirection, setLastMoveDirection] = useState("right");
 
+  // call for player movement
   const move = async (direction) => {
     if (gameOver) return;
 
@@ -98,9 +135,38 @@ const App = () => {
     }
   }
 
-  const [brainHint, setBrainHint] = useState(null);
-  const [brainLoading, setBrainLoading] = useState(false);
+  // assign move to arrow keys and wasd keys
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (isDeathScreenOpen) return;
+      if (isWinScreenOpen) return;
+      if (isBrainModalOpen) return;
+      if (isLegendModalOpen) return;
+      if (isTraderModalOpen) return;
+      if (isWelcomeModalOpen) return;
 
+      if (e.key === "ArrowUp" || e.key === "w") move("up");
+      if (e.key === "ArrowDown" || e.key === "s") move("down");
+      if (e.key === "ArrowLeft" || e.key === "a") move("left");
+      if (e.key === "ArrowRight" || e.key === "d") move("right");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, 
+    [
+      move,
+      isDeathScreenOpen,
+      isWinScreenOpen,
+      isBrainModalOpen,
+      isLegendModalOpen,
+      isTraderModalOpen,
+      isWelcomeModalOpen
+    ]
+  );
+
+  //**Brain Functionality */
   const balancedBrainMove = async () => {
     try {
       setBrainLoading(true); // start animation
@@ -170,6 +236,7 @@ const App = () => {
     } 
   }
 
+  //**Reset and Next Level */
   const resetGame = async () => {
     setGameOver(false);
 
@@ -182,6 +249,7 @@ const App = () => {
       const data = await response.json();
       setGameState(data);
       setGameLevel(data.level);
+      setCurrentScore(data.currentscore);
 
       // Clear hint if open
       setBrainHint(null);
@@ -203,6 +271,7 @@ const App = () => {
       const data = await response.json();
       setGameState(data);
       setGameLevel(data.level);
+      setCurrentScore(data.currentscore);
 
       // Clear hint if open
       setBrainHint(null);
@@ -221,10 +290,6 @@ const App = () => {
   const arrowRef = useRef();
   
   //**Modal Functionality
-  const [isTraderModalOpen, setIsTraderModalOpen] = useState(false); 
-  const openTraderModal = () => setIsTraderModalOpen(true);
-  const closeTraderModal = () => setIsTraderModalOpen(false);
-
   // trade calls to backend endpoints
   const acceptTrade = async () => {
     const response = await fetch("http://localhost:8080/accepttrade", {
@@ -243,7 +308,6 @@ const App = () => {
   }
 
   // check if game is loaded
-  const [gameLoaded, setGameLoaded] = useState(false);
   useEffect(() => {
     if (gameState && gameState.player && !gameLoaded) {
       setGameLoaded(true);
@@ -251,10 +315,6 @@ const App = () => {
   }, [gameState]);
   
   // death screen
-  const [isDeathScreenOpen, setIsDeathScreenOpen] = useState(false);
-  const openDeathScreen = () => setIsDeathScreenOpen(true);
-  const closeDeathScreen = () => setIsDeathScreenOpen(false);
-
   useEffect(() => {
     if (!gameLoaded) return;
 
@@ -264,10 +324,6 @@ const App = () => {
   }, [gameState]);
 
   // win screen
-  const [isWinScreenOpen, setIsWinScreenOpen] = useState(false);
-  const openWinScreen = () => setIsWinScreenOpen(true);
-  const closeWinScreen = () => setIsWinScreenOpen(false);
-
   useEffect(() => {
     if (!gameLoaded) return;
 
@@ -278,7 +334,6 @@ const App = () => {
   }, [gameState]);
 
   // brainUI
-  const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
   const openBrainModal = () => {
     setBrainHint(null);
     setBrainLoading(false);
@@ -291,12 +346,17 @@ const App = () => {
   // check if any modals are open
   const anyModalsOpen = () => {
     if (isTraderModalOpen 
-      || isBrainModalOpen) {
+      || isBrainModalOpen
+      || isDeathScreenOpen
+      || isLegendModalOpen
+      || isWinScreenOpen
+      || isWelcomeModalOpen
+      ) {
       return true;
     }
 
     return false;
-  }
+  };
   
   // disable scrolling when modals are open
   useEffect(() => {
@@ -321,17 +381,25 @@ const App = () => {
   }, [gameState?.activeTrader]);
 
   return (
-    <div className="flex flex-col items-center justify-center font-mono pb-10">
-      <Legend />
-
+    <div className="flex flex-col items-center justify-center font-mono pb-10 pt-2">
+      <div className="text-[75px] -translate-x-20 font-bold italic">
+        WSS
+      </div>
       <div className="flex flex-row items-center justify-center gap-10">
         <div className="flex flex-col items-center justify-center">
+
+          <div className="mb-2 flex flex-row items-center justify-center gap-10">
+            <div>
+              Level: {`${gameLevel}`}
+            </div>
+            <div>
+              Score: {`${currentScore}`}
+            </div>
+          </div>
+
           <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
           
           <StatsUI gameState={gameState} />
-          <div className="mt-2">
-            Level: {`${gameLevel}`}
-          </div>
         </div>
 
         <div className={gameOver ? "pointer-events-none opacity-50" : ""}>
@@ -347,6 +415,13 @@ const App = () => {
           className="dev-button"
         >
           The Brain
+        </button>
+
+        <button
+          onClick={openLegendModal}
+          className="dev-button"
+        >
+          Legend
         </button>
 
         <button
@@ -374,8 +449,8 @@ const App = () => {
 
       <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal} closeButton={true}>
         <BrainUI 
-          hint={brainHint} 
-          loading={brainLoading} 
+          hint={brainHint}
+          loading={brainLoading}
           onBalanced={balancedBrainMove}
           onExplorer={explorerBrainMove}
           onGreedy={greedyBrainMove}
@@ -383,11 +458,19 @@ const App = () => {
         />
       </Modal>
 
-      <Modal isOpen={isDeathScreenOpen} onClose={closeDeathScreen} closeButton={true}>
-        <DeathScreen resetGame={resetGame} closeDeathScreen={closeDeathScreen}/>
+      <Modal isOpen={isLegendModalOpen} onClose={closeLegendModal} closeButton={true} width={'max-w-3xl'}>
+        <Legend />
       </Modal>
 
-      <Modal isOpen={isWinScreenOpen} onClose={closeWinScreen} closeButton={true}>
+      <Modal 
+        isOpen={isDeathScreenOpen} 
+        onClose={closeDeathScreen} 
+        closeButton={true}
+      >
+        <DeathScreen resetGame={resetGame} closeDeathScreen={closeDeathScreen} />
+      </Modal>
+
+      <Modal isOpen={isWinScreenOpen} onClose={closeWinScreen} closeButton={false}>
         <WinScreen nextLevel={nextLevel} closeWinScreen={closeWinScreen}/>
       </Modal>
     </div>
