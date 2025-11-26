@@ -14,6 +14,11 @@ public class Player {
     public String terrainStringBuffer;
     public int turnsUntilDeath;
 
+    private int waterBottleConsumed;
+    private int turkeyConsumed;
+    private int energyDrinkConsumed;
+    private int medicineConsumed;
+
     public Player(int x, int y, Map map) {
         this.x = x;
         this.y = y;
@@ -92,6 +97,13 @@ public class Player {
         clampPlayerStats();
     }
 
+    public void resetPlayerResources() {
+        this.hp = 100;
+        this.energy = 100;
+        this.water = 100;
+        this.gold = 0;
+    }
+
     public void setOnGoalTile(boolean bool) {
         this.onGoalTile = bool;
         clampPlayerStats();
@@ -162,7 +174,7 @@ public class Player {
     //to see if our player has any HP left to lose, 100 is a test value, if we agree on maxHP field, replace 100 with that
     public void resourceCheck() {
         if ( this.water <=0 || this.energy <= 0) {
-            this.hp = this.hp - 25;
+            this.hp = this.hp - 8;
             System.out.println("GET RESOURCES SOON, OR YOU WILL DIE");
         }
     }
@@ -187,5 +199,49 @@ public class Player {
         if (this.hp > 100) this.hp = 100;
         if (this.energy > 100) this.energy = 100;
         if (this.water > 100) this.water = 100;
+
+        if (this.hp < 0) this.hp = 0;
+        if (this.energy < 0) this.energy = 0;
+        if (this.water < 0) this.water = 0;
+        if (this.gold < 0) this.gold = 0;
+    }
+
+    public int getWaterBottleConsumed() {
+        return this.waterBottleConsumed;
+    }
+
+    public int getTurkeyConsumed() {
+        return this.turkeyConsumed;
+    }
+
+    public int getMedicineConsumed() {
+        return this.medicineConsumed;
+    }
+
+    public int getEnergyDrinkConsumed() {
+        return this.energyDrinkConsumed;
+    }
+
+    public void incrementWaterBottleConsumed() {
+        this.waterBottleConsumed++;
+    }
+
+    public void incrementTurkeyConsumed() {
+        this.turkeyConsumed++;
+    }
+
+    public void incrementMedicineConsumed() {
+        this.medicineConsumed++;
+    }
+
+    public void incrementEnergyDrinkConsumed() {
+        this.energyDrinkConsumed++;
+    }
+
+    public void resetConsumedStats() {
+        this.waterBottleConsumed = 0;
+        this.turkeyConsumed = 0;
+        this.energyDrinkConsumed = 0;
+        this.medicineConsumed = 0;
     }
 }

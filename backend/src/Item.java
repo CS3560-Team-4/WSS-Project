@@ -22,15 +22,19 @@ public class Item {
         switch (type) {
             case TURKEY:
                 player.incrementEnergyBy(TURKEY_RESOURCE);
+                player.incrementTurkeyConsumed();
                 break;
             case WATER_BOTTLE:
                 player.incrementWaterBy(ENERGY_DRINK_RESOURCE);
+                player.incrementWaterBottleConsumed();
                 break;
             case MEDICINE:
                 player.incrementHpBy(MEDICINE_RESOURCE);
+                player.incrementMedicineConsumed();
                 break;
             case ENERGY_DRINK:
                 player.incrementEnergyBy(WATER_BOTTLE_RESOURCE);
+                player.incrementEnergyDrinkConsumed();
                 break;
         }
     }

@@ -8,6 +8,8 @@ public class GameState {
     private final Player player;
 
     private int level;
+    private int highScore;
+    private int currentScore;
     private int playerTurnInterval;
 
     private Trader activeTrader;
@@ -17,7 +19,9 @@ public class GameState {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(0, 0,map);
 
-        this.level = 0;
+        this.level = 1;
+        this.highScore = 0;
+        this.currentScore = 0;
         this.playerTurnInterval = 0;
 
         player.terrainStringBuffer = map.getTerrain(player.getPosX(), player.getPosY()).stringRep;
@@ -134,6 +138,7 @@ public class GameState {
         player.resourceCheck();
         updateMap();
         checkForTileObject();
+        calculateCurrentScore();
 
         if (player.terrainStringBuffer.equals("E")){
             player.setOnGoalTile(true);
@@ -150,10 +155,7 @@ public class GameState {
         player.setPosition(0, 0, newMap);
 
         // reset player stats
-        player.setHP(100.0);
-        player.setWater(100);
-        player.setEnergy(100);
-        player.setGold(0);
+        player.resetPlayerResources();
 
         // reset win condition
         player.setOnGoalTile(false);
@@ -161,10 +163,16 @@ public class GameState {
         // reset player trade condition
         player.setOnTraderTile(false);
 
+        // reset player consumption stats
+        player.resetConsumedStats();
+
         // replace old map
         this.map = newMap;
 
         resetLevel();
+        setHighScore();
+        resetCurrentScore();
+
         updateMap();
         spawnTileObjects();
     }
@@ -209,7 +217,35 @@ public class GameState {
     }
 
     public void resetLevel() {
-        this.level = 0;
+        this.level = 1;
+    }
+
+    public void resetCurrentScore() {
+        this.currentScore = 0;
+    }
+
+    public int getCurrentScore() {
+        return this.currentScore;
+    }
+
+    public void calculateCurrentScore() {
+        this.currentScore = 
+            ((this.level) * 100) + 
+            (player.getGold() * 3) + 
+            (player.getEnergyDrinkConsumed() * 2) +
+            (player.getTurkeyConsumed() * 3) +
+            (player.getMedicineConsumed() * 5) +
+            (player.getWaterBottleConsumed() * 4);
+    }
+
+    public void setHighScore() {
+        if (this.currentScore > this.highScore) {
+            this.highScore = this.currentScore;
+        }
+    }
+
+    public int getHighScore() {
+        return this.highScore;
     }
 
     public boolean checkForTileObject() {

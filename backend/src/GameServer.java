@@ -32,8 +32,8 @@ public class GameServer {
             Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
 
-            // get the game level
-            response.put("level", game.getLevel());
+            // game info
+            configureGameInfo(response);
 
             // get trader info
             response.put("activeTrader", 
@@ -60,8 +60,8 @@ public class GameServer {
             Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
 
-            // get the game level
-            response.put("level", game.getLevel());
+            // game info
+            configureGameInfo(response);
 
              // get trader info
             response.put("activeTrader", 
@@ -88,8 +88,8 @@ public class GameServer {
             Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
 
-            // get the game level
-            response.put("level", game.getLevel());
+            // game info
+            configureGameInfo(response);
 
              // get trader info
             response.put("activeTrader", 
@@ -119,8 +119,8 @@ public class GameServer {
             Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
 
-            // get the game level
-            response.put("level", game.getLevel());
+            // game info
+            configureGameInfo(response);
 
              // get trader info
             response.put("activeTrader", 
@@ -150,6 +150,7 @@ public class GameServer {
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
+            System.out.println("Balanced Brain says: " + chosen.name());
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -160,7 +161,6 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            // game.updateMap();
             Vision vision = new CautiousVision(game);
             Brain brain = new ExplorerBrain(game, vision); 
 
@@ -169,6 +169,7 @@ public class GameServer {
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
+            System.out.println("Explorer Brain says: " + chosen.name());
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -179,7 +180,6 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            // game.updateMap();
             Vision vision = new CautiousVision(game);
             Brain brain = new GreedyBrain(game, vision); 
 
@@ -188,6 +188,7 @@ public class GameServer {
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
+            System.out.println("Greedy Brain says: " + chosen.name());
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
@@ -264,6 +265,12 @@ public class GameServer {
         playerInfo.put("trading", player.getOnTraderTile());
 
         return playerInfo;
+    }
+
+    static void configureGameInfo(Map<String, Object> response) {
+        response.put("level", game.getLevel());
+        response.put("currentscore", game.getCurrentScore());
+        response.put("highscore", game.getHighScore());
     }
 
     static Map<String, Object> configureBoardResponse(Terrain[][] board) {

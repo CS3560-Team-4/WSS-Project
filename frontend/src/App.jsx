@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import './css/App.css';
 import GameControls from './components/GameControls.jsx';
 import Map from './components/Map.jsx';
@@ -22,6 +22,7 @@ const App = () => {
   const [gameState, setGameState] = useState(null);
   const [gameLevel, setGameLevel] = useState(1);
   const [currentScore, setCurrentScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   
   // death screen
@@ -57,6 +58,11 @@ const App = () => {
   // default last direction
   const [lastMoveDirection, setLastMoveDirection] = useState("right");
 
+  // auto-play
+  const [autoPlayEnabled, setAutoPlayEnabled] = useState(false);
+  const [autoPlayMode, setAutoPlayMode] = useState(null);
+  const autoMoveRef = useRef();
+
   //**Fetching Data
   const fetchMapData = async () => {
     try {
@@ -65,6 +71,7 @@ const App = () => {
       
       setGameState(data);
       setCurrentScore(data.currentscore);
+      setHighScore(data.highscore);
       console.log("Full game state: ", data);
       
       if (!response.ok) {
@@ -112,7 +119,7 @@ const App = () => {
   
 
   // call for player movement
-  const move = async (direction) => {
+  const move = useCallback(async (direction) => {
     if (gameOver) return;
 
     try {
@@ -133,7 +140,11 @@ const App = () => {
     } catch (err) {
       console.error(`Error moving player: ${err}`);
     }
-  }
+  }, [gameOver]);
+
+  useEffect(() => {
+    autoMoveRef.current = move;
+  }, [move]);
 
   // assign move to arrow keys and wasd keys
   useEffect(() => {
@@ -165,6 +176,40 @@ const App = () => {
       isWelcomeModalOpen
     ]
   );
+
+  useEffect(() => {
+    if (!autoPlayEnabled) return;
+    if (anyModalsOpen()) return;
+    if (!gameLoaded) return;
+
+    const interval = setInterval(() => {
+      autoPlayStep();
+    }, 350); // speed of auto-play
+
+    return () => clearInterval(interval);
+  }, 
+  [
+    autoPlayEnabled,
+    autoPlayMode,
+    gameState,
+    isTraderModalOpen,
+    isBrainModalOpen,
+    isDeathScreenOpen,
+    isLegendModalOpen,
+    isWinScreenOpen,
+    isWelcomeModalOpen,
+    gameLoaded
+  ]);
+
+  useEffect(() => {
+    if (!autoPlayEnabled) return;
+
+    const interval = setInterval(() => {
+      autoMoveRef.current("down");
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [autoPlayEnabled]);
 
   //**Brain Functionality */
   const balancedBrainMove = async () => {
@@ -250,6 +295,7 @@ const App = () => {
       setGameState(data);
       setGameLevel(data.level);
       setCurrentScore(data.currentscore);
+      setHighScore(data.highscore);
 
       // Clear hint if open
       setBrainHint(null);
@@ -272,6 +318,7 @@ const App = () => {
       setGameState(data);
       setGameLevel(data.level);
       setCurrentScore(data.currentscore);
+      setHighScore(data.highscore);
 
       // Clear hint if open
       setBrainHint(null);
@@ -341,6 +388,52 @@ const App = () => {
   }
   const closeBrainModal = () => setIsBrainModalOpen(false);
 
+  // TraderUI 
+  useEffect(() => {
+    if (!gameState) return;
+
+    if (gameState.activeTrader) {
+      setIsTraderModalOpen(true);
+    }
+  }, [gameState?.activeTrader]);
+
+  // auto-play
+  const autoPlayStep = async () => {
+    if (!autoPlayEnabled) return;
+    if (anyModalsOpen()) return;
+    if (!gameLoaded) return;
+
+    try {
+      let endpoint = "";
+      if (autoPlayMode === "balanced") endpoint = "/balancedbrain";
+      if (autoPlayMode === "explorer") endpoint = "/explorerbrain";
+      if (autoPlayMode === "greedy") endpoint = "/greedybrain";
+
+      const response = await fetch(`http://localhost:8080${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type" : "application/json" }
+      });
+
+      const data = await response.json();
+
+      const normalizeBrainMove = (d) => {
+        switch (d) {
+          case "MoveNorth": return "up";
+          case "MoveSouth": return "down";
+          case "MoveEast": return "right";
+          case "MoveWest": return "left";
+          default: return null;
+        }
+      };
+
+      const moveDir = normalizeBrainMove(data.brainMove);
+      if (moveDir) await move(moveDir);
+      
+    } catch (err) {
+      console.log("Auto-play error:", err);
+    }
+  };
+  
   //**General Modal Functionality
   // might delete since current UI does not scroll already
   // check if any modals are open
@@ -371,14 +464,6 @@ const App = () => {
     };
   }, [anyModalsOpen]);
 
-  // check for player in trader tiles
-  useEffect(() => {
-    if (!gameState) return;
-
-    if (gameState.activeTrader) {
-      setIsTraderModalOpen(true);
-    }
-  }, [gameState?.activeTrader]);
 
   return (
     <div className="flex flex-col items-center justify-center font-mono pb-10 pt-2">
@@ -395,11 +480,20 @@ const App = () => {
             <div>
               Score: {`${currentScore}`}
             </div>
+            <div>
+              High Score: {`${highScore}`}
+            </div>
           </div>
 
           <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
           
           <StatsUI gameState={gameState} />
+
+          {autoPlayEnabled && (
+            <div className="text-white text-xl font-bold border-white rounded shadow">
+              Auto-Play: {autoPlayMode ? autoPlayMode[0].toUpperCase() + autoPlayMode.slice(1) : ""}
+            </div>
+          )}
         </div>
 
         <div className={gameOver ? "pointer-events-none opacity-50" : ""}>
@@ -407,7 +501,7 @@ const App = () => {
         </div>
       </div>
 
-      {/* Test buttons for Modals*/}
+      {/** Menu buttons */}
       <div className="fixed right-8 flex flex-col gap-2 p-6">
         <div className="text-center">Menu</div>
         <button
@@ -416,6 +510,46 @@ const App = () => {
         >
           The Brain
         </button>
+
+        <button
+          className="dev-button"
+          onClick={() => {
+            setAutoPlayMode("balanced")
+            setAutoPlayEnabled(true);
+          }}
+        >
+          Auto-Play (Balanced)
+        </button>
+        <button
+          className="dev-button"
+          onClick={() => {
+            setAutoPlayMode("explorer")
+            setAutoPlayEnabled(true);
+          }}
+        >
+          Auto-Play (Explorer)
+        </button>
+        <button
+          className="dev-button"
+          onClick={() => {
+            setAutoPlayMode("greedy")
+            setAutoPlayEnabled(true);
+          }}
+        >
+          Auto-Play (Greedy)
+        </button>
+
+        {autoPlayEnabled && (
+          <button
+            className="dev-button"
+            onClick={() => {
+              setAutoPlayEnabled(false);
+              setAutoPlayMode(null);
+            }}
+          >
+            Stop Auto-Play
+          </button>
+        )}
 
         <button
           onClick={openLegendModal}
