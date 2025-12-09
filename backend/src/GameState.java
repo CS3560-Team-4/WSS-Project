@@ -18,8 +18,8 @@ public class GameState {
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(0, 0,map);
-        // player.setVision(new CautiousVision(this)); // Initial vision set to cautious
-        player.setVision(new QueenVision(this));
+        player.setVision(new CautiousVision(this)); // Initial vision set to cautious
+        // player.setVision(new QueenVision(this)); // <---- this is for testing
 
         this.level = 1;
         this.highScore = 0;

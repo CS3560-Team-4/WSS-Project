@@ -54,6 +54,9 @@ const App = () => {
 
   // brain modal
   const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
+
+  // vision modal
+  const [isVisionModalOpen, setIsVisionModalOpen] = useState(false);
   
   // default last direction
   const [lastMoveDirection, setLastMoveDirection] = useState("right");
@@ -152,6 +155,7 @@ const App = () => {
       if (isDeathScreenOpen) return;
       if (isWinScreenOpen) return;
       if (isBrainModalOpen) return;
+      if (isVisionModalOpen) return;
       if (isLegendModalOpen) return;
       if (isTraderModalOpen) return;
       if (isWelcomeModalOpen) return;
@@ -171,6 +175,7 @@ const App = () => {
       isDeathScreenOpen,
       isWinScreenOpen,
       isBrainModalOpen,
+      isVisionModalOpen,
       isLegendModalOpen,
       isTraderModalOpen,
       isWelcomeModalOpen
@@ -194,6 +199,7 @@ const App = () => {
     gameState,
     isTraderModalOpen,
     isBrainModalOpen,
+    isVisionModalOpen,
     isDeathScreenOpen,
     isLegendModalOpen,
     isWinScreenOpen,
@@ -388,6 +394,12 @@ const App = () => {
   }
   const closeBrainModal = () => setIsBrainModalOpen(false);
 
+    // brainUI
+  const openVisionModal = () => {
+    setIsVisionModalOpen(true);
+  }
+  const closeVisionModal = () => setIsVisionModalOpen(false);
+
   // TraderUI 
   useEffect(() => {
     if (!gameState) return;
@@ -440,6 +452,7 @@ const App = () => {
   const anyModalsOpen = () => {
     if (isTraderModalOpen 
       || isBrainModalOpen
+      || isVisionModalOpen
       || isDeathScreenOpen
       || isLegendModalOpen
       || isWinScreenOpen
@@ -464,6 +477,28 @@ const App = () => {
     };
   }, [anyModalsOpen]);
 
+  const setVision = async (type) => {
+    try {
+      const endpointMap = {
+        cautious: "/cautious-vision",
+        keen: "/keen-vision",
+        narrow: "/narrow-vision",
+        queen: "/queen-vision",
+      };
+
+      const res = await fetch(`http://localhost:8080${endpointMap[type]}`, {
+        method: "POST"
+      });
+
+      if (!res.ok) throw new Error (`Failed to set vision ${type}`);
+
+      // Refresh game state after changing vision
+      fetchMapData();
+      closeVisionModal();
+    } catch (err) {
+      console.error(err);
+    } // end try catch
+  } // end setVision
 
   return (
     <div className="flex flex-col items-center justify-center font-mono pb-10 pt-2">
@@ -516,6 +551,14 @@ const App = () => {
           className="dev-button"
         >
           The Brain
+        </button>
+
+        {/* Vision settings */}
+        <button
+          onClick={openVisionModal}
+          className="dev-button"
+        >
+          Set Vision
         </button>
 
         <button
@@ -590,6 +633,17 @@ const App = () => {
           onGreedy={greedyBrainMove}
           gold={gameState?.player?.gold}
         />
+      </Modal>
+
+      {/* Vision Modal */}
+      <Modal isOpen={isVisionModalOpen} onClose={closeVisionModal} closeButton={true} width="max-w-md">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-xl font-bold text-center mb-4">Set Player Vision</h2>
+          <button className="dev-button" onClick={() => setVision("cautious")}>Cautious Vision</button>
+          <button className="dev-button" onClick={() => setVision("keen")}>Keen Vision</button>
+          <button className="dev-button" onClick={() => setVision("narrow")}>Narrow Vision</button>
+          <button className="dev-button" onClick={() => setVision("queen")}>Queen Vision</button>
+        </div>
       </Modal>
 
       <Modal isOpen={isLegendModalOpen} onClose={closeLegendModal} closeButton={true} width={'max-w-6xl'}>

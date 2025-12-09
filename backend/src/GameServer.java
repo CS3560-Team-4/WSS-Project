@@ -272,7 +272,24 @@ public class GameServer {
         app.post("/cautious-vision", ctx -> {
             Player p = game.getPlayer();
             p.setVision(new CautiousVision(game));
-            
+        });
+
+        // POST /keen-vision
+        app.post("/keen-vision", ctx -> {
+            Player p = game.getPlayer();
+            p.setVision(new KeenVision(game));
+        });
+
+        // POST /narrow-vision
+        app.post("/narrow-vision", ctx -> {
+            Player p = game.getPlayer();
+            p.setVision(new NarrowVision(game));
+        });
+
+        // POST /queen-vision
+        app.post("/queen-vision", ctx -> {
+            Player p = game.getPlayer();
+            p.setVision(new QueenVision(game));
         });
     }
 
