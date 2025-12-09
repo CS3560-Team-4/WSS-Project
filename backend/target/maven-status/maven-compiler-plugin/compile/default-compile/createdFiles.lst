@@ -1,6 +1,7 @@
 ExplorerBrain.class
 GameServer$ItemDTO.class
 Map.class
+NarrowVision.class
 GameState.class
 Trader.class
 Item.class
@@ -13,6 +14,7 @@ DMV.class
 ItemType.class
 Path.class
 Desert.class
+QueenVision.class
 GameServer$TradeOfferDTO.class
 Goal.class
 Terrain.class
@@ -21,6 +23,7 @@ Player.class
 Frost.class
 Mountain.class
 Vision.class
+KeenVision.class
 GreedyBrain.class
 OfferResult.class
 BalancedBrain.class

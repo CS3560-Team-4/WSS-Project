@@ -145,6 +145,15 @@ public abstract class Vision {
         return result;
     }
 
+    // Return a list of all the visible coordinates
+    public List<int[]> getVisibleCoordinates() {
+        List<int[]> coords = new ArrayList<>();
+        for (Candidate c : candidatesOnce()) {
+            coords.add(new int[]{ c.tile.x, c.tile.y });
+        }
+        return coords;
+    }
+
     protected void invalidate() {
         cachedCandidates = null;
         rankedCache.clear();
@@ -155,7 +164,192 @@ class CautiousVision extends Vision {
     public CautiousVision(GameState state) {
         super(state, 1, 1); // xVisionRange=1, yVisionRange=1
     }
-    @Override protected Move[] allowedMoves() {
-        return new Move[]{ Move.MoveNorth, Move.MoveSouth, Move.MoveEast, Move.MoveWest };
+
+    @Override 
+    protected Move[] allowedMoves() {
+        return new Move[]{ 
+            Move.MoveNorth, 
+            Move.MoveSouth, 
+            Move.MoveEast, 
+            Move.MoveWest,
+            Move.MoveNorthEast,
+            Move.MoveNorthWest,
+            Move.MoveSouthEast,
+            Move.MoveSouthWest,
+        };
     }
 }
+
+// Has a sight with a radius of 2
+class KeenVision extends Vision {
+    public KeenVision(GameState state) {
+        super(state, 2, 2);
+    }
+
+    @Override
+    protected Move[] allowedMoves() {
+        return new Move[]{
+            Move.MoveNorth,
+            Move.MoveNorth2,
+            Move.MoveNorthWest,
+            Move.MoveNorthEast,
+            Move.MoveSouth,
+            Move.MoveSouth2,
+            Move.MoveSouthEast,
+            Move.MoveSouthWest,
+            Move.MoveEast,
+            Move.MoveEast2,
+            Move.MoveWest,
+            Move.MoveWest2,
+            Move.MoveNorth2East1,
+            Move.MoveNorth2West1,
+            Move.MoveSouth2East1,
+            Move.MoveSouth2West1,
+            Move.MoveEast2North1,
+            Move.MoveEast2South1,
+            Move.MoveWest2North1,
+            Move.MoveWest2South1,
+        };
+    } // end allowedMoves
+} // end class KeenVision
+
+// Narrow vision - only sees 5 tiles straight in each cardinal direction, with 1 tile diagonal
+class NarrowVision extends Vision {
+    public NarrowVision(GameState state) {
+        super(state, 5, 5);
+    }
+
+    @Override
+    protected Move[] allowedMoves() {
+        return new Move[]{
+            Move.MoveNorth,
+            Move.MoveNorth2,
+            Move.MoveNorth3,
+            Move.MoveNorth4,
+            Move.MoveNorth5,
+
+            Move.MoveSouth,
+            Move.MoveSouth2,
+            Move.MoveSouth3,
+            Move.MoveSouth4,
+            Move.MoveSouth5,
+
+            Move.MoveWest,
+            Move.MoveWest2,
+            Move.MoveWest3,
+            Move.MoveWest4,
+            Move.MoveWest5,
+
+            Move.MoveEast,
+            Move.MoveEast2,
+            Move.MoveEast3,
+            Move.MoveEast4,
+            Move.MoveEast5,
+
+            Move.MoveNorthEast,
+            Move.MoveNorthWest,
+            Move.MoveSouthEast,
+            Move.MoveSouthWest
+        };
+    } // end allowedMoves
+} // end class NarrowVision
+
+// Has the sight of a queen like in chess
+class QueenVision extends Vision {
+    public QueenVision(GameState state) {
+        super(state, 10, 10);
+    }
+
+    @Override
+    protected Move[] allowedMoves() {
+        return new Move[]{
+            Move.MoveNorth,
+            Move.MoveNorth2,
+            Move.MoveNorth3,
+            Move.MoveNorth4,
+            Move.MoveNorth5,
+            Move.MoveNorth6,
+            Move.MoveNorth7,
+            Move.MoveNorth8,
+            Move.MoveNorth9,
+            Move.MoveNorth10,
+
+            Move.MoveSouth,
+            Move.MoveSouth2,
+            Move.MoveSouth3,
+            Move.MoveSouth4,
+            Move.MoveSouth5,
+            Move.MoveSouth6,
+            Move.MoveSouth7,
+            Move.MoveSouth8,
+            Move.MoveSouth9,
+            Move.MoveSouth10,
+
+            Move.MoveEast,
+            Move.MoveEast2,
+            Move.MoveEast3,
+            Move.MoveEast4,
+            Move.MoveEast5,
+            Move.MoveEast6,
+            Move.MoveEast7,
+            Move.MoveEast8,
+            Move.MoveEast9,
+            Move.MoveEast10,
+
+            Move.MoveWest,
+            Move.MoveWest2,
+            Move.MoveWest3,
+            Move.MoveWest4,
+            Move.MoveWest5,
+            Move.MoveWest6,
+            Move.MoveWest7,
+            Move.MoveWest8,
+            Move.MoveWest9,
+            Move.MoveWest10,
+
+            Move.MoveNorthEast,
+            Move.MoveNorthEast2,
+            Move.MoveNorthEast3,
+            Move.MoveNorthEast4,
+            Move.MoveNorthEast5,
+            Move.MoveNorthEast6,
+            Move.MoveNorthEast7,
+            Move.MoveNorthEast8,
+            Move.MoveNorthEast9,
+            Move.MoveNorthEast10,
+
+            Move.MoveNorthWest,
+            Move.MoveNorthWest2,
+            Move.MoveNorthWest3,
+            Move.MoveNorthWest4,
+            Move.MoveNorthWest5,
+            Move.MoveNorthWest6,
+            Move.MoveNorthWest7,
+            Move.MoveNorthWest8,
+            Move.MoveNorthWest9,
+            Move.MoveNorthWest10,
+
+            Move.MoveSouthEast,
+            Move.MoveSouthEast2,
+            Move.MoveSouthEast3,
+            Move.MoveSouthEast4,
+            Move.MoveSouthEast5,
+            Move.MoveSouthEast6,
+            Move.MoveSouthEast7,
+            Move.MoveSouthEast8,
+            Move.MoveSouthEast9,
+            Move.MoveSouthEast10,
+
+            Move.MoveSouthWest,
+            Move.MoveSouthWest2,
+            Move.MoveSouthWest3,
+            Move.MoveSouthWest4,
+            Move.MoveSouthWest5,
+            Move.MoveSouthWest6,
+            Move.MoveSouthWest7,
+            Move.MoveSouthWest8,
+            Move.MoveSouthWest9,
+            Move.MoveSouthWest10
+        };
+    } // end allowedMoves
+} // end class QueenVision

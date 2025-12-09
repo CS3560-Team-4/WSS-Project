@@ -19,6 +19,9 @@ public class Player {
     private int energyDrinkConsumed;
     private int medicineConsumed;
 
+    // Player's vision
+    private Vision vision;
+
     public Player(int x, int y, Map map) {
         this.x = x;
         this.y = y;
@@ -33,6 +36,18 @@ public class Player {
 
         this.terrainStringBuffer = map.getTerrain(x,y).stringRep;
         this.turnsUntilDeath = 0;
+
+        this.vision = null;
+    }
+
+    // Setter for the player vision
+    public void setVision(Vision vision) {
+        this.vision = vision;
+    }
+
+    // Getter for vision
+    public Vision getVision() {
+        return vision;
     }
 
     public void setPosition(int x, int y, Map map) {

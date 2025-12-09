@@ -18,6 +18,8 @@ public class GameState {
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(0, 0,map);
+        // player.setVision(new CautiousVision(this)); // Initial vision set to cautious
+        player.setVision(new QueenVision(this));
 
         this.level = 1;
         this.highScore = 0;
@@ -135,10 +137,12 @@ public class GameState {
         
         // check player resources, update map status 
         // check for tile events
+        // invalidate and recalculate vision
         player.resourceCheck();
         updateMap();
         checkForTileObject();
         calculateCurrentScore();
+        player.getVision().invalidate();
 
         if (player.terrainStringBuffer.equals("E")){
             player.setOnGoalTile(true);
@@ -166,6 +170,9 @@ public class GameState {
         // reset player consumption stats
         player.resetConsumedStats();
 
+        // reset player visible tiles
+        player.getVision().invalidate();
+
         // replace old map
         this.map = newMap;
 
@@ -191,6 +198,9 @@ public class GameState {
 
         // reset player trade condition
         player.setOnTraderTile(false);
+
+        // reset player visible tiles
+        player.getVision().invalidate();
 
         // replace old map
         this.map = newMap;

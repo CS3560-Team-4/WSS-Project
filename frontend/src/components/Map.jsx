@@ -19,7 +19,6 @@ const traderSprites = {
 
 const Map = forwardRef(({ gameState, lastMove }, ref) => {
 
-
   if (!gameState) {
     return (
       <div 
@@ -56,20 +55,30 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
             const terrain = cell.terrain;
             const tileObject = cell.tileObject;
 
-            const isPlayer = terrain === 'P';
+            // const isPlayer = terrain === 'P';
+            const playerX = gameState.player.x;
+            const playerY = gameState.player.y;
+            const isPlayer = x === playerX && y === playerY;
+
             const isGoal = terrain === 'E';
 
             // If player occupies this tile, use underlying terrain
-            const baseTerrain = isPlayer
-              ? gameState.player.terrainStringBuffer
-              : terrain;
+            // const baseTerrain = isPlayer
+            //   ? gameState.player.terrainStringBuffer
+            //   : terrain;
+            const baseTerrain = gameState.board[y][x].terrain;
 
             const terrainClass = getTerrainClass(baseTerrain);
+
+            // Check if tile is visible to the player
+            const isVisible = gameState.visibleTiles.some(
+              ([vx, vy]) => vx === x && vy === y
+            ) || false;
 
             return (
               <div
                 key={x}
-                className={`relative w-11 h-11 flex items-center justify-center ${terrainClass}`}
+                className={`relative w-11 h-11 flex items-center justify-center ${terrainClass} ${isVisible ? 'visible-tile' : ''}`}
               >
                 {/** Goal Sprite*/}
                 {isGoal && (

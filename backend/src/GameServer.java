@@ -35,6 +35,10 @@ public class GameServer {
             // game info
             configureGameInfo(response);
 
+            // add vision tiles
+            Vision vision = p.getVision();
+            response.put("visibleTiles", vision.getVisibleCoordinates());
+
             // get trader info
             response.put("activeTrader", 
                 game.getActiveTrader() == null ? null : new TraderDTO(game.getActiveTrader()));
@@ -59,6 +63,8 @@ public class GameServer {
             Player p = game.getPlayer();
             Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
+            Vision vision = p.getVision();
+            response.put("visibleTiles", vision.getVisibleCoordinates());
 
             // game info
             configureGameInfo(response);
@@ -87,6 +93,8 @@ public class GameServer {
             Player p = game.getPlayer();
             Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
+            Vision vision = p.getVision();
+            response.put("visibleTiles", vision.getVisibleCoordinates());
 
             // game info
             configureGameInfo(response);
@@ -105,6 +113,8 @@ public class GameServer {
         // **expected return
         // body: {"direction": "up|down|left|right"}
         app.post("/move", ctx -> {
+            game.updateMap();
+
             // Get the latest board from map
             Terrain[][] board = game.getMap().getBoard();
 
@@ -118,6 +128,10 @@ public class GameServer {
             Player p = game.getPlayer();
             Map<String, Object> playerInfo = configurePlayerInfo(p);
             response.put("player", playerInfo);
+
+            // update visible tiles
+            Vision vision = p.getVision();
+            response.put("visibleTiles", vision.getVisibleCoordinates());
 
             // game info
             configureGameInfo(response);
@@ -142,7 +156,8 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            Vision vision = new CautiousVision(game);
+            // Vision vision = new CautiousVision(game);
+            Vision vision = p.getVision();
             Brain brain = new BalancedBrain(game, vision); 
 
             // chosen move that the brain decides
@@ -150,6 +165,7 @@ public class GameServer {
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
+            response.put("visibleTiles", vision.getVisibleCoordinates());
             System.out.println("Balanced Brain says: " + chosen.name());
 
             ctx.contentType("application/json");
@@ -161,7 +177,8 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            Vision vision = new CautiousVision(game);
+            // Vision vision = new CautiousVision(game);
+            Vision vision = p.getVision();
             Brain brain = new ExplorerBrain(game, vision); 
 
             // chosen move that the brain decides
@@ -169,6 +186,7 @@ public class GameServer {
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
+            response.put("visibleTiles", vision.getVisibleCoordinates());
             System.out.println("Explorer Brain says: " + chosen.name());
 
             ctx.contentType("application/json");
@@ -180,7 +198,8 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            Vision vision = new CautiousVision(game);
+            // Vision vision = new CautiousVision(game);
+            Vision vision = p.getVision();
             Brain brain = new GreedyBrain(game, vision); 
 
             // chosen move that the brain decides
@@ -188,6 +207,7 @@ public class GameServer {
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
+            response.put("visibleTiles", vision.getVisibleCoordinates());
             System.out.println("Greedy Brain says: " + chosen.name());
 
             ctx.contentType("application/json");
@@ -245,6 +265,14 @@ public class GameServer {
             game.clearTrade();
 
             ctx.json(Map.of("success", true));
+        });
+
+        //** For setting player vision *//
+        // POST /cautious-vision
+        app.post("/cautious-vision", ctx -> {
+            Player p = game.getPlayer();
+            p.setVision(new CautiousVision(game));
+            
         });
     }
 
