@@ -1,7 +1,10 @@
 const WelcomeScreen = ({ onStart }) => {
   return (
     <div className="flex flex-col items-center justify-center text-center p-6">
-      <div className="text-4xl font-bold mb-4 text-white">Welcome to WSS</div>
+      <div className="flex flex-col mb-6 gap-2">
+        <div className="text-4xl font-bold text-white">Welcome to the WSS</div>
+        <div>(Wilderness Survival System)</div>
+      </div>
 
       <p className="text-lg text-gray-300 mb-5 max-w-xs">
         Navigate through the terrain and use as little resources as possible to

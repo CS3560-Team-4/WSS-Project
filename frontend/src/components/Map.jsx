@@ -71,14 +71,14 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
             const terrainClass = getTerrainClass(baseTerrain);
 
             // Check if tile is visible to the player
-            const isVisible = gameState.visibleTiles.some(
+            const isVisible = (x === gameState.player.x && y === gameState.player.y) || gameState.visibleTiles.some(
               ([vx, vy]) => vx === x && vy === y
             ) || false;
 
             return (
               <div
                 key={x}
-                className={`relative w-11 h-11 flex items-center justify-center ${terrainClass} ${isVisible ? 'visible-tile' : ''}`}
+                className={`relative w-11 h-11 flex items-center justify-center ${terrainClass} ${isVisible ? terrainClass : 'fog-tile'}`}
               >
                 {/** Goal Sprite*/}
                 {isGoal && (
@@ -90,7 +90,7 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
                 )}
 
                 {/**Render item */}
-                {tileObject && tileObject.type === "ITEM" && !isPlayer && (
+                {tileObject?.type === "ITEM" && !isPlayer && (
                   <img 
                     src={itemSprites[tileObject.itemType]}
                     alt={tileObject.itemType}
@@ -99,7 +99,7 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
                 )}
 
                 {/**Render trader */}
-                {tileObject && tileObject.type === "TRADER" && !isPlayer && (
+                {tileObject?.type === "TRADER" && !isPlayer && (
                   <img 
                     src={traderSprites[tileObject.traderType]}
                     alt={tileObject.traderType}
@@ -108,7 +108,7 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
                 )}
 
                 {/* Overlay player sprite */}
-                {isPlayer && (
+                {isVisible && isPlayer && (
                   <img
                     src={playerImg}
                     alt="Player"

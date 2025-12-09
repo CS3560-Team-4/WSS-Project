@@ -58,4 +58,8 @@
     pointer-events: none;
     z-index: 50;
   }
+
+  .fog-tile {
+    @apply opacity-40;
+  }
 }
