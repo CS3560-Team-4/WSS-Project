@@ -1,88 +1,94 @@
+import java.util.Objects;
+
 /**
- * explorer brain seeks to explore new areas
- * tries to visit unvisited tiles and maximize map coverage
+ * ExplorerBrain - prioritizes exploration and steady progress toward the goal,
+ * taking detours only for survival resources.
  */
 public class ExplorerBrain extends Brain {
-    
-    /**
-     * creates a new explorer brain
-     * @param state the current game state
-     * @param vision the vision object used to analyze surroundings
-     */
-    public ExplorerBrain(GameState state, Vision vision) {
-        super(state, vision);
-    setDefaultMode(false);
+
+    public ExplorerBrain(GameState state, Player player, Vision vision) {
+        super(Objects.requireNonNull(state),
+              Objects.requireNonNull(player),
+              Objects.requireNonNull(vision));
     }
-    
-    /**
-     * chooses a strategy that prioritizes exploration
-     * maintains minimum resources then explores
-     * @return the chosen move
-     */
+
     @Override
-    protected Move chooseStrategy() {
-        if (getWaterLevel() < 35) {
-            String[] waterMoves = getVision().getClosestWater();
-            if (waterMoves != null && waterMoves.length > 0) {
-                return parseMove(waterMoves[0]);
-            }
-        }
-        
-        if (getFoodLevel() < 35) {
-            String[] foodMoves = getVision().getClosestFood();
-            if (foodMoves != null && foodMoves.length > 0) {
-                return parseMove(foodMoves[0]);
-            }
-        }
-        
-        return exploreNewDirection();
+    protected Move chooseExploreStrategy() {
+        // Explorer: push eastward when nothing urgent is happening.
+        return stepEastBias();
     }
-    
-    /**
-     * choose a move that explores new territory
-     * @return an exploratory move
-     */
-    private Move exploreNewDirection() {
-        Player player = getPlayer();
-        Map map = getState().getMap();
-        
-        // Prefer moves toward unexplored edges
-        int px = player.getPosX();
-        int py = player.getPosY();
-        int width = map.getWidth();
-        int height = map.getHeight();
-        
-        // Calculate distances to edges
-        int distToEast = width - px;
-        int distToWest = px;
-        int distToSouth = height - py;
-        int distToNorth = py;
-        
-        // Find furthest edge and move toward it
-        int maxDist = Math.max(Math.max(distToEast, distToWest), 
-                              Math.max(distToSouth, distToNorth));
-        
-        if (maxDist == distToEast && distToEast > 2) {
-            return Move.MoveEast;
-        } else if (maxDist == distToWest && distToWest > 2) {
-            return Move.MoveWest;
-        } else if (maxDist == distToSouth && distToSouth > 2) {
-            return Move.MoveSouth;
-        } else if (maxDist == distToNorth && distToNorth > 2) {
+
+    @Override
+    protected Move chooseSurvivalStrategy() {
+        // When low on resources, go for nearest water or food.
+        Vision.TileInfo resource = vision.findClosest(t -> t.hasWater || t.hasFood);
+        if (resource != null) {
+            return stepToward(resource.x, resource.y);
+        }
+        // If no resources visible, still explore east.
+        return stepEastBias();
+    }
+
+    @Override
+    protected Move chooseGoalStrategy() {
+        // If goal is visible, bias horizontal progress toward its column first,
+        // then adjust vertically as needed. This reduces simple up/down wobbling
+        // near the goal.
+        Vision.TileInfo goal = vision.getGoalTile();
+        if (goal != null) {
+            int px = player.getPosX();
+            int py = player.getPosY();
+
+            int gx = goal.x;
+            int gy = goal.y;
+
+            // Prefer horizontal movement toward the goal's column when not aligned.
+            if (gx > px) return Move.MoveEast;
+            if (gx < px) return Move.MoveWest;
+
+            // Once aligned horizontally, move vertically toward the goal.
+            if (gy > py) return Move.MoveSouth;
+            if (gy < py) return Move.MoveNorth;
+
+            // Already on the goal tile; any move is fine (engine will handle win).
             return Move.MoveNorth;
         }
-        
-        // If in center, use diagonal moves for efficiency
-        return Move.MoveNorthEast;
+        // Otherwise continue exploring east.
+        return stepEastBias();
     }
-    
-    @Override
-    protected void updateGoal() {
-        // Always in exploration mode unless critical
-        if (getWaterLevel() < 25 || getFoodLevel() < 25) {
-            aggressiveStrategy();
-        } else {
-            setDefaultMode(false);
+
+    private Move stepToward(int tx, int ty) {
+        int px = player.getPosX();
+        int py = player.getPosY();
+
+        int dx = Integer.compare(tx, px);
+        int dy = Integer.compare(ty, py);
+
+        if (dx > 0) return Move.MoveEast;
+        if (dx < 0) return Move.MoveWest;
+        if (dy > 0) return Move.MoveSouth;
+        if (dy < 0) return Move.MoveNorth;
+        return Move.MoveNorth;
+    }
+
+    private Move stepEastBias() {
+        int px = player.getPosX();
+        int py = player.getPosY();
+
+        // Prefer any walkable neighbor that moves east.
+        for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+            if (n.x > px) return Move.MoveEast;
         }
+
+        // Otherwise pick any walkable neighbor deterministically.
+        for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+            int dx = n.x - px;
+            int dy = n.y - py;
+            if (dx > 0) return Move.MoveEast;
+            if (dx < 0) return Move.MoveWest;
+            if (dy > 0) return Move.MoveSouth;
+            if (dy < 0) return Move.MoveNorth;
+        }
+        return Move.MoveNorth;
     }
 }

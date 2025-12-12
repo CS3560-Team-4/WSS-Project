@@ -156,12 +156,12 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            // Vision vision = new CautiousVision(game);
+            // Use the player's existing vision
             Vision vision = p.getVision();
-            Brain brain = new BalancedBrain(game, vision); 
+            Brain brain = new BalancedBrain(game, p, vision);
 
             // chosen move that the brain decides
-            Move chosen = brain.decideMove();
+            Move chosen = brain.makeMove();
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
@@ -177,12 +177,11 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            // Vision vision = new CautiousVision(game);
             Vision vision = p.getVision();
-            Brain brain = new ExplorerBrain(game, vision); 
+            Brain brain = new ExplorerBrain(game, p, vision);
 
             // chosen move that the brain decides
-            Move chosen = brain.decideMove();
+            Move chosen = brain.makeMove();
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
@@ -198,12 +197,11 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
-            // Vision vision = new CautiousVision(game);
             Vision vision = p.getVision();
-            Brain brain = new GreedyBrain(game, vision); 
+            Brain brain = new GreedyBrain(game, p, vision);
 
             // chosen move that the brain decides
-            Move chosen = brain.decideMove();
+            Move chosen = brain.makeMove();
 
             Map<String, Object> response = new HashMap<>();
             response.put("brainMove", chosen.name());
