@@ -75,19 +75,21 @@ public class Map {
         int x = player.getPosX();
         int y = player.getPosY();
 
-        // restore the previous tile, only if valid
-        if (prevX >= 0 && prevY >= 0) {
-            map[prevY][prevX].stringRep = player.terrainStringBuffer;
+        // ONLY restore if position actually changed
+        if (prevX != x || prevY != y) {
+            if (prevX >= 0 && prevY >= 0) {
+                map[prevY][prevX].stringRep = player.terrainStringBuffer;
+            }
         }
 
-        // record what's under the new tile
-        String newTerrain = map[y][x].stringRep;
+        // buffer terrain BEFORE overwriting
+        String underlying = map[y][x].stringRep;
 
-        // place player by overwriting the new position with "P"
         map[y][x].stringRep = "P";
 
-        // store that newTerrain for next time
-        player.terrainStringBuffer = newTerrain;
+        if (!underlying.equals("P")) {
+            player.terrainStringBuffer = underlying;
+        }
     }
 
     //print the map

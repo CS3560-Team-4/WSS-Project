@@ -21,7 +21,6 @@ public class GameServer {
 
         // GET /state
         app.get("/state", ctx -> {
-            game.updateMap();
             Terrain[][] board = game.getMap().getBoard();
 
             // board info
@@ -113,7 +112,6 @@ public class GameServer {
         // **expected return
         // body: {"direction": "up|down|left|right"}
         app.post("/move", ctx -> {
-            game.updateMap();
 
             // Get the latest board from map
             Terrain[][] board = game.getMap().getBoard();

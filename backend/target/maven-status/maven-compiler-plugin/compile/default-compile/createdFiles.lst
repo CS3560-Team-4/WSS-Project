@@ -32,8 +32,8 @@ BalancedBrain.class
 TraderType.class
 GameServer$MoveRequest.class
 GameServer$TileDTO.class
-Move.class
 GameServer$TraderDTO.class
 Swamp.class
+Move.class
 TradeOffer.class
 MoodState.class

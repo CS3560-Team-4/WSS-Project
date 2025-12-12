@@ -537,76 +537,90 @@ const App = () => {
       </div>
 
       {/** Menu buttons */}
-      <div className="fixed right-8 flex flex-col gap-2 p-6">
-        <div className="text-center">Menu</div>
-        <button
-          onClick={openLegendModal}
-          className="dev-button"
-        >
-          Guide
-        </button>
+      <div className="
+        fixed top-4
+        [@media(min-width:1250px)]:left-10 [@media(min-width:1250px)]:top-1/3             
+        [@media(min-width:1250px)]:right-auto                         
+        gap-2"
+      >
+        <div className="
+          flex flex-col gap-2 p-6
+        ">
+          <div className="text-center">Menu</div>
+          <div className="
+            flex flex-row gap-2
+            [@media(min-width:1250px)]:flex-col
+          ">
+            <button
+              onClick={openLegendModal}
+              className="dev-button"
+            >
+              Guide
+            </button>
 
-        <button
-          onClick={openBrainModal}
-          className="dev-button"
-        >
-          The Brain
-        </button>
+            <button
+              onClick={openBrainModal}
+              className="dev-button"
+            >
+              The Brain
+            </button>
 
-        {/* Vision settings */}
-        <button
-          onClick={openVisionModal}
-          className="dev-button"
-        >
-          Set Vision
-        </button>
+            {/* Vision settings */}
+            <button
+              onClick={openVisionModal}
+              className="dev-button"
+            >
+              Set Vision
+            </button>
 
-        <button
-          className="dev-button"
-          onClick={() => {
-            setAutoPlayMode("balanced")
-            setAutoPlayEnabled(true);
-          }}
-        >
-          Auto-Play (Balanced)
-        </button>
-        <button
-          className="dev-button"
-          onClick={() => {
-            setAutoPlayMode("explorer")
-            setAutoPlayEnabled(true);
-          }}
-        >
-          Auto-Play (Explorer)
-        </button>
-        <button
-          className="dev-button"
-          onClick={() => {
-            setAutoPlayMode("greedy")
-            setAutoPlayEnabled(true);
-          }}
-        >
-          Auto-Play (Greedy)
-        </button>
+            <button
+              className="dev-button"
+              onClick={() => {
+                setAutoPlayMode("balanced")
+                setAutoPlayEnabled(true);
+              }}
+            >
+              Auto-Play (Balanced)
+            </button>
+            <button
+              className="dev-button"
+              onClick={() => {
+                setAutoPlayMode("explorer")
+                setAutoPlayEnabled(true);
+              }}
+            >
+              Auto-Play (Explorer)
+            </button>
+            <button
+              className="dev-button"
+              onClick={() => {
+                setAutoPlayMode("greedy")
+                setAutoPlayEnabled(true);
+              }}
+            >
+              Auto-Play (Greedy)
+            </button>
 
-        {autoPlayEnabled && (
-          <button
-            className="dev-button"
-            onClick={() => {
-              setAutoPlayEnabled(false);
-              setAutoPlayMode(null);
-            }}
-          >
-            Stop Auto-Play
-          </button>
-        )}
+            {autoPlayEnabled && (
+              <button
+                className="dev-button"
+                onClick={() => {
+                  setAutoPlayEnabled(false);
+                  setAutoPlayMode(null);
+                }}
+              >
+                Stop Auto-Play
+              </button>
+            )}
 
-        <button
-          onClick={resetGame}
-          className="dev-button bg-red-600 hover:bg-red-700"
-        >
-          Reset Game
-        </button>
+            <button
+              onClick={resetGame}
+              className="dev-button bg-red-600 hover:bg-red-700"
+            >
+              Reset Game
+            </button>
+          </div>
+        </div>
       </div>
       
       {/* Modals */}

@@ -66,7 +66,7 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
             // const baseTerrain = isPlayer
             //   ? gameState.player.terrainStringBuffer
             //   : terrain;
-            const baseTerrain = gameState.board[y][x].terrain;
+            const baseTerrain = isPlayer ? gameState.player.terrainStringBuffer : terrain;
 
             const terrainClass = getTerrainClass(baseTerrain);
 
