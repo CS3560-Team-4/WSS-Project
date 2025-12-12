@@ -173,6 +173,21 @@ public class Player {
         this.water = this.water - terrain.waterCost;
     }
 
+    // Generic move helper to set previous position before updating to new tile
+    // Ensures prevX/prevY always store the tile occupied before movement
+    public void moveTo(int newX, int newY, Map map) {
+        setPrev();
+        this.x = newX;
+        this.y = newY;
+        Terrain terrain = map.getTerrain(x, y);
+        if (terrain != null) {
+            this.energy = this.energy - terrain.energyCost;
+            this.water = this.water - terrain.waterCost;
+            this.terrainStringBuffer = terrain.stringRep;
+        }
+        clampPlayerStats();
+    }
+
     public int getPosX() {
         return this.x;
     }

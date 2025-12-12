@@ -1,77 +1,161 @@
+import java.util.Objects;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
- * BalancedBrain - Maintains balance between all goals.
- * Uses the default Brain behavior but with fine-tuned thresholds.
+ * BalancedBrain - plays cautiously, prioritizing survival resources,
+ * then low-risk exploration and progress toward the goal.
  */
 public class BalancedBrain extends Brain {
-    
-    private static final int IDEAL_WATER = 60;
-    private static final int IDEAL_FOOD = 60;
-    private static final int MIN_SAFE_WATER = 40;
-    private static final int MIN_SAFE_FOOD = 40;
-    
-    /**
-     * creates a new balanced brain with fine tuned thresholds
-     * @param state the current game state
-     * @param vision the vision object used to analyze surroundings
-     */
-    public BalancedBrain(GameState state, Vision vision) {
-        super(state, vision);
+
+    public BalancedBrain(GameState state, Player player, Vision vision) {
+        super(Objects.requireNonNull(state),
+              Objects.requireNonNull(player),
+              Objects.requireNonNull(vision));
     }
 
-    /**
-     * chooses a strategy that balances resource management and goals
-     * prefers restoring deficits before pursuing gold
-     * @return the chosen move
-     */
     @Override
-    protected Move chooseStrategy() {
-        // Balance resources first, then pursue goals
-        
-        // Check if resources are unbalanced
-        int waterDeficit = IDEAL_WATER - getWaterLevel();
-        int foodDeficit = IDEAL_FOOD - getFoodLevel();
-        
-        // Prioritize whichever is more needed
-        if (waterDeficit > foodDeficit && waterDeficit > 20) {
-            String[] waterMoves = getVision().getClosestWater();
-            if (waterMoves != null && waterMoves.length > 0) {
-                return parseMove(waterMoves[0]);
-            }
-        } else if (foodDeficit > 20) {
-            String[] foodMoves = getVision().getClosestFood();
-            if (foodMoves != null && foodMoves.length > 0) {
-                return parseMove(foodMoves[0]);
-            }
+    protected Move chooseExploreStrategy() {
+        // Exploration should focus on moving safely into new areas,
+        // not greedily chasing the nearest item.
+        return pickSafeNeighbor();
+    }
+
+    @Override
+    protected Move chooseSurvivalStrategy() {
+        // When resources are low, go for nearest water/food first.
+        Vision.TileInfo resource = vision.findClosest(t -> t.hasWater || t.hasFood);
+        if (resource != null) {
+            return stepToward(resource.x, resource.y);
         }
-        
-        // If balanced, pursue gold
-        if (getWaterLevel() >= MIN_SAFE_WATER && getFoodLevel() >= MIN_SAFE_FOOD) {
-            Path goldPath = getVision().closestGold();
-            if (goldPath != null && !goldPath.isEmpty() && canAffordMove(goldPath)) {
-                return goldPath.getMoves().get(0);
-            }
-        }
-        
-        // Take easiest available path
-        Path easiest = getVision().easiestPath();
-        if (!easiest.isEmpty()) {
-            return easiest.getMoves().get(0);
-        }
-        
+        return pickSafeNeighbor();
+    }
+
+   @Override
+protected Move chooseGoalStrategy() {
+
+    Vision.TileInfo goal = vision.getGoalTile();
+    if (goal == null) {
+        // No goal in sight → keep exploring eastward (your existing bias)
+        return stepEastBias();
+    }
+
+    int px = player.getPosX();
+    int py = player.getPosY();
+    int gx = goal.x;
+    int gy = goal.y;
+
+    // Compute deltas
+    int dx = gx - px;
+    int dy = gy - py;
+
+    // --- 1. Try horizontal first (east/west) ---
+    if (dx > 0 && isNeighborWalkable(px + 1, py)) {
+        return Move.MoveEast;
+    }
+    if (dx < 0 && isNeighborWalkable(px - 1, py)) {
+        return Move.MoveWest;
+    }
+
+    // --- 2. If horizontal path is blocked, try vertical toward goal ---
+    if (dy > 0 && isNeighborWalkable(px, py + 1)) {
+        return Move.MoveSouth;
+    }
+    if (dy < 0 && isNeighborWalkable(px, py - 1)) {
         return Move.MoveNorth;
     }
-    
-    @Override
-    protected void updateGoal() {
-        int waterLevel = getWaterLevel();
-        int foodLevel = getFoodLevel();
-        
-        // Dynamic goal setting based on balanced thresholds
-        if (waterLevel < MIN_SAFE_WATER || foodLevel < MIN_SAFE_FOOD) {
-            setDefaultMode(true);
-        } else if (waterLevel >= IDEAL_WATER && foodLevel >= IDEAL_FOOD) {
-            setDefaultMode(false);
+
+    // --- 3. If both direct paths are blocked, try any walkable neighbor
+    //        that reduces MANHATTAN distance to the goal. ---
+    Move best = null;
+    int bestDist = Integer.MAX_VALUE;
+
+    for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+        int dist = Math.abs(gx - n.x) + Math.abs(gy - n.y);
+        if (dist < bestDist) {
+            bestDist = dist;
+            best = directionFromDelta(n.x - px, n.y - py);
         }
-        // Otherwise maintain current mode
     }
+
+    if (best != null) return best;
+
+    // --- 4. If fully boxed in, use fallback anti-loop explorer ---
+    return pickSafeNeighbor();
+}
+
+
+    private Move stepToward(int tx, int ty) {
+        int px = player.getPosX();
+        int py = player.getPosY();
+
+        int dx = Integer.compare(tx, px);
+        int dy = Integer.compare(ty, py);
+
+        // Balanced: prefer the axis with larger distance, but avoid standing still.
+        if (Math.abs(tx - px) >= Math.abs(ty - py)) {
+            if (dx > 0) return Move.MoveEast;
+            if (dx < 0) return Move.MoveWest;
+        }
+        if (dy > 0) return Move.MoveSouth;
+        if (dy < 0) return Move.MoveNorth;
+
+        return Move.MoveNorth;
+    }
+
+   private Move pickSafeNeighbor() {
+    int px = player.getPosX();
+    int py = player.getPosY();
+
+    List<Vision.TileInfo> neighbors = new ArrayList<>(vision.getWalkableNeighbors());
+
+    Collections.shuffle(neighbors); // <-- prevents directional bias
+
+    for (Vision.TileInfo n : neighbors) {
+        int dx = n.x - px;
+        int dy = n.y - py;
+        return directionFromDelta(dx, dy);
+    }
+
+    return Move.MoveNorth;
+    }
+    private Move directionFromDelta(int dx, int dy) {
+    if (dx > 0) return Move.MoveEast;
+    if (dx < 0) return Move.MoveWest;
+    if (dy > 0) return Move.MoveSouth;
+    if (dy < 0) return Move.MoveNorth;
+    return Move.MoveNorth; // fallback, shouldn't happen
+}
+
+private Move stepEastBias() {
+    int px = player.getPosX();
+    int py = player.getPosY();
+
+// Prefer any walkable neighbor that moves east.
+    for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+            if (n.x > px) return Move.MoveEast;
+        }
+
+        // Otherwise pick any walkable neighbor deterministically.
+    for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+        int dx = n.x - px;
+        int dy = n.y - py;
+        if (dx > 0) return Move.MoveEast;
+        if (dx < 0) return Move.MoveWest;
+        if (dy > 0) return Move.MoveSouth;
+        if (dy < 0) return Move.MoveNorth;
+    }
+    return Move.MoveNorth;
+}
+
+private boolean isNeighborWalkable(int x, int y) {
+    for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+        if (n.x == x && n.y == y) return true;
+    }
+    return false;
+}
+
+
+
 }

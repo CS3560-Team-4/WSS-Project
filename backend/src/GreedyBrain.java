@@ -1,81 +1,87 @@
+
+import java.util.Objects;
+
 /**
- * greedy brain prioritizes gold above all other objectives
- * takes risks to maximize gold collection
+ * GreedyBrain - prioritizes valuable tiles (items/traders) first,
+ * then survival resources, then general exploration.
  */
 public class GreedyBrain extends Brain {
-    
-    /**
-     * creates a new greedy brain
-     * @param state the current game state
-     * @param vision the vision object used to analyze surroundings
-     */
-    public GreedyBrain(GameState state, Vision vision) {
-        super(state, vision);
-        setDefaultMode(false);
+
+    public GreedyBrain(GameState state, Player player, Vision vision) {
+        super(Objects.requireNonNull(state),
+              Objects.requireNonNull(player),
+              Objects.requireNonNull(vision));
     }
-    
+
     @Override
-    protected Move chooseStrategy() {
-        // Always be aggressive unless critically low on resources
-        if (getWaterLevel() < 20 || getFoodLevel() < 20) {
-            return aggressiveStrategy();
+    protected Move chooseExploreStrategy() {
+        // Prefer items or traders in vision.
+        Vision.TileInfo target = vision.findClosest(t -> t.hasItem || t.hasTrader);
+        if (target != null) {
+            return stepToward(target.x, target.y);
         }
-        return aggressiveStrategy();
+
+        // Otherwise, move toward any walkable neighbor (slight east bias).
+        return pickExplorationStep();
     }
-    
+
     @Override
-    protected Move aggressiveStrategy() {
-        /**
-         * aggressive strategy for greedy brain
-         * prefer gold then traders then resources when necessary
-         */
-        Path goldPath = getVision().closestGold();
-        if (goldPath != null && !goldPath.isEmpty()) {
-            // Check if we can afford it
-            if (canAffordMove(goldPath)) {
-                return goldPath.getMoves().get(0);
-            }
+    protected Move chooseSurvivalStrategy() {
+        // Prefer water or food when in survival state.
+        Vision.TileInfo resource = vision.findClosest(t -> t.hasWater || t.hasFood);
+        if (resource != null) {
+            return stepToward(resource.x, resource.y);
         }
-        
-        // Look for second closest gold
-        Path secondGold = getVision().secondClosestGold();
-        if (secondGold != null && !secondGold.isEmpty() && canAffordMove(secondGold)) {
-            return secondGold.getMoves().get(0);
-        }
-        
-        // Only get resources if we can't afford to move
-        if (getWaterLevel() < 30) {
-            String[] waterMoves = getVision().getClosestWater();
-            if (waterMoves != null && waterMoves.length > 0) {
-                return parseMove(waterMoves[0]);
-            }
-        }
-        
-        if (getFoodLevel() < 30) {
-            String[] foodMoves = getVision().getClosestFood();
-            if (foodMoves != null && foodMoves.length > 0) {
-                return parseMove(foodMoves[0]);
-            }
-        }
-        
-        // Find trader to sell gold
-        Path traderPath = getVision().closestTrader();
-        if (traderPath != null && !traderPath.isEmpty()) {
-            return traderPath.getMoves().get(0);
-        }
-        
-        return Move.MoveEast; // Default: explore eastward
+
+        // Fall back to normal exploration if no resources visible.
+        return chooseExploreStrategy();
     }
-    /**
-     * update goal for greedy brain
-     * remain focused on gold unless resources are critically low
-     */
+
     @Override
-    protected void updateGoal() {
-        if (getWaterLevel() < 15 || getFoodLevel() < 15) {
-            setDefaultMode(true);
-        } else {
-            setDefaultMode(false);
+    protected Move chooseGoalStrategy() {
+        // If goal tile is visible, move directly toward it.
+        Vision.TileInfo goal = vision.getGoalTile();
+        if (goal != null) {
+            return stepToward(goal.x, goal.y);
         }
+
+        // Otherwise just fall back to greedy exploration.
+        return chooseExploreStrategy();
+    }
+
+    private Move stepToward(int tx, int ty) {
+        int px = player.getPosX();
+        int py = player.getPosY();
+
+        int dx = Integer.compare(tx, px);
+        int dy = Integer.compare(ty, py);
+
+        // Prefer horizontal moves first (toward east/west), then vertical.
+        if (dx > 0) return Move.MoveEast;
+        if (dx < 0) return Move.MoveWest;
+        if (dy > 0) return Move.MoveSouth;
+        if (dy < 0) return Move.MoveNorth;
+
+        // Already at target tile; arbitrary fallback.
+        return Move.MoveNorth;
+    }
+
+    private Move pickExplorationStep() {
+        int px = player.getPosX();
+        int py = player.getPosY();
+
+        // Try to move east if any walkable neighbor is east; otherwise any neighbor.
+        for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+            if (n.x > px) return Move.MoveEast;
+        }
+        for (Vision.TileInfo n : vision.getWalkableNeighbors()) {
+            int dx = n.x - px;
+            int dy = n.y - py;
+            if (dx > 0) return Move.MoveEast;
+            if (dx < 0) return Move.MoveWest;
+            if (dy > 0) return Move.MoveSouth;
+            if (dy < 0) return Move.MoveNorth;
+        }
+        return Move.MoveNorth;
     }
 }
