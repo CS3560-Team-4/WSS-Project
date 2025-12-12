@@ -29,6 +29,25 @@ public abstract class Brain {
      * Main entry point called once per game tick to decide the player's move.
      */
     public Move makeMove() {
+        // --- TRADE OFFER HANDLING ---
+        TradeOffer offer = state.getActiveOffer();
+        if (offer != null) {
+            // If the player can afford the offer, auto-accept it and pause movement.
+            if (player.getGold() >= offer.goldCost) {
+                // Pay for the offer
+                player.setGold(player.getGold() - offer.goldCost);
+                // Apply the item effect
+                offer.offeredItem.use(player);
+                // Remove the trader from the tile
+                Terrain tile = state.getMap().getTerrain(player.getPosX(), player.getPosY());
+                tile.removeTileObject();
+                tile.stringRep = player.terrainStringBuffer;
+                // End the trade
+                state.clearTrade();
+            }
+            // Pause movement this turn while trade is/was active
+            return rest();
+        }
         // High-level template: survival > goal > exploration.
         if (isInSurvivalState()) {
             return chooseSurvivalStrategy();
