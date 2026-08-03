@@ -1,5 +1,9 @@
 # Wilderness Survival System
 
+> [!TIP]
+> ### [Play the live game →](https://cs3560-team-4.github.io/WSS-Project/)
+> The frontend is hosted on GitHub Pages and connects to the live game backend.
+
 A full-stack, turn-based survival game developed collaboratively by **CS3560 Team 4**. The application combines a React single-page interface with a Java/Javalin REST API that owns the game state, processes player actions, generates randomized terrain, applies survival mechanics, and returns structured JSON updates to the browser.
 
 The objective is to manage limited resources, navigate a partially visible wilderness map, interact with items and traders, and reach the goal tile without exhausting the player's health, water, or energy.

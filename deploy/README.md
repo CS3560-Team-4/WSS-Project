@@ -96,11 +96,21 @@ example, a repository named `wss-game` owned by `username` is published at
 
 ## Updating the backend
 
-After backend changes, rebuild and replace the jar, then restart:
+After backend changes, run the refresh script from the repository root:
+
+```bash
+./refresh.sh
+```
+
+It builds and tests the backend before asking for sudo, replaces only the WSS
+game JAR, restarts only `wss-game`, and verifies the local health endpoint. It
+does not modify or restart Netric.
+
+The equivalent manual commands are:
 
 ```bash
 ./backend/mvnw -f backend/pom.xml clean package
-sudo install -m 644 backend/target/game-server.jar /opt/wss-game/game-server.jar
+sudo install -o root -g root -m 644 backend/target/game-server.jar /opt/wss-game/game-server.jar
 sudo systemctl restart wss-game
 curl --fail https://netricsports.us/game-api/health
 ```
