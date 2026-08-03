@@ -38,23 +38,37 @@ If the Pages site belongs to a different GitHub owner, change
 no repository path), then run `systemctl daemon-reload` and restart the service.
 Multiple origins can be comma-separated.
 
-## 2. Add the Nginx route
+## 2. Add the isolated Nginx route
 
-The checked-in `nginx/netric.conf` mirrors this host's existing Netric server
-block and adds one include. Install it together with the location snippet:
+Netric owns `/etc/nginx/sites-available/netric`, so the game deployment must not
+replace that file. Install only the game-owned snippet:
 
 ```bash
 sudo install -m 644 deploy/nginx/game-locations.conf /etc/nginx/snippets/wss-game.conf
-sudo install -m 644 deploy/nginx/netric.conf /etc/nginx/sites-available/netric
+```
+
+Then add this one line inside the existing `server` block in
+`../netric/ops/nginx/netric.conf`, outside its `/api/` location:
+
+```nginx
+include /etc/nginx/snippets/wss-game.conf;
+```
+
+The Netric deployment script owns and regenerates the active site from that
+template. Adding the include there keeps `/api/`, port `8000`, its static files,
+certificate changes, services, and health checks under Netric's control while
+the separate snippet owns only `/game-api/` and port `8080`.
+
+Redeploy Netric, or add the same include to its current active server block,
+then validate and reload:
+
+```bash
 sudo nginx -t
 sudo systemctl reload nginx
 curl --fail https://netricsports.us/game-api/health
 ```
 
-On another host, copy the two `location` blocks from
-`nginx/game-locations.conf` into its existing HTTPS server block instead of
-replacing that host's configuration. No additional DNS record or certificate
-is required.
+No additional DNS record or certificate is required.
 
 ## 3. Enable GitHub Pages
 
