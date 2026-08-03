@@ -10,6 +10,7 @@ import StatsUI from './components/StatsUI.jsx';
 import DeathScreen from './components/DeathScreen.jsx';
 import WinScreen from './components/WinScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
+import { apiUrl } from './api.js';
 
 const App = () => {
   //**State Initialization */
@@ -37,7 +38,6 @@ const App = () => {
 
   // trader modal
   const [isTraderModalOpen, setIsTraderModalOpen] = useState(false); 
-  const openTraderModal = () => setIsTraderModalOpen(true);
   const closeTraderModal = () => setIsTraderModalOpen(false);
   
   // check game load
@@ -69,7 +69,7 @@ const App = () => {
   //**Fetching Data
   const fetchMapData = async () => {
     try {
-      const response = await fetch('http://localhost:8080/state');
+      const response = await fetch(apiUrl('/state'));
       const data = await response.json();
       
       setGameState(data);
@@ -128,7 +128,7 @@ const App = () => {
     try {
       setLastMoveDirection(direction); // track last direction
 
-      const response = await fetch('http://localhost:8080/move', {
+      const response = await fetch(apiUrl('/move'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -222,7 +222,7 @@ const App = () => {
     try {
       setBrainLoading(true); // start animation
 
-      const response = await fetch('http://localhost:8080/balancedbrain', {
+      const response = await fetch(apiUrl('/balancedbrain'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -245,7 +245,7 @@ const App = () => {
     try {
       setBrainLoading(true); // start animation
 
-      const response = await fetch('http://localhost:8080/explorerbrain', {
+      const response = await fetch(apiUrl('/explorerbrain'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -268,7 +268,7 @@ const App = () => {
     try {
       setBrainLoading(true); // start animation
 
-      const response = await fetch('http://localhost:8080/greedybrain', {
+      const response = await fetch(apiUrl('/greedybrain'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -292,7 +292,7 @@ const App = () => {
     setGameOver(false);
 
     try {
-      const response = await fetch('http://localhost:8080/reset', {
+      const response = await fetch(apiUrl('/reset'), {
         method: 'POST',
         headers: { 'Content-Type' : 'application/json' }
       });
@@ -315,7 +315,7 @@ const App = () => {
     setGameOver(false);
 
     try {
-      const response = await fetch('http://localhost:8080/nextlevel', {
+      const response = await fetch(apiUrl('/nextlevel'), {
         method: 'POST',
         headers: { 'Content-Type' : 'application/json' }
       });
@@ -345,7 +345,7 @@ const App = () => {
   //**Modal Functionality
   // trade calls to backend endpoints
   const acceptTrade = async () => {
-    const response = await fetch("http://localhost:8080/accepttrade", {
+    await fetch(apiUrl('/accepttrade'), {
       method: "POST"
     });
     
@@ -354,7 +354,7 @@ const App = () => {
   };
 
   const rejectTrade = async () => {
-    await fetch ("http://localhost:8080/rejecttrade", {
+    await fetch(apiUrl('/rejecttrade'), {
       method: "POST"
     });
     closeTraderModal();
@@ -421,7 +421,7 @@ const App = () => {
       if (autoPlayMode === "explorer") endpoint = "/explorerbrain";
       if (autoPlayMode === "greedy") endpoint = "/greedybrain";
 
-      const response = await fetch(`http://localhost:8080${endpoint}`, {
+      const response = await fetch(apiUrl(endpoint), {
         method: "POST",
         headers: { "Content-Type" : "application/json" }
       });
@@ -486,7 +486,7 @@ const App = () => {
         queen: "/queen-vision",
       };
 
-      const res = await fetch(`http://localhost:8080${endpointMap[type]}`, {
+      const res = await fetch(apiUrl(endpointMap[type]), {
         method: "POST"
       });
 

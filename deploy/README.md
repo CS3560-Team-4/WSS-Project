@@ -1,0 +1,83 @@
+# Web deployment
+
+The production topology is:
+
+```text
+GitHub Pages  https://<owner>.github.io/<repository>/
+       |
+       +----> https://netricsports.us/game-api/*
+                         |
+                         +----> http://127.0.0.1:8080/*
+```
+
+This application currently uses REST only. There is no WebSocket endpoint, so
+`/game-ws` should not be added to Nginx unless WebSocket functionality is added
+later.
+
+## 1. Install the backend
+
+The server needs Java 21. Build the executable jar from the repository root:
+
+```bash
+./backend/mvnw -f backend/pom.xml clean package
+```
+
+Copy the jar and service definition to the server:
+
+```bash
+sudo install -d -m 755 /opt/wss-game
+sudo install -m 644 backend/target/game-server.jar /opt/wss-game/game-server.jar
+sudo install -m 644 deploy/systemd/wss-game.service /etc/systemd/system/wss-game.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now wss-game
+curl --fail http://127.0.0.1:8080/health
+```
+
+If the Pages site belongs to a different GitHub owner, change
+`CORS_ALLOWED_ORIGINS` in the service to its origin (scheme plus hostname, with
+no repository path), then run `systemctl daemon-reload` and restart the service.
+Multiple origins can be comma-separated.
+
+## 2. Add the Nginx route
+
+The checked-in `nginx/netric.conf` mirrors this host's existing Netric server
+block and adds one include. Install it together with the location snippet:
+
+```bash
+sudo install -m 644 deploy/nginx/game-locations.conf /etc/nginx/snippets/wss-game.conf
+sudo install -m 644 deploy/nginx/netric.conf /etc/nginx/sites-available/netric
+sudo nginx -t
+sudo systemctl reload nginx
+curl --fail https://netricsports.us/game-api/health
+```
+
+On another host, copy the two `location` blocks from
+`nginx/game-locations.conf` into its existing HTTPS server block instead of
+replacing that host's configuration. No additional DNS record or certificate
+is required.
+
+## 3. Enable GitHub Pages
+
+In the GitHub repository, open **Settings > Pages** and set **Source** to
+**GitHub Actions**. Push the repository's `main` branch, or manually run the
+**Deploy frontend to GitHub Pages** workflow.
+
+The workflow automatically uses the repository name as Vite's base path. For
+example, a repository named `wss-game` owned by `username` is published at
+`https://username.github.io/wss-game/`. This repository's current remote is
+`CS3560-Team-4/WSS-Project`, so without renaming or moving it, its URL is
+`https://cs3560-team-4.github.io/WSS-Project/`.
+
+## Updating the backend
+
+After backend changes, rebuild and replace the jar, then restart:
+
+```bash
+./backend/mvnw -f backend/pom.xml clean package
+sudo install -m 644 backend/target/game-server.jar /opt/wss-game/game-server.jar
+sudo systemctl restart wss-game
+curl --fail https://netricsports.us/game-api/health
+```
+
+The backend holds one game in memory. Restarting it resets the game, and all
+simultaneous visitors currently share that same game state.

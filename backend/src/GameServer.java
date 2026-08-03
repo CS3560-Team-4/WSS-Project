@@ -1,5 +1,7 @@
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import com.google.gson.Gson;
@@ -15,9 +17,25 @@ public class GameServer {
     static final GameState game = new GameState();
 
     public static void main(String[] args) {
+        String host = System.getenv().getOrDefault("HOST", "127.0.0.1");
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
+        String[] allowedOrigins = Arrays.stream(System.getenv().getOrDefault(
+                "CORS_ALLOWED_ORIGINS",
+                "http://localhost:5173,https://cs3560-team-4.github.io"
+            ).split(","))
+            .map(String::trim)
+            .filter(origin -> !origin.isEmpty())
+            .toArray(String[]::new);
+
         var app = Javalin.create(config -> {
-            config.plugins.enableCors(cors -> cors.add(it -> it.allowHost("http://localhost:5173")));
-        }).start(8080);
+            config.plugins.enableCors(cors -> cors.add(it -> {
+                for (String origin : allowedOrigins) {
+                    it.allowHost(origin);
+                }
+            }));
+        }).start(host, port);
+
+        app.get("/health", ctx -> sendJson(ctx, Map.of("status", "ok")));
 
         // GET /state
         app.get("/state", ctx -> {
@@ -220,7 +238,7 @@ public class GameServer {
             response.put("trader", new TraderDTO(t));
             response.put("offer", new TradeOfferDTO(offer));
 
-            ctx.json(response);
+            sendJson(ctx, response);
         });
 
         // POST /accepttrade
@@ -242,7 +260,7 @@ public class GameServer {
             // End trade
             game.clearTrade();
 
-            ctx.json(Map.of("success", true));
+            sendJson(ctx, Map.of("success", true));
         });
 
         // POST /rejecttrade
@@ -260,7 +278,7 @@ public class GameServer {
             // End trade
             game.clearTrade();
 
-            ctx.json(Map.of("success", true));
+            sendJson(ctx, Map.of("success", true));
         });
 
         //** For setting player vision *//
@@ -287,6 +305,11 @@ public class GameServer {
             Player p = game.getPlayer();
             p.setVision(new QueenVision(game));
         });
+    }
+
+    static void sendJson(Context ctx, Object response) {
+        ctx.contentType("application/json");
+        ctx.result(gson.toJson(response));
     }
 
     static Map<String, Object> configurePlayerInfo(Player player) {

@@ -206,7 +206,7 @@ User input
    ↓
 React event handler
    ↓
-fetch() request to localhost:8080
+fetch() request to the configured API base URL
    ↓
 Java game-state mutation
    ↓
@@ -270,7 +270,9 @@ The backend is a Java 21 application built with Maven and exposed through Javali
 
 ## REST API
 
-The backend runs at `http://localhost:8080`.
+The backend runs at `http://127.0.0.1:8080` by default. Set `HOST` or `PORT` to
+change its listener and `CORS_ALLOWED_ORIGINS` to a comma-separated list of
+allowed frontend origins.
 
 ### Game State
 
@@ -437,7 +439,16 @@ Open the Vite address shown in the terminal, normally:
 http://localhost:5173
 ```
 
-The backend's current CORS configuration allows requests from `http://localhost:5173`, so both applications must use their expected local ports unless the configuration is updated.
+The backend allows the local Vite origin and the repository's GitHub Pages
+origin by default. Override `CORS_ALLOWED_ORIGINS` when deploying from a fork or
+another hostname.
+
+## Production Deployment
+
+The repository includes a GitHub Pages workflow, an executable backend jar,
+and deployment templates for the existing `netricsports.us` Nginx server. See
+[`deploy/README.md`](deploy/README.md) for the deployment and verification
+commands.
 
 ## Development Commands
 
