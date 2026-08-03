@@ -10,7 +10,7 @@ import StatsUI from './components/StatsUI.jsx';
 import DeathScreen from './components/DeathScreen.jsx';
 import WinScreen from './components/WinScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
-import { apiUrl } from './api.js';
+import { apiFetch } from './api.js';
 
 const App = () => {
   //**State Initialization */
@@ -69,7 +69,7 @@ const App = () => {
   //**Fetching Data
   const fetchMapData = async () => {
     try {
-      const response = await fetch(apiUrl('/state'));
+      const response = await apiFetch('/state');
       const data = await response.json();
       
       setGameState(data);
@@ -128,7 +128,7 @@ const App = () => {
     try {
       setLastMoveDirection(direction); // track last direction
 
-      const response = await fetch(apiUrl('/move'), {
+      const response = await apiFetch('/move', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -222,7 +222,7 @@ const App = () => {
     try {
       setBrainLoading(true); // start animation
 
-      const response = await fetch(apiUrl('/balancedbrain'), {
+      const response = await apiFetch('/balancedbrain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -245,7 +245,7 @@ const App = () => {
     try {
       setBrainLoading(true); // start animation
 
-      const response = await fetch(apiUrl('/explorerbrain'), {
+      const response = await apiFetch('/explorerbrain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -268,7 +268,7 @@ const App = () => {
     try {
       setBrainLoading(true); // start animation
 
-      const response = await fetch(apiUrl('/greedybrain'), {
+      const response = await apiFetch('/greedybrain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -292,7 +292,7 @@ const App = () => {
     setGameOver(false);
 
     try {
-      const response = await fetch(apiUrl('/reset'), {
+      const response = await apiFetch('/reset', {
         method: 'POST',
         headers: { 'Content-Type' : 'application/json' }
       });
@@ -315,7 +315,7 @@ const App = () => {
     setGameOver(false);
 
     try {
-      const response = await fetch(apiUrl('/nextlevel'), {
+      const response = await apiFetch('/nextlevel', {
         method: 'POST',
         headers: { 'Content-Type' : 'application/json' }
       });
@@ -345,7 +345,7 @@ const App = () => {
   //**Modal Functionality
   // trade calls to backend endpoints
   const acceptTrade = async () => {
-    await fetch(apiUrl('/accepttrade'), {
+    await apiFetch('/accepttrade', {
       method: "POST"
     });
     
@@ -354,7 +354,7 @@ const App = () => {
   };
 
   const rejectTrade = async () => {
-    await fetch(apiUrl('/rejecttrade'), {
+    await apiFetch('/rejecttrade', {
       method: "POST"
     });
     closeTraderModal();
@@ -421,7 +421,7 @@ const App = () => {
       if (autoPlayMode === "explorer") endpoint = "/explorerbrain";
       if (autoPlayMode === "greedy") endpoint = "/greedybrain";
 
-      const response = await fetch(apiUrl(endpoint), {
+      const response = await apiFetch(endpoint, {
         method: "POST",
         headers: { "Content-Type" : "application/json" }
       });
@@ -486,7 +486,7 @@ const App = () => {
         queen: "/queen-vision",
       };
 
-      const res = await fetch(apiUrl(endpointMap[type]), {
+      const res = await apiFetch(endpointMap[type], {
         method: "POST"
       });
 

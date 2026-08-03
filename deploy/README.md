@@ -93,5 +93,5 @@ sudo systemctl restart wss-game
 curl --fail https://netricsports.us/game-api/health
 ```
 
-The backend holds one game in memory. Restarting it resets the game, and all
-simultaneous visitors currently share that same game state.
+The backend holds a separate in-memory game for each browser tab. Inactive games
+expire after four hours, and restarting the backend resets all active games.

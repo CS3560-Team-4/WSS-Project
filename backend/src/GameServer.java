@@ -1,9 +1,17 @@
 import io.javalin.Javalin;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
+import io.javalin.http.ServiceUnavailableResponse;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
+import java.util.regex.Pattern;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
@@ -14,7 +22,15 @@ public class GameServer {
     static final Gson gson = new GsonBuilder()
         .registerTypeHierarchyAdapter(Terrain.class, (JsonSerializer<Terrain>) (src, typeOfSrc, context) -> 
             new JsonPrimitive(src.stringRep)).setPrettyPrinting().create();
-    static final GameState game = new GameState();
+    static final String SESSION_HEADER = "X-Game-Session";
+    static final int MAX_ACTIVE_SESSIONS = 1_000;
+    static final long SESSION_TTL_MILLIS = TimeUnit.HOURS.toMillis(4);
+    static final long SESSION_CLEANUP_INTERVAL_MILLIS = TimeUnit.MINUTES.toMillis(5);
+    static final Pattern SESSION_ID_PATTERN = Pattern.compile(
+        "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    );
+    static final ConcurrentHashMap<String, GameSession> sessions = new ConcurrentHashMap<>();
+    static final AtomicLong nextSessionCleanupAt = new AtomicLong(0);
 
     public static void main(String[] args) {
         String host = System.getenv().getOrDefault("HOST", "127.0.0.1");
@@ -38,7 +54,7 @@ public class GameServer {
         app.get("/health", ctx -> sendJson(ctx, Map.of("status", "ok")));
 
         // GET /state
-        app.get("/state", ctx -> {
+        app.get("/state", sessionHandler((ctx, game) -> {
             Terrain[][] board = game.getMap().getBoard();
 
             // board info
@@ -50,7 +66,7 @@ public class GameServer {
             response.put("player", playerInfo);
 
             // game info
-            configureGameInfo(response);
+            configureGameInfo(response, game);
 
             // add vision tiles
             Vision vision = p.getVision();
@@ -64,11 +80,11 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
-        });
+        }));
 
         // POST /reset
         // hard resets entire game
-        app.post("/reset", ctx -> {
+        app.post("/reset", sessionHandler((ctx, game) -> {
             game.reset();
             
             Terrain[][] board = game.getMap().getBoard();
@@ -84,7 +100,7 @@ public class GameServer {
             response.put("visibleTiles", vision.getVisibleCoordinates());
 
             // game info
-            configureGameInfo(response);
+            configureGameInfo(response, game);
 
              // get trader info
             response.put("activeTrader", 
@@ -94,11 +110,11 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
-        });
+        }));
 
         // POST /nextlevel
         // hard resets entire game
-        app.post("/nextlevel", ctx -> {
+        app.post("/nextlevel", sessionHandler((ctx, game) -> {
             game.nextLevel();
             
             Terrain[][] board = game.getMap().getBoard();
@@ -114,7 +130,7 @@ public class GameServer {
             response.put("visibleTiles", vision.getVisibleCoordinates());
 
             // game info
-            configureGameInfo(response);
+            configureGameInfo(response, game);
 
              // get trader info
             response.put("activeTrader", 
@@ -124,12 +140,12 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
-        });
+        }));
 
         // POST /move
         // **expected return
         // body: {"direction": "up|down|left|right"}
-        app.post("/move", ctx -> {
+        app.post("/move", sessionHandler((ctx, game) -> {
 
             // Get the latest board from map
             Terrain[][] board = game.getMap().getBoard();
@@ -150,7 +166,7 @@ public class GameServer {
             response.put("visibleTiles", vision.getVisibleCoordinates());
 
             // game info
-            configureGameInfo(response);
+            configureGameInfo(response, game);
 
              // get trader info
             response.put("activeTrader", 
@@ -160,7 +176,7 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
-        });
+        }));
 
         //--------------------------------------------------------------------------------
         //**POST brains
@@ -168,7 +184,7 @@ public class GameServer {
 
         int hintCost = 5;
         // POST /balancedbrain
-        app.post("/balancedbrain", ctx -> {
+        app.post("/balancedbrain", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
@@ -186,10 +202,10 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
-        });
+        }));
 
         // POST /explorerbrain
-        app.post("/explorerbrain", ctx -> {
+        app.post("/explorerbrain", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
@@ -206,10 +222,10 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
-        });
+        }));
 
         // POST /greedybrain
-        app.post("/greedybrain", ctx -> {
+        app.post("/greedybrain", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
             p.setGold(p.getGold() - hintCost);
 
@@ -226,11 +242,11 @@ public class GameServer {
 
             ctx.contentType("application/json");
             ctx.result(gson.toJson(response));
-        });
+        }));
 
         //**Trade endpoints
         // POST /begintrade
-        app.post("/begintrade", ctx -> {
+        app.post("/begintrade", sessionHandler((ctx, game) -> {
             Trader t = game.getActiveTrader();
             TradeOffer offer = game.getActiveOffer();
 
@@ -239,10 +255,10 @@ public class GameServer {
             response.put("offer", new TradeOfferDTO(offer));
 
             sendJson(ctx, response);
-        });
+        }));
 
         // POST /accepttrade
-        app.post("/accepttrade", ctx -> {
+        app.post("/accepttrade", sessionHandler((ctx, game) -> {
             TradeOffer offer = game.getActiveOffer();
             Player p = game.getPlayer();
 
@@ -261,10 +277,10 @@ public class GameServer {
             game.clearTrade();
 
             sendJson(ctx, Map.of("success", true));
-        });
+        }));
 
         // POST /rejecttrade
-        app.post("/rejecttrade", ctx -> {
+        app.post("/rejecttrade", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
 
             Trader t = game.getActiveTrader();
@@ -279,32 +295,88 @@ public class GameServer {
             game.clearTrade();
 
             sendJson(ctx, Map.of("success", true));
-        });
+        }));
 
         //** For setting player vision *//
         // POST /cautious-vision
-        app.post("/cautious-vision", ctx -> {
+        app.post("/cautious-vision", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
             p.setVision(new CautiousVision(game));
-        });
+        }));
 
         // POST /keen-vision
-        app.post("/keen-vision", ctx -> {
+        app.post("/keen-vision", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
             p.setVision(new KeenVision(game));
-        });
+        }));
 
         // POST /narrow-vision
-        app.post("/narrow-vision", ctx -> {
+        app.post("/narrow-vision", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
             p.setVision(new NarrowVision(game));
-        });
+        }));
 
         // POST /queen-vision
-        app.post("/queen-vision", ctx -> {
+        app.post("/queen-vision", sessionHandler((ctx, game) -> {
             Player p = game.getPlayer();
             p.setVision(new QueenVision(game));
-        });
+        }));
+    }
+
+    static Handler sessionHandler(BiConsumer<Context, GameState> handler) {
+        return ctx -> {
+            GameSession session = sessionFor(ctx);
+            synchronized (session.game) {
+                handler.accept(ctx, session.game);
+            }
+        };
+    }
+
+    static GameSession sessionFor(Context ctx) {
+        String sessionId = ctx.header(SESSION_HEADER);
+        if (sessionId == null || !SESSION_ID_PATTERN.matcher(sessionId).matches()) {
+            throw new BadRequestResponse("Missing or invalid " + SESSION_HEADER + " header");
+        }
+
+        long now = System.currentTimeMillis();
+        cleanupExpiredSessions(now);
+
+        GameSession existingSession = sessions.get(sessionId);
+        if (existingSession != null) {
+            existingSession.lastAccessMillis = now;
+            return existingSession;
+        }
+
+        if (sessions.size() >= MAX_ACTIVE_SESSIONS) {
+            throw new ServiceUnavailableResponse("Too many active game sessions");
+        }
+
+        GameSession session = sessions.computeIfAbsent(sessionId, ignored -> new GameSession(now));
+        session.lastAccessMillis = now;
+        return session;
+    }
+
+    static void cleanupExpiredSessions(long now) {
+        long scheduledCleanup = nextSessionCleanupAt.get();
+        if (now < scheduledCleanup || !nextSessionCleanupAt.compareAndSet(
+                scheduledCleanup,
+                now + SESSION_CLEANUP_INTERVAL_MILLIS
+            )) {
+            return;
+        }
+
+        sessions.entrySet().removeIf(
+            entry -> now - entry.getValue().lastAccessMillis > SESSION_TTL_MILLIS
+        );
+    }
+
+    static class GameSession {
+        final GameState game = new GameState();
+        volatile long lastAccessMillis;
+
+        GameSession(long lastAccessMillis) {
+            this.lastAccessMillis = lastAccessMillis;
+        }
     }
 
     static void sendJson(Context ctx, Object response) {
@@ -331,7 +403,7 @@ public class GameServer {
         return playerInfo;
     }
 
-    static void configureGameInfo(Map<String, Object> response) {
+    static void configureGameInfo(Map<String, Object> response, GameState game) {
         response.put("level", game.getLevel());
         response.put("currentscore", game.getCurrentScore());
         response.put("highscore", game.getHighScore());

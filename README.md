@@ -274,6 +274,10 @@ The backend runs at `http://127.0.0.1:8080` by default. Set `HOST` or `PORT` to
 change its listener and `CORS_ALLOWED_ORIGINS` to a comma-separated list of
 allowed frontend origins.
 
+Game endpoints require an `X-Game-Session` header containing a UUID. The
+frontend creates one in browser `sessionStorage`, so each visitor—and each tab—
+gets an independent in-memory game. Inactive sessions expire after four hours.
+
 ### Game State
 
 | Method | Endpoint | Description |
@@ -515,6 +519,13 @@ WSS-Project/
 
 All important game mutations occur in the Java backend. The frontend sends commands rather than directly modifying health, resources, scoring, map contents, or trader outcomes. This keeps game rules centralized and prevents the interface from becoming a second implementation of the domain logic.
 
+### Independent Browser Sessions
+
+The frontend sends a random per-tab session ID with every API request. The
+backend maps that ID to its own `GameState` and serializes concurrent requests
+within the same game, while requests for different games can run independently.
+Inactive sessions are removed automatically to bound memory usage.
+
 ### DTO-Based Responses
 
 `GameServer` converts terrain, items, traders, offers, player statistics, and game metadata into dedicated JSON-friendly response objects. This prevents the frontend from depending directly on the backend's internal class structure.
@@ -531,9 +542,8 @@ The React frontend separates map rendering, controls, statistics, guides, strate
 
 This project was completed as an academic team project and currently uses a development-oriented architecture. Potential improvements include:
 
-- Move the API base URL into environment configuration
 - Add persistent storage for users, scores, and saved games
-- Support independent game sessions instead of one global in-memory state
+- Preserve active games across backend restarts
 - Expand request validation and API error responses
 - Add broader automated frontend and backend test coverage
 - Refactor API logic into a dedicated frontend service layer
