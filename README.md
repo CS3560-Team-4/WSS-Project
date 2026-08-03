@@ -276,7 +276,9 @@ allowed frontend origins.
 
 Game endpoints require an `X-Game-Session` header containing a UUID. The
 frontend creates one in browser `sessionStorage`, so each visitor—and each tab—
-gets an independent in-memory game. Inactive sessions expire after four hours.
+gets an independent in-memory game. It also detects storage copied by a
+duplicated tab and replaces the copied UUID before making a request. Inactive
+sessions expire after four hours.
 
 ### Game State
 
