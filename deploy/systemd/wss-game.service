@@ -11,7 +11,7 @@ ExecStart=/usr/bin/java -jar /opt/wss-game/game-server.jar
 Environment=HOST=127.0.0.1
 Environment=PORT=8080
 Environment=CORS_ALLOWED_ORIGINS=https://cs3560-team-4.github.io
-Restart=on-failure
+Restart=always
 RestartSec=3
 
 NoNewPrivileges=true

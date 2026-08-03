@@ -33,6 +33,18 @@ sudo systemctl enable --now wss-game
 curl --fail http://127.0.0.1:8080/health
 ```
 
+The backend runs detached, restarts automatically, and starts again after a
+server reboot. It is independently controllable without affecting Netric:
+
+```bash
+sudo systemctl stop wss-game       # take the game backend down
+sudo systemctl start wss-game      # bring it back up
+sudo systemctl restart wss-game    # restart it after an update
+sudo systemctl disable wss-game    # do not start it on the next boot
+sudo systemctl enable wss-game     # start it on future boots
+sudo systemctl status wss-game
+```
+
 If the Pages site belongs to a different GitHub owner, change
 `CORS_ALLOWED_ORIGINS` in the service to its origin (scheme plus hostname, with
 no repository path), then run `systemctl daemon-reload` and restart the service.
