@@ -18,7 +18,7 @@ public class GameState {
     public GameState() {
         map = new Map(MAP_WIDTH, MAP_HEIGHT);
         this.player = new Player(0, 0,map);
-        player.setVision(new Vision(this)); // Use new simple Vision class
+        player.setVision(new CautiousVision(this)); // every game starts with cautious vision
 
         this.level = 1;
         this.highScore = 0;
@@ -169,8 +169,8 @@ public class GameState {
         // reset player consumption stats
         player.resetConsumedStats();
 
-        // reset player visible tiles
-        player.getVision().invalidate();
+        // every new game starts with cautious vision
+        player.setVision(new CautiousVision(this));
 
         // replace old map
         this.map = newMap;

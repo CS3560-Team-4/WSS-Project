@@ -88,19 +88,21 @@ const App = () => {
   }
   
   // initial map
+  // (a fresh session resets first so the initial fetch can't show stale vision)
+  const didInit = useRef(false);
   useEffect(() => {
-    fetchMapData();
-    openWelcomeModal();
-  }, []);
+    if (didInit.current) return;
+    didInit.current = true;
 
-  // refresh the page when user reloads page
-  useEffect(() => {
     const hasSession = sessionStorage.getItem("hasGameSession");
 
     if (!hasSession) {
+      sessionStorage.setItem("hasGameSession", "true");
       resetGame();
-      sessionStorage.setItem("hasGameSession", "true")
+    } else {
+      fetchMapData();
     }
+    openWelcomeModal();
   }, []);
 
   useEffect(() => {
@@ -299,7 +301,13 @@ const App = () => {
         headers: { 'Content-Type' : 'application/json' }
       });
 
-      const data = await response.json();
+      let data = await response.json();
+
+      // every new game starts with cautious vision
+      await apiFetch('/cautious-vision', { method: 'POST' });
+      const stateRes = await apiFetch('/state');
+      if (stateRes.ok) data = await stateRes.json();
+
       setGameState(data);
       setGameLevel(data.level);
       setCurrentScore(data.currentscore);
