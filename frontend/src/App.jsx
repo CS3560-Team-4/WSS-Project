@@ -10,6 +10,8 @@ import StatsUI from './components/StatsUI.jsx';
 import DeathScreen from './components/DeathScreen.jsx';
 import WinScreen from './components/WinScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
+import GameSidebar from './components/GameSidebar.jsx';
+import FieldNotes from './components/FieldNotes.jsx';
 
 const App = () => {
   //**State Initialization */
@@ -37,7 +39,6 @@ const App = () => {
 
   // trader modal
   const [isTraderModalOpen, setIsTraderModalOpen] = useState(false); 
-  const openTraderModal = () => setIsTraderModalOpen(true);
   const closeTraderModal = () => setIsTraderModalOpen(false);
   
   // check game load
@@ -345,7 +346,7 @@ const App = () => {
   //**Modal Functionality
   // trade calls to backend endpoints
   const acceptTrade = async () => {
-    const response = await fetch("http://localhost:8080/accepttrade", {
+    await fetch("http://localhost:8080/accepttrade", {
       method: "POST"
     });
     
@@ -501,128 +502,66 @@ const App = () => {
   } // end setVision
 
   return (
-    <div className="flex flex-col items-center justify-center font-mono pb-10 pt-2">
-      <div className="text-[75px] -translate-x-20 font-bold italic">
-        WSS
-      </div>
-      <div className="flex flex-row items-center justify-center gap-10">
-        <div className="flex flex-col items-center justify-center">
-
-          <div className="mb-2 flex flex-row items-center justify-center gap-10">
-            <div>
-              Level: {`${gameLevel}`}
-            </div>
-            <div>
-              Score: {`${currentScore}`}
-            </div>
-            <div>
-              High Score: {`${highScore}`}
-            </div>
-          </div>
-
-          <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
-          
-          <StatsUI gameState={gameState} />
-
-          {autoPlayEnabled && (
-            <div className="text-white text-xl font-bold border-white rounded shadow">
-              Auto-Play: {autoPlayMode ? autoPlayMode[0].toUpperCase() + autoPlayMode.slice(1) : ""}
-            </div>
-          )}
+    <div className="game-app">
+      <header className="site-header">
+        <div className="wordmark" aria-label="WSS">
+          <svg viewBox="0 0 44 36" fill="none" aria-hidden="true"><path d="M3 30 17 6l9 16 5-9 10 17H3Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="m12 15 5 4 5-4M27 20l4 3 4-3" stroke="currentColor" strokeWidth="1.4" /></svg>
+          <span>WSS<span className="wordmark-dot">.</span></span>
         </div>
+        <h1 className="site-name">Wilderness Survival System</h1>
+        <dl className="score-strip">
+          <div><dt>Level</dt><dd>{gameLevel.toString().padStart(2, '0')}</dd></div>
+          <div><dt>Score</dt><dd>{currentScore}</dd></div>
+          <div><dt>High Score</dt><dd>{highScore}</dd></div>
+        </dl>
+      </header>
 
-        <div className={gameOver ? "pointer-events-none opacity-50" : ""}>
-          <GameControls ref={arrowRef} move={move} />
+      <main>
+        <div className="game-layout">
+          <GameSidebar
+            onGuide={openLegendModal}
+            onBrain={openBrainModal}
+            onVision={openVisionModal}
+            onReset={resetGame}
+            autoPlayEnabled={autoPlayEnabled}
+            autoPlayMode={autoPlayMode}
+            onAutoPlay={(mode) => {
+              setAutoPlayMode(mode);
+              setAutoPlayEnabled(true);
+            }}
+            onStop={() => {
+              setAutoPlayEnabled(false);
+              setAutoPlayMode(null);
+            }}
+          />
+
+          <section className="map-section" aria-label="Expedition map" style={{ '--board-aspect': gameState?.board?.length ? gameState.board[0].length / gameState.board.length : 1 }}>
+            <div className="map-caption">
+              <h2>Expedition map</h2>
+              <div className="map-actions">
+                <span className="coordinates">{gameState?.player ? `x ${gameState.player.x + 1} / y ${gameState.player.y + 1}` : 'Charting the terrain…'}</span>
+                <button onClick={openLegendModal}>Map key <span aria-hidden="true">↗</span></button>
+              </div>
+            </div>
+            <Map ref={mapRef} gameState={gameState} lastMove={lastMoveDirection} />
+            <StatsUI gameState={gameState} />
+            {autoPlayEnabled && <div className="autoplay-status" role="status"><span className="position-dot" />Auto-Play: <span className="mode-label">{autoPlayMode}</span></div>}
+          </section>
+
+          <aside className="journey-sidebar" aria-label="Movement and field notes">
+            <section className="movement-section">
+              <p>Use WASD or the arrow keys.</p>
+              <div className={gameOver ? 'controls-unavailable' : ''}>
+                <GameControls ref={arrowRef} move={move} />
+              </div>
+              <span className="movement-caption">Or use the controls above.</span>
+            </section>
+            <FieldNotes />
+          </aside>
         </div>
-      </div>
+      </main>
+      <footer className="site-footer"><span>WSS — Wilderness Survival System</span><span>Pack light. Wander wisely.</span></footer>
 
-      {/** Menu buttons */}
-      <div className="
-        fixed top-4
-        [@media(min-width:1250px)]:left-10 [@media(min-width:1250px)]:top-1/3             
-        [@media(min-width:1250px)]:right-auto                         
-        gap-2"
-      >
-        <div className="
-          flex flex-col gap-2 p-6
-        ">
-          <div className="text-center">Menu</div>
-          <div className="
-            flex flex-row gap-2
-            [@media(min-width:1250px)]:flex-col
-          ">
-            <button
-              onClick={openLegendModal}
-              className="dev-button"
-            >
-              Guide
-            </button>
-
-            <button
-              onClick={openBrainModal}
-              className="dev-button"
-            >
-              The Brain
-            </button>
-
-            {/* Vision settings */}
-            <button
-              onClick={openVisionModal}
-              className="dev-button"
-            >
-              Set Vision
-            </button>
-
-            <button
-              className="dev-button"
-              onClick={() => {
-                setAutoPlayMode("balanced")
-                setAutoPlayEnabled(true);
-              }}
-            >
-              Auto-Play (Balanced)
-            </button>
-            <button
-              className="dev-button"
-              onClick={() => {
-                setAutoPlayMode("explorer")
-                setAutoPlayEnabled(true);
-              }}
-            >
-              Auto-Play (Explorer)
-            </button>
-            <button
-              className="dev-button"
-              onClick={() => {
-                setAutoPlayMode("greedy")
-                setAutoPlayEnabled(true);
-              }}
-            >
-              Auto-Play (Greedy)
-            </button>
-
-            {autoPlayEnabled && (
-              <button
-                className="dev-button"
-                onClick={() => {
-                  setAutoPlayEnabled(false);
-                  setAutoPlayMode(null);
-                }}
-              >
-                Stop Auto-Play
-              </button>
-            )}
-
-            <button
-              onClick={resetGame}
-              className="dev-button bg-red-600 hover:bg-red-700"
-            >
-              Reset Game
-            </button>
-          </div>
-        </div>
-      </div>
-      
       {/* Modals */}
       <Modal isOpen={isWelcomeModalOpen} onClose={closeWelcomeModal} closeButton={false}>
         <WelcomeScreen onStart={closeWelcomeModal} />
@@ -638,7 +577,7 @@ const App = () => {
         />
       </Modal>
 
-      <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal} closeButton={true}>
+      <Modal isOpen={isBrainModalOpen} onClose={closeBrainModal} closeButton={true} title="The Brain">
         <BrainUI 
           hint={brainHint}
           loading={brainLoading}
@@ -650,17 +589,16 @@ const App = () => {
       </Modal>
 
       {/* Vision Modal */}
-      <Modal isOpen={isVisionModalOpen} onClose={closeVisionModal} closeButton={true} width="max-w-md">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-bold text-center mb-4">Set Player Vision</h2>
-          <button className="dev-button" onClick={() => setVision("cautious")}>Cautious Vision</button>
-          <button className="dev-button" onClick={() => setVision("keen")}>Keen Vision</button>
-          <button className="dev-button" onClick={() => setVision("narrow")}>Narrow Vision</button>
-          <button className="dev-button" onClick={() => setVision("queen")}>Queen Vision</button>
+      <Modal isOpen={isVisionModalOpen} onClose={closeVisionModal} closeButton={true} width="max-w-md" title="Set Player Vision">
+        <div className="vision-options">
+          <button className="secondary-button" onClick={() => setVision("cautious")}>Cautious Vision</button>
+          <button className="secondary-button" onClick={() => setVision("keen")}>Keen Vision</button>
+          <button className="secondary-button" onClick={() => setVision("narrow")}>Narrow Vision</button>
+          <button className="secondary-button" onClick={() => setVision("queen")}>Queen Vision</button>
         </div>
       </Modal>
 
-      <Modal isOpen={isLegendModalOpen} onClose={closeLegendModal} closeButton={true} width={'max-w-6xl'}>
+      <Modal isOpen={isLegendModalOpen} onClose={closeLegendModal} closeButton={true} width={'max-w-6xl'} title="The WSS Guide">
         <Legend />
       </Modal>
 
@@ -668,6 +606,8 @@ const App = () => {
         isOpen={isDeathScreenOpen} 
         onClose={closeDeathScreen} 
         closeButton={true}
+        title="You have died"
+        titleClassName="result-title--death"
       >
         <DeathScreen resetGame={resetGame} closeDeathScreen={closeDeathScreen} />
       </Modal>

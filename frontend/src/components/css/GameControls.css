@@ -1,9 +1,80 @@
-@import 'tailwindcss';
+.game-controls {
+  --move-size: 44px;
 
-@layer components {
-  .button {
-    @apply px-3 py-1 bg-amber-500 rounded font-medium 
-      cursor-pointer hover:bg-amber-600 hover:outline-2
-      hover:font-extrabold hover:scale-110 transition-transform;
-  }
+  display: grid;
+  grid-template-areas:
+    '. up .'
+    'left center right'
+    '. down .';
+  grid-template-columns: repeat(3, var(--move-size));
+  grid-template-rows: repeat(3, var(--move-size));
+  place-items: center;
+  gap: 4px;
+  width: max-content;
+  margin: 14px auto;
+  touch-action: manipulation;
+}
+
+.movement-button {
+  display: grid;
+  width: var(--move-size);
+  height: var(--move-size);
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--primary);
+  border-radius: 7px;
+  background: var(--primary);
+  color: var(--on-primary);
+  cursor: pointer;
+  transition: none;
+}
+
+.movement-button:hover {
+  border-color: var(--primary-hover);
+  background: var(--primary-hover);
+}
+
+.movement-button:active {
+  border-color: var(--primary-active);
+  background: var(--primary-active);
+}
+
+.movement-button:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 3px;
+}
+
+.movement-button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.movement-up {
+  grid-area: up;
+}
+
+.movement-left {
+  grid-area: left;
+}
+
+.movement-right {
+  grid-area: right;
+}
+
+.movement-down {
+  grid-area: down;
+}
+
+.movement-hub {
+  grid-area: center;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--line, #c8c3ac);
+  border-radius: 50%;
+  background: var(--canvas, #ebe6d4);
 }

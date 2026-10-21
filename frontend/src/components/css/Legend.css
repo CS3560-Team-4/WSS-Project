@@ -1,63 +1,146 @@
-@import 'tailwindcss';
+.wss-guide {
+  display: grid;
+  gap: 1.4rem;
+  color: var(--ink, #303c32);
+}
 
-@layer components {
-  .icon-div {
-    @apply flex flex-row items-center gap-2 border p-3 min-w-[225px] justify-between;
+.guide-section {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.guide-section-title {
+  margin: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--line, #c9c7bc);
+  color: var(--ink);
+  font-family: var(--font-display, Georgia, "Times New Roman", serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.terrain-list,
+.item-list,
+.trader-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  column-gap: 1.25rem;
+}
+
+.terrain-entry,
+.item-entry,
+.trader-entry {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.15rem;
+  border-bottom: 1px solid var(--line, #c9c7bc);
+}
+
+.terrain-name,
+.guide-entry-name,
+.trader-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.terrain-name span:last-child,
+.guide-entry-name span,
+.trader-entry span {
+  overflow-wrap: anywhere;
+}
+
+.guide-terrain-swatch {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink, #303c32);
+}
+
+.terrain-icon { background: #dddcc8; }
+.desert-icon { background: #d4bd87; }
+.dmv-icon { background: #a2b383; }
+.mountain-icon { background: #b5a18b; }
+.frost-icon { background: #a9c0be; }
+.swamp-icon { background: #718570; }
+.goal-icon { background: #465c42; }
+
+.goal-icon img {
+  width: 1rem;
+  height: 1rem;
+  filter: invert(1) brightness(2);
+}
+
+.guide-effects {
+  display: grid;
+  gap: 0.1rem;
+  flex: 0 0 auto;
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.guide-effects > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.42rem;
+}
+
+.guide-effects dt,
+.guide-effects dd {
+  margin: 0;
+}
+
+.guide-effects dt {
+  color: var(--muted, #5b665c);
+}
+
+.guide-effects dd {
+  min-width: 2.25ch;
+  text-align: right;
+}
+
+.guide-effects .resource-water { color: var(--accent-ink); }
+.guide-effects .resource-energy { color: var(--success); }
+.guide-effects .resource-health { color: var(--danger); }
+
+.guide-sprite {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.trader-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+
+.trader-entry {
+  justify-content: flex-start;
+}
+
+@media (max-width: 420px) {
+  .wss-guide {
+    gap: 1rem;
   }
 
-  .trader-div {
-    @apply flex flex-row items-center justify-center gap-2 border p-3;
+  .terrain-list,
+  .item-list,
+  .trader-list {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .legend-icon {
-    @apply size-6 border border-black flex items-center justify-center;
-  }
-
-  .item-icon {
-    @apply size-8;
-  }
-
-  .player-icon {
-    @apply bg-gray-800 border-3 border-white text-white flex justify-center items-center; 
-  }
-
-  .icon-desc {
-    @apply ml-3 text-right;
-  }
-
-  .legend-sub-heading {
-    @apply underline underline-offset-4;
-  }
-
-  .legend-section {
-    @apply flex flex-row gap-6;
-  }
-  
-  .terrain-icon {
-    @apply bg-gray-300;
-  }
-
-  .desert-icon {
-    @apply bg-amber-200;
-  }
-
-  .dmv-icon {
-    @apply bg-green-400;
-  }
-
-  .frost-icon {
-    @apply bg-blue-400;
-  }
-
-  .mountain-icon {
-    @apply bg-amber-700 border-2 border-green-600;
-  }
-
-  .swamp-icon {
-    @apply bg-green-800;
-  }
-
-  .goal-icon {
-    @apply bg-black border-2 border-white;
+  .terrain-entry,
+  .item-entry {
+    padding-inline: 0;
   }
 }

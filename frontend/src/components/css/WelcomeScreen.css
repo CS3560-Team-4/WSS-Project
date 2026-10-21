@@ -1,0 +1,79 @@
+.welcome-screen {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  max-width: 39rem;
+  margin-inline: auto;
+  color: var(--ink, #303c32);
+  text-align: center;
+}
+
+.welcome-heading-row {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  align-items: center;
+  justify-items: start;
+  gap: 0.9rem;
+  text-align: left;
+}
+
+.welcome-player {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.welcome-heading-row .dialog-title {
+  margin: 0;
+  font-size: clamp(1.55rem, 6vw, 2.2rem);
+  line-height: 1.1;
+}
+
+.welcome-expansion {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.welcome-copy {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  max-width: 63ch;
+}
+
+.welcome-copy .dialog-copy {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.welcome-prompt {
+  margin: 0.1rem 0 0;
+  color: var(--ink);
+  font-family: var(--font-display, Georgia, "Times New Roman", serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.welcome-start {
+  min-width: 9.5rem;
+  margin-top: 0.15rem;
+}
+
+@media (max-width: 380px) {
+  .welcome-screen {
+    gap: 1rem;
+  }
+
+  .welcome-heading-row {
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .welcome-player {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}

@@ -1,21 +1,153 @@
-@import 'tailwindcss';
+.trader-ui {
+  display: grid;
+  justify-items: center;
+  gap: 1.3rem;
+  color: var(--ink, #303c32);
+}
 
-@layer components {
-  .trade-label {
-    @apply text-amber-600 text-center text-3xl font-extrabold mb-6;
+.trade-title {
+  margin: 0;
+  text-align: center;
+}
+
+.trade-parties {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.trade-person,
+.trade-offer {
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.trade-person-name {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-display, Georgia, "Times New Roman", serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.trade-details {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.trade-details > div,
+.trade-price {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.trade-details dt,
+.trade-price span {
+  color: var(--muted, #5b665c);
+}
+
+.trade-details dd {
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.trade-offer {
+  display: flex;
+  min-height: 9.5rem;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: var(--surface);
+}
+
+.trade-overline,
+.trade-item,
+.trade-price {
+  margin: 0;
+}
+
+.trade-overline {
+  color: var(--muted, #5b665c);
+  font-size: 0.9rem;
+}
+
+.trade-item {
+  margin-top: 0.35rem;
+  font-family: var(--font-display, Georgia, "Times New Roman", serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.trade-price {
+  justify-content: center;
+  margin-top: 0.75rem;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.trade-price strong {
+  color: var(--ink, #ae864b);
+}
+
+.trade-warning {
+  margin: -0.3rem 0 0;
+  color: var(--danger, #9a453d);
+  font-weight: 700;
+}
+
+.trade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.trade-actions button {
+  min-width: 7rem;
+}
+
+.trade-actions .secondary-button {
+  color: var(--ink);
+  background: var(--canvas);
+  border-color: var(--control-line);
+}
+
+.trade-actions .secondary-button:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.trade-actions .secondary-button:active:not(:disabled) { background: var(--selected); }
+
+.trade-accept:disabled {
+  border-color: var(--control-line);
+  color: var(--muted, #5b665c);
+  background: var(--disabled-surface);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.trade-loading {
+  margin: 0;
+  color: var(--ink, #303c32);
+}
+
+@media (max-width: 560px) {
+  .trade-parties {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
   }
 
-  .info {
-    background: rgba(0, 0, 0, 0.4);
-    @apply text-white border-[#87afff]
-  }
-
-  .offer-box {
-    background: rgba(0, 0, 0, 0.4);
-    @apply text-white border-amber-600;
-  }
-
-  .accept-button, .reject-button {
-    @apply text-lg cursor-pointer;
+  .trade-offer {
+    min-height: 0;
   }
 }

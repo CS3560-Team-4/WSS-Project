@@ -1,4 +1,4 @@
-import '../css/App.css';
+import './css/ResultScreen.css';
 
 const WinScreen = ({ nextLevel, closeWinScreen }) => {
   const handleClick = () => {
@@ -7,16 +7,13 @@ const WinScreen = ({ nextLevel, closeWinScreen }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <div className="text-3xl font-extrabold text-amber-600">Level Complete!</div>
-      <button
-        onClick={handleClick}
-        className="dev-button text-xl"
-      >
+    <section className="result-screen">
+      <h1 className="dialog-title result-title result-title--win">Level Complete!</h1>
+      <button type="button" onClick={handleClick} className="primary-button">
         Next Level
       </button>
-    </div>
-  )
-}
+    </section>
+  );
+};
 
 export default WinScreen;

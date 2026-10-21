@@ -1,47 +1,137 @@
-@import 'tailwindcss';
+.map-board {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: min(100%, 610px);
+  margin-inline: auto;
+  padding: 5px;
+  overflow: hidden;
+  border: 1px solid var(--line, #c8c3ac);
+  border-radius: 8px;
+  background: var(--surface, #f5f1e4);
+  box-shadow: 0 2px 6px rgb(52 55 42 / 6%);
+}
 
-@layer components {
-  .player-cell {
-    @apply text-white bg-transparent border-black border-2;
-  }
-  
-  .terrain-cell {
-    @apply bg-gray-300 border border-black;
-  }
+.map-loading {
+  min-height: 180px;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted, #626550);
+  font-family: var(--font-body, sans-serif);
+  text-align: center;
+}
 
-  .empty-cell {
-    @apply bg-gray-300 border border-black;
-  }
+.map-row {
+  display: grid;
+  grid-template-columns: repeat(var(--map-columns), minmax(0, 1fr));
+  gap: 1px;
+}
 
-  .desert-cell {
-    @apply bg-amber-200 border border-black;
-  }
+.map-tile {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(59 66 48 / 14%);
+}
 
-  .dmv-cell {
-    @apply bg-green-400 border border-black;
-  }
+.map-tile::before,
+.map-tile::after {
+  position: absolute;
+  z-index: 0;
+  content: '';
+  background: var(--tile-mark, #85876f);
+  opacity: 0.22;
+  pointer-events: none;
+}
 
-  .frost-cell {
-    @apply bg-blue-400 border border-black;
-  }
+.map-tile::before {
+  top: 22%;
+  left: 23%;
+  width: 8%;
+  height: 8%;
+  border-radius: 2px;
+}
 
-  .mountain-cell {
-    @apply bg-amber-700 border-2 border-green-600;
-  }
+.map-tile::after {
+  top: 62%;
+  left: 59%;
+  width: 14%;
+  height: 1px;
+  transform: rotate(-28deg);
+}
 
-  .swamp-cell {
-    @apply bg-green-800 border-2 border-black;
-  }
+.terrain-cell,
+.empty-cell {
+  --tile-mark: #85876f;
+  background: #dddcc8;
+}
 
-  .goal-cell {
-    @apply bg-black border-2 border-white;
-  }
+.desert-cell {
+  --tile-mark: #8b7040;
+  background: #d4bd87;
+}
 
-  .flip-horizontal {
-    transform: scaleX(-1);
-  }
+.dmv-cell {
+  --tile-mark: #526c45;
+  background: #a2b383;
+}
 
-  .fog-tile {
-    @apply opacity-40;
-  }
+.frost-cell {
+  --tile-mark: #547377;
+  background: #a9c0be;
+}
+
+.mountain-cell {
+  --tile-mark: #796754;
+  background: #b5a18b;
+}
+
+.swamp-cell {
+  --tile-mark: #364c3a;
+  background: #718570;
+}
+
+.goal-cell {
+  --tile-mark: #d2d6b7;
+  background: #465c42;
+}
+
+.fog-tile {
+  opacity: 0.4;
+}
+
+.map-sprite {
+  z-index: 1;
+  object-fit: contain;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.map-sprite-goal {
+  width: 62%;
+  height: 62%;
+  filter: invert(1) brightness(2);
+}
+
+.map-sprite-object {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+}
+
+.map-sprite-player {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 74%;
+  height: 74%;
+  transform: translate(-50%, -50%);
+}
+
+.flip-horizontal {
+  transform: translate(-50%, -50%) scaleX(-1);
 }

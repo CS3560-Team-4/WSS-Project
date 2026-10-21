@@ -16,92 +16,70 @@ const BrainUI = ({ hint, loading, onBalanced, onExplorer, onGreedy, gold }) => {
   const triggerHint = () => {
     if (gold < hintCost) return;
 
-    if (selectedBrain === "balanced") onBalanced();
-    if (selectedBrain === "explorer") onExplorer();
-    if (selectedBrain === "greedy") onGreedy();
+    if (selectedBrain === 'balanced') onBalanced();
+    if (selectedBrain === 'explorer') onExplorer();
+    if (selectedBrain === 'greedy') onGreedy();
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="brain-label">THE BRAIN</div>
-
-      {/* Default desc when no hint */}
+    <section className="brain-ui">
       {!hint && !loading && (
-        <div className="flex flex-col items-center">
-          <div className="brain-desc">
-            The brain will point you towards the right direction...
-          </div>
-          <div className="brain-desc mt-4">
-            Cost: {`${hintCost}`} <span className="text-amber-300">gold</span>
-          </div>
-          <div className="brain-desc mt-8 mb-2">
-            Select your brain type
-          </div>
+        <div className="brain-intro">
+          <p className="dialog-copy">The brain will point you towards the right direction...</p>
+          <p className="brain-cost">Cost: <span>{hintCost} gold</span></p>
+          <p className="brain-instruction">Select your brain type</p>
         </div>
       )}
 
-      {/**Brain Selector Buttons */}
-      <div className="flex gap-4 mb-1">
+      <div className="brain-choices" role="group" aria-label="Brain type">
         <button
-          onClick={() => handleSelect("balanced")}
-          className={`hint-button ${selectedBrain === "balanced" ? "brain-selected" : ""}`}
+          type="button"
+          onClick={() => handleSelect('balanced')}
+          className={`brain-choice ${selectedBrain === 'balanced' ? 'brain-choice--selected' : ''}`}
+          aria-pressed={selectedBrain === 'balanced'}
         >
           Balanced
         </button>
-
         <button
-          onClick={() => handleSelect("explorer")}
-          className={`hint-button ${selectedBrain === "explorer" ? "brain-selected" : ""}`}
+          type="button"
+          onClick={() => handleSelect('explorer')}
+          className={`brain-choice ${selectedBrain === 'explorer' ? 'brain-choice--selected' : ''}`}
+          aria-pressed={selectedBrain === 'explorer'}
         >
           Explorer
         </button>
-
         <button
-          onClick={() => handleSelect("greedy")}
-          className={`hint-button ${selectedBrain === "greedy" ? "brain-selected" : ""}`}
+          type="button"
+          onClick={() => handleSelect('greedy')}
+          className={`brain-choice ${selectedBrain === 'greedy' ? 'brain-choice--selected' : ''}`}
+          aria-pressed={selectedBrain === 'greedy'}
         >
           Greedy
         </button>
       </div>
 
-      {/**Not enough gold message */}
       {selectedBrain && gold < hintCost && (
-        <div className="brain-desc text-red-600 mt-2">
-          Not enough gold to use hints.
-        </div>
+        <p className="brain-warning" role="status">Not enough gold to use hints.</p>
       )}
 
-      {/** Collapsible Brain Panel */}
       {selectedBrain && gold >= hintCost && (
-        <div className="w-full flex flex-col items-center justify-center px-4 py-3 mt-5 border border-gray-600 rounded-lg bg-black-40">
-          <div className="brain-desc capitalize text-center">
-            {selectedBrain} Brain Selected
-          </div>
+        <div className="brain-result">
+          <p className="brain-selected-label">{selectedBrain} Brain Selected</p>
 
-          {/**Loading Spinner */}
-          {loading && (
-            <div className="spinner"></div>
-          )}
+          {loading && <div className="brain-spinner" role="status" aria-label="Generating hint" />}
 
-          {/**Hint Result */}
           {hint && !loading && (
-            <div className="brain-desc hint-animate">
+            <p className="brain-hint" aria-live="polite">
               Suggested Move: {formatMove(hint)}
-            </div>
+            </p>
           )}
 
-          <button
-            className="hint-button mt-4 mb-2"
-            onClick={triggerHint}
-          >
+          <button type="button" className="primary-button brain-generate" onClick={triggerHint}>
             Generate Hint
           </button>
-          
         </div>
       )}
-
-      
-    </div>
+    </section>
   );
 };
 

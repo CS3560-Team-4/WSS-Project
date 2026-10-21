@@ -1,7 +1,110 @@
 @import 'tailwindcss';
 
-@layer base {
-  body {
-    @apply bg-slate-900 text-white flex flex-col items-center justify-center h-screen;
-  }
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('/fonts/instrument-sans.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --navy: #101820;
+  --white: #f5f2ea;
+  --periwinkle: #a5b4fc;
+  --coral: #ff8a75;
+  --mint: #72d6c9;
+  --gold: #efc34e;
+  --gold-ink: #806000;
+  --canvas: var(--navy);
+  --surface: #1b2732;
+  --surface-hover: #293847;
+  --ink: var(--white);
+  --muted: #b8c3cc;
+  --line: #3d4d59;
+  --control-line: #7c8e9a;
+  --primary: var(--periwinkle);
+  --primary-hover: #bdcaff;
+  --primary-active: #91a3ec;
+  --on-primary: var(--navy);
+  --accent-ink: var(--periwinkle);
+  --focus: var(--periwinkle);
+  --selected: #253147;
+  --success: var(--mint);
+  --danger: var(--coral);
+  --danger-surface: #3e2728;
+  --disabled-surface: #293743;
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-display: 'Instrument Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--canvas);
+  font-synthesis: weight;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: dark;
+}
+
+.modal-dialog, .stats-ui {
+  --canvas: var(--white);
+  --surface: #e6e7e8;
+  --surface-hover: #d7dce5;
+  --ink: var(--navy);
+  --muted: #4c5b66;
+  --line: #c8cdd0;
+  --control-line: #657481;
+  --accent-ink: #3c4e9b;
+  --focus: var(--navy);
+  --selected: #e1e5f5;
+  --success: #17675e;
+  --danger: #a6332e;
+  --danger-surface: #ffe1db;
+  --disabled-surface: #dfe2e5;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+button:disabled { cursor: not-allowed; opacity: 1; background: var(--disabled-surface); color: var(--muted); border-color: var(--control-line); }
+a { color: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+::selection { background: var(--primary); color: var(--on-primary); }
+* { scrollbar-width: thin; scrollbar-color: var(--control-line) var(--canvas); }
+h1, h2, h3, p { margin: 0; }
+img { max-width: 100%; }
+button { transition: background-color 140ms ease, color 140ms ease; }
+.ui-icon { width: 20px; height: 20px; flex: 0 0 auto; }
+
+.primary-button, .secondary-button, .dev-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.primary-button { background: var(--primary); color: var(--on-primary); border-color: var(--navy); font-weight: 700; }
+.primary-button:hover:not(:disabled) { background: var(--primary-hover); }
+.primary-button:active:not(:disabled) { background: var(--primary-active); }
+.secondary-button, .dev-button { background: var(--canvas); color: var(--ink); border-color: var(--control-line); }
+.secondary-button:hover:not(:disabled), .dev-button:hover:not(:disabled) { background: var(--surface-hover); }
+.secondary-button:active:not(:disabled), .dev-button:active:not(:disabled) { background: var(--selected); }
+.dialog-title { font-family: var(--font-display); font-size: 32px; font-weight: 700; letter-spacing: -.025em; line-height: 1.15; text-wrap: balance; }
+.dialog-copy { color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }

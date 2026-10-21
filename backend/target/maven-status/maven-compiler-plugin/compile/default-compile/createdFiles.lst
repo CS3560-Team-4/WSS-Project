@@ -14,8 +14,8 @@ Trader$1.class
 DMV.class
 ItemType.class
 Path.class
-QueenVision.class
 Desert.class
+QueenVision.class
 GameServer$TradeOfferDTO.class
 Goal.class
 Terrain.class
@@ -27,13 +27,13 @@ Vision.class
 KeenVision.class
 GreedyBrain.class
 OfferResult.class
-GameServer.class
 BalancedBrain.class
+GameServer.class
 TraderType.class
-GameServer$MoveRequest.class
 GameServer$TileDTO.class
+GameServer$MoveRequest.class
+Move.class
 GameServer$TraderDTO.class
 Swamp.class
-Move.class
 TradeOffer.class
 MoodState.class

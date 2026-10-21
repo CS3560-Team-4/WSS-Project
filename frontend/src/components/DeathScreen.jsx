@@ -1,4 +1,4 @@
-import '../css/App.css';
+import './css/ResultScreen.css';
 
 const DeathScreen = ({ resetGame, closeDeathScreen }) => {
   const handleClick = () => {
@@ -7,16 +7,12 @@ const DeathScreen = ({ resetGame, closeDeathScreen }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <div className="text-3xl text-red-600 [--stroke:0.2px_white] [-webkit-text-stroke:var(--stroke)] font-bold">You have died</div>
-      <button
-        onClick={handleClick}
-        className="dev-button text-xl"
-      >
+    <section className="result-screen">
+      <button type="button" onClick={handleClick} className="primary-button">
         Play Again
       </button>
-    </div>
-  )
-}
+    </section>
+  );
+};
 
 export default DeathScreen;

@@ -1,239 +1,92 @@
-import './css/Legend.css'
+import './css/Legend.css';
 import goalImg from '../assets/exit.png';
 
+const terrainEntries = [
+  { name: 'Basic', className: 'terrain-icon', water: '-1', energy: '-1' },
+  { name: 'Desert', className: 'desert-icon', water: '-6', energy: '-2' },
+  { name: 'DMV', className: 'dmv-icon', water: '-1', energy: '-10' },
+  { name: 'Mountain', className: 'mountain-icon', water: '-2', energy: '-3' },
+  { name: 'Frost', className: 'frost-icon', water: '-1', energy: '-6' },
+  { name: 'Swamp', className: 'swamp-icon', water: '-1', energy: '-3' },
+  { name: 'Goal', className: 'goal-icon', water: '-1', energy: '-1', goal: true },
+];
+
+const itemEntries = [
+  { name: 'Medicine', sprite: new URL('../assets/items/MEDICINE.png', import.meta.url).href, resource: 'Health', amount: '+25' },
+  { name: 'Turkey', sprite: new URL('../assets/items/TURKEY.png', import.meta.url).href, resource: 'Energy', amount: '+25' },
+  { name: 'Water Bottle', sprite: new URL('../assets/items/WATER_BOTTLE.png', import.meta.url).href, resource: 'Water', amount: '+25' },
+  { name: 'Energy Drink', sprite: new URL('../assets/items/ENERGY_DRINK.png', import.meta.url).href, resource: 'Energy', amount: '+10' },
+];
+
+const traderEntries = [
+  { name: 'Friendly', sprite: new URL('../assets/traders/Friendly.png', import.meta.url).href },
+  { name: 'Generous', sprite: new URL('../assets/traders/Generous.png', import.meta.url).href },
+  { name: 'Greedy', sprite: new URL('../assets/traders/Greedy.png', import.meta.url).href },
+  { name: 'Lowballer', sprite: new URL('../assets/traders/Lowballer.png', import.meta.url).href },
+];
+
 const Legend = () => {
-
-  const itemSprites = {
-    WATER_BOTTLE: new URL('../assets/items/WATER_BOTTLE.png', import.meta.url).href,
-    MEDICINE: new URL('../assets/items/MEDICINE.png', import.meta.url).href,
-    ENERGY_DRINK: new URL('../assets/items/ENERGY_DRINK.png', import.meta.url).href,
-    TURKEY: new URL('../assets/items/TURKEY.png', import.meta.url).href,
-  };
-
-  const traderSprites = {
-    Friendly: new URL('../assets/traders/Friendly.png', import.meta.url).href,
-    Generous: new URL('../assets/traders/Generous.png', import.meta.url).href,
-    Greedy: new URL('../assets/traders/Greedy.png', import.meta.url).href,
-    Lowballer: new URL('../assets/traders/Lowballer.png', import.meta.url).href,
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="text-center w-full font-bold text-3xl mb-1">The WSS Guide</div>
-      <div className="flex flex-col items-center justify-center p-2 gap-5 mb-8 mt-2">
-        <div className="flex flex-col items-center justify-center gap-4 w-full h-full">
-          <div className="legend-sub-heading">
-            Terrains
-          </div>
-          <div className="legend-section">
-            <div className="icon-div">
-              <div className="flex gap-2">
-                <div className="legend-icon terrain-icon">
-                </div>
-                Basic
+    <section className="wss-guide">
+      <section className="guide-section" aria-labelledby="guide-terrains">
+        <h2 className="guide-section-title" id="guide-terrains">Terrains</h2>
+        <div className="terrain-list">
+          {terrainEntries.map(({ name, className, water, energy, goal }) => (
+            <article className="terrain-entry" key={name}>
+              <div className="terrain-name">
+                <span className={`guide-terrain-swatch ${className}`} aria-hidden="true">
+                  {goal && <img src={goalImg} alt="" width="16" height="16" />}
+                </span>
+                <span>{name}</span>
               </div>
-              <div className="icon-desc">
+              <dl className="guide-effects">
                 <div>
-                  <span className="text-blue-300">Water</span> -1
-                </div>
-                <div>
-                  <span className="text-green-400">Energy</span> -1
-                </div>
-              </div>
-            </div>
-            <div className="icon-div">
-              <div className="flex gap-2">
-                <div className="legend-icon desert-icon">
-                </div>
-                Desert
-              </div>
-              <div className="icon-desc">
-                <div>
-                  <span className="text-blue-300">Water</span> -6
+                  <dt className="resource-water">Water</dt>
+                  <dd>{water}</dd>
                 </div>
                 <div>
-                  <span className="text-green-400">Energy</span> -2
+                  <dt className="resource-energy">Energy</dt>
+                  <dd>{energy}</dd>
                 </div>
-              </div>
-            </div>
-            <div className="icon-div">
-              <div className="flex gap-2">
-                <div className="legend-icon dmv-icon">
-                </div>
-                DMV
-              </div>
-              <div className="icon-desc">
-                <div>
-                  <span className="text-blue-300">Water</span> -1
-                </div>
-                <div>
-                  <span className="text-green-400">Energy</span> -10
-                </div>
-              </div>
-            </div>
-            <div className="icon-div">
-              <div className="flex gap-2">
-                <div className="legend-icon mountain-icon">
-                </div>
-                Mountain
-              </div>
-              <div className="icon-desc">
-                <div>
-                  <span className="text-blue-300">Water</span> -2
-                </div>
-                <div>
-                  <span className="text-green-400">Energy</span> -3
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="legend-section">
-            <div className="icon-div">
-              <div className="flex gap-2">
-                <div className="legend-icon frost-icon">
-                </div>
-                Frost
-              </div>
-              <div className="icon-desc">
-                <div>
-                  <span className="text-blue-300">Water</span> -1
-                </div>
-                <div>
-                  <span className="text-green-400">Energy</span> -6
-                </div>
-              </div>
-            </div>
-            <div className="icon-div">
-              <div className="flex gap-2">
-                <div className="legend-icon swamp-icon">
-                </div>
-                Swamp
-              </div>
-              <div className="icon-desc">
-                <div>
-                  <span className="text-blue-300">Water</span> -1
-                </div>
-                <div>
-                  <span className="text-green-400">Energy</span> -3
-                </div>
-              </div>
-            </div>
-            <div className="icon-div">
-              <div className="flex gap-2">
-                <div className="legend-icon goal-icon">
-                  <img src={goalImg} className="invert brightness-200 size-4" />
-                </div>
-                Goal
-              </div>
-              <div className="icon-desc">
-                  <div>
-                    <span className="text-blue-300">Water</span> -1
-                  </div>
-                  <div>
-                    <span className="text-green-400">Energy</span> -1
-                  </div>
-                </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center justify-center gap-4">
-            <div className="legend-sub-heading mt-3">
-              Items
-            </div>
-            <div className="legend-section">
-              <div className="icon-div min-w-70">
-                <div className="flex gap-2">
-                  <img src={itemSprites["MEDICINE"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Medicine
-                  </div>
-                </div>
-                  <div className="icon-desc">
-                    <span className="text-red-400">Health</span> +25
-                  </div>
-              </div>
-              <div className="icon-div min-w-70">
-                <div className="flex gap-2">
-                  <img src={itemSprites["TURKEY"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Turkey
-                  </div>
-                </div>
-                  <div className="icon-desc">
-                    <span className="text-green-400">Energy</span> +25
-                  </div>
-              </div>
-            </div>
-            <div className="legend-section">
-              <div className="icon-div min-w-70">
-                <div className="flex gap-2">
-                  <img src={itemSprites["WATER_BOTTLE"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Water Bottle
-                  </div>
-                </div>
-                  <div className="icon-desc">
-                    <span className="text-blue-300">Water</span> +25
-                  </div>
-              </div>
-              <div className="icon-div min-w-70">
-                <div className="flex gap-2">
-                  <img src={itemSprites["ENERGY_DRINK"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Energy Drink
-                  </div>
-                </div>
-                  <div className="icon-desc">
-                    <span className="text-green-400">Energy</span> +10
-                  </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center justify-center gap-4">
-            <div className="legend-sub-heading mt-3">
-              Traders
-            </div>
-            <div className="legend-section">
-              <div className="trader-div">
-                <div className="flex gap-2">
-                  <img src={traderSprites["Friendly"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Friendly
-                  </div>
-                </div>
-              </div>
-              <div className="trader-div">
-                <div className="flex gap-2">
-                  <img src={traderSprites["Generous"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Generous
-                  </div>
-                </div>
-              </div>
-              <div className="trader-div">
-                <div className="flex gap-2">
-                  <img src={traderSprites["Greedy"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Greedy
-                  </div>
-                </div>
-              </div>
-              <div className="trader-div">
-                <div className="flex gap-2">
-                  <img src={traderSprites["Lowballer"]} className="item-icon"/>
-                  <div className="translate-y-1">
-                    Lowballer
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+              </dl>
+            </article>
+          ))}
         </div>
-      </div>
-    </div>
-  )
+      </section>
+
+      <section className="guide-section" aria-labelledby="guide-items">
+        <h2 className="guide-section-title" id="guide-items">Items</h2>
+        <div className="item-list">
+          {itemEntries.map(({ name, sprite, resource, amount }) => (
+            <article className="item-entry" key={name}>
+              <div className="guide-entry-name">
+                <img className="guide-sprite" src={sprite} alt="" width="32" height="32" />
+                <span>{name}</span>
+              </div>
+              <dl className="guide-effects">
+                <div>
+                  <dt className={`resource-${resource.toLowerCase()}`}>{resource}</dt>
+                  <dd>{amount}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="guide-section" aria-labelledby="guide-traders">
+        <h2 className="guide-section-title" id="guide-traders">Traders</h2>
+        <div className="trader-list">
+          {traderEntries.map(({ name, sprite }) => (
+            <div className="trader-entry" key={name}>
+              <img className="guide-sprite" src={sprite} alt="" width="32" height="32" />
+              <span>{name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </section>
+  );
 };
 
 export default Legend;
