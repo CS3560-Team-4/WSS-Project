@@ -40,6 +40,10 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
   }
 
   const mapData = gameState.board;
+  const { x: px, y: py } = gameState.player;
+  const visibleKeys = new Set(gameState.visibleTiles.map(([vx, vy]) => `${vx},${vy}`));
+  visibleKeys.add(`${px},${py}`);
+  const seen = (x, y) => visibleKeys.has(`${x},${y}`);
 
   return (
     <div ref={ref} className="map-board" role="group" aria-label="Game map">
@@ -59,14 +63,20 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
             const baseTerrain = isPlayer ? gameState.player.terrainStringBuffer : terrain;
             const terrainClass = getTerrainClass(baseTerrain);
 
-            const isVisible = (x === gameState.player.x && y === gameState.player.y) || gameState.visibleTiles.some(
-              ([vx, vy]) => vx === x && vy === y
-            ) || false;
+            const isVisible = seen(x, y);
+            const edges = isVisible
+              ? [
+                  !seen(x, y - 1) && 'vision-top',
+                  !seen(x, y + 1) && 'vision-bottom',
+                  !seen(x - 1, y) && 'vision-left',
+                  !seen(x + 1, y) && 'vision-right',
+                ].filter(Boolean).join(' ')
+              : '';
 
             return (
               <div
                 key={x}
-                className={`map-tile ${terrainClass} ${isVisible ? terrainClass : 'fog-tile'}`}
+                className={`map-tile ${isVisible || isGoal ? terrainClass : 'terrain-cell'} ${isVisible ? edges : isGoal ? '' : 'fog-tile'}`}
               >
                 {isGoal && (
                   <img
@@ -76,7 +86,7 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
                   />
                 )}
 
-                {tileObject?.type === 'ITEM' && !isPlayer && (
+                {isVisible && tileObject?.type === 'ITEM' && !isPlayer && (
                   <img
                     src={itemSprites[tileObject.itemType]}
                     alt={tileObject.itemType}
@@ -84,7 +94,7 @@ const Map = forwardRef(({ gameState, lastMove }, ref) => {
                   />
                 )}
 
-                {tileObject?.type === 'TRADER' && !isPlayer && (
+                {isVisible && tileObject?.type === 'TRADER' && !isPlayer && (
                   <img
                     src={traderSprites[tileObject.traderType]}
                     alt={tileObject.traderType}

@@ -64,10 +64,10 @@
   border: 1px solid var(--ink, #303c32);
 }
 
-.terrain-icon { background: #dddcc8; }
+.terrain-icon { background: #a58a6d; }
 .desert-icon { background: #d4bd87; }
 .dmv-icon { background: #a2b383; }
-.mountain-icon { background: #b5a18b; }
+.mountain-icon { background: #5c4633; }
 .frost-icon { background: #a9c0be; }
 .swamp-icon { background: #718570; }
 .goal-icon { background: #465c42; }

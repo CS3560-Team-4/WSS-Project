@@ -13,31 +13,31 @@
 }
 
 :root {
-  --navy: #101820;
-  --white: #f5f2ea;
+  --navy: #0b1a28;
+  --white: #eef3f7;
   --periwinkle: #a5b4fc;
   --coral: #ff8a75;
   --mint: #72d6c9;
   --gold: #efc34e;
   --gold-ink: #806000;
   --canvas: var(--navy);
-  --surface: #1b2732;
-  --surface-hover: #293847;
+  --surface: #14283a;
+  --surface-hover: #1f384e;
   --ink: var(--white);
-  --muted: #b8c3cc;
-  --line: #3d4d59;
-  --control-line: #7c8e9a;
+  --muted: #aebfce;
+  --line: #2e4a60;
+  --control-line: #6f8ca3;
   --primary: var(--periwinkle);
   --primary-hover: #bdcaff;
   --primary-active: #91a3ec;
   --on-primary: var(--navy);
   --accent-ink: var(--periwinkle);
   --focus: var(--periwinkle);
-  --selected: #253147;
+  --selected: #1c3552;
   --success: var(--mint);
   --danger: var(--coral);
-  --danger-surface: #3e2728;
-  --disabled-surface: #293743;
+  --danger-surface: #3a2430;
+  --disabled-surface: #1b3043;
   --font-body: 'Instrument Sans', sans-serif;
   --font-display: 'Instrument Sans', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
@@ -53,19 +53,19 @@
 
 .modal-dialog, .stats-ui {
   --canvas: var(--white);
-  --surface: #e6e7e8;
-  --surface-hover: #d7dce5;
+  --surface: #dce7ef;
+  --surface-hover: #cbdae6;
   --ink: var(--navy);
-  --muted: #4c5b66;
-  --line: #c8cdd0;
-  --control-line: #657481;
-  --accent-ink: #3c4e9b;
+  --muted: #3f586b;
+  --line: #b8cad8;
+  --control-line: #5b7588;
+  --accent-ink: #2f4a8f;
   --focus: var(--navy);
-  --selected: #e1e5f5;
+  --selected: #d6e3f4;
   --success: #17675e;
   --danger: #a6332e;
-  --danger-surface: #ffe1db;
-  --disabled-surface: #dfe2e5;
+  --danger-surface: #fde4de;
+  --disabled-surface: #d0dde7;
   color-scheme: light;
 }
 

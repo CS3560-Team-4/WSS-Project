@@ -7,10 +7,10 @@
   width: min(100%, 610px);
   margin: 10px auto 0;
   padding: 16px;
-  border: 0;
+  border: 1px solid #6e5640;
   border-radius: 6px;
-  background: var(--canvas);
-  color: var(--ink, #34392d);
+  background: #a58a6d;
+  color: #1f140a;
 }
 
 .stat-resource,
@@ -28,15 +28,16 @@
 
 .stat-label {
   overflow: hidden;
-  color: var(--muted, #626550);
+  color: #2b1d11;
   font-family: var(--font-body, sans-serif);
   font-size: 0.76rem;
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .stat-value {
-  color: var(--ink, #34392d);
+  color: #1f140a;
   font-family: var(--font-mono, monospace);
   font-size: 0.86rem;
   font-variant-numeric: tabular-nums;
@@ -44,10 +45,12 @@
 }
 
 .stat-meter {
-  height: 6px;
+  box-sizing: border-box;
+  height: 8px;
   overflow: hidden;
   border-radius: 2px;
-  background: #b2bdc3;
+  border: 1px solid #1f140a;
+  background: #3a281a;
 }
 
 .stat-meter-fill {
@@ -58,15 +61,15 @@
 }
 
 .stat-fill-health {
-  background: var(--danger, #a85a4e);
+  background: #ff8a75;
 }
 
 .stat-fill-water {
-  background: var(--accent-ink);
+  background: #a5b4fc;
 }
 
 .stat-fill-energy {
-  background: var(--success, #657954);
+  background: #72d6c9;
 }
 
 .stat-gold {
@@ -79,7 +82,7 @@
 
 .stat-gold .stat-label,
 .stat-gold .stat-value {
-  color: var(--ink);
+  color: #1f140a;
 }
 
 .stat-gold-amount {
@@ -92,8 +95,10 @@
 .stat-gold-icon {
   width: 18px;
   height: 18px;
-  color: var(--gold-ink);
-  fill: var(--gold);
+  color: #1f140a;
+  fill: #efc34e;
+  stroke: #1f140a;
+  stroke-width: 0.6;
 }
 
 @media (max-width: 420px) {
