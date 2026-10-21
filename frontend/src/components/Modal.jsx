@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import './css/Modal.css';
 
 const focusableSelector = [
@@ -11,7 +11,7 @@ const focusableSelector = [
 ].join(',');
 
 const getTopmostDialog = () => {
-  const dialogs = document.querySelectorAll('.modal-dialog');
+  const dialogs = document.querySelectorAll('.modal-dialog:not(.modal-dialog--closing)');
   return dialogs[dialogs.length - 1] || null;
 };
 
@@ -43,10 +43,27 @@ const focusDialog = (dialog) => {
   focusTarget.focus({ preventScroll: true });
 };
 
+const MODAL_EXIT_MS = 180;
+
 const Modal = ({ isOpen, onClose, closeButton, title, titleClassName = '', width = 'max-w-md', children }) => {
   const dialogRef = useRef(null);
   const onCloseRef = useRef(onClose);
   const dialogId = useId();
+  const [present, setPresent] = useState(isOpen);
+  const lastContent = useRef({ children, title, titleClassName });
+
+  if (isOpen) lastContent.current = { children, title, titleClassName };
+
+  useEffect(() => {
+    if (isOpen) {
+      setPresent(true);
+      return undefined;
+    }
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const timer = setTimeout(() => setPresent(false), reduceMotion ? 0 : MODAL_EXIT_MS);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
 
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -131,14 +148,17 @@ const Modal = ({ isOpen, onClose, closeButton, title, titleClassName = '', width
     };
   }, [closeButton, dialogId, isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !present) return null;
+
+  const closing = !isOpen;
+  const content = lastContent.current;
 
   const dialogWidth = width === 'max-w-6xl' ? 'modal-dialog--wide' : '';
 
   return (
-    <div className="modal-backdrop">
+    <div className={`modal-backdrop ${closing ? 'modal-backdrop--closing' : ''}`}>
       <div
-        className={`modal-dialog ${dialogWidth} ${closeButton ? 'modal-dialog--dismissible' : ''}`}
+        className={`modal-dialog ${dialogWidth} ${closeButton ? 'modal-dialog--dismissible' : ''} ${closing ? 'modal-dialog--closing' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label="Game dialog"
@@ -147,7 +167,7 @@ const Modal = ({ isOpen, onClose, closeButton, title, titleClassName = '', width
       >
         {closeButton && (
           <div className="modal-header">
-            {title && <h2 className={`dialog-title ${titleClassName}`}>{title}</h2>}
+            {content.title && <h2 className={`dialog-title ${content.titleClassName}`}>{content.title}</h2>}
             <button
               type="button"
               onClick={onClose}
@@ -159,7 +179,7 @@ const Modal = ({ isOpen, onClose, closeButton, title, titleClassName = '', width
           </div>
         )}
 
-        <div className="modal-content">{children}</div>
+        <div className="modal-content">{content.children}</div>
       </div>
     </div>
   );

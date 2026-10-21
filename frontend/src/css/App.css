@@ -46,12 +46,11 @@
 .position-dot { display: inline-block; width: 6px; height: 6px; background: var(--accent-ink); border-radius: 50%; flex-shrink: 0; }
 .map-actions button { flex-shrink: 0; min-height: 28px; font-size: 11px; color: var(--muted); text-decoration: underline; text-decoration-color: var(--control-line); text-underline-offset: 4px; }
 .autoplay-status { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 15px; color: var(--accent-ink); font-family: var(--font-mono); font-size: 11px; }
-.journey-sidebar { padding-top: 3px; }
-.movement-section { padding-bottom: 18px; border-bottom: 1px solid var(--line); text-align: center; }
+.journey-sidebar { padding-top: 38px; }
+.movement-section { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); text-align: center; }
 .movement-section > p { font-size: 11px; }
-.movement-caption { color: var(--muted); font-size: 11px; }
 .controls-unavailable { opacity: .5; pointer-events: none; }
-.field-notes { margin-top: 18px; }
+.field-notes { margin-top: 0; }
 .field-notes > .ui-icon { width: 22px; height: 22px; color: var(--ink); margin-bottom: 8px; }
 .field-notes h2 { font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
 .field-notes p { color: var(--muted); font-size: 13px; line-height: 1.6; margin-top: 10px; }
@@ -93,7 +92,7 @@
   .map-actions { gap: 10px; }
   .map-caption { flex-wrap: wrap; }
   .journey-sidebar { width: 100%; order: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 0; }
-  .movement-section { border-bottom: 0; }
+  .movement-section { margin-top: 0; padding-top: 0; border-top: 0; }
   .field-notes { margin-top: 0; }
   .field-sidebar { width: 100%; order: 2; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; border-top: 1px solid var(--line); padding-top: 24px; }
   .autoplay-section { border: 0; padding-top: 0; margin-top: 0; }

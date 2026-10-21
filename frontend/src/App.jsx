@@ -406,7 +406,7 @@ const App = () => {
   useEffect(() => {
     if (!gameState) return;
 
-    if (gameState.activeTrader) {
+    if (gameState.activeTrader && gameState.player.health > 0) {
       setIsTraderModalOpen(true);
     }
   }, [gameState?.activeTrader]);
@@ -550,14 +550,12 @@ const App = () => {
           </section>
 
           <aside className="journey-sidebar" aria-label="Movement and field notes">
+            <FieldNotes />
             <section className="movement-section">
-              <p>Use WASD or the arrow keys.</p>
               <div className={gameOver ? 'controls-unavailable' : ''}>
                 <GameControls ref={arrowRef} move={move} />
               </div>
-              <span className="movement-caption">Or use the controls above.</span>
             </section>
-            <FieldNotes />
           </aside>
         </div>
       </main>
@@ -568,7 +566,7 @@ const App = () => {
         <WelcomeScreen onStart={closeWelcomeModal} />
       </Modal>
 
-      <Modal isOpen={isTraderModalOpen} onClose={closeTraderModal} closeButton={false}>
+      <Modal isOpen={isTraderModalOpen && !(gameState?.player?.health <= 0)} onClose={closeTraderModal} closeButton={false}>
         <TraderUI
           trader={gameState?.activeTrader ?? null}
           offer={gameState?.activeOffer ?? null}
