@@ -1,5 +1,9 @@
 # Wilderness Survival System
 
+> [!TIP]
+> ### [Play the live game →](https://cs3560-team-4.github.io/WSS-Project/)
+> The frontend is hosted on GitHub Pages and connects to the live game backend.
+
 A full-stack, turn-based survival game developed collaboratively by **CS3560 Team 4**. The application combines a React single-page interface with a Java/Javalin REST API that owns the game state, processes player actions, generates randomized terrain, applies survival mechanics, and returns structured JSON updates to the browser.
 
 The objective is to manage limited resources, navigate a partially visible wilderness map, interact with items and traders, and reach the goal tile without exhausting the player's health, water, or energy.
@@ -206,7 +210,7 @@ User input
    ↓
 React event handler
    ↓
-fetch() request to localhost:8080
+fetch() request to the configured API base URL
    ↓
 Java game-state mutation
    ↓
@@ -270,7 +274,15 @@ The backend is a Java 21 application built with Maven and exposed through Javali
 
 ## REST API
 
-The backend runs at `http://localhost:8080`.
+The backend runs at `http://127.0.0.1:8080` by default. Set `HOST` or `PORT` to
+change its listener and `CORS_ALLOWED_ORIGINS` to a comma-separated list of
+allowed frontend origins.
+
+Game endpoints require an `X-Game-Session` header containing a UUID. The
+frontend creates one in browser `sessionStorage`, so each visitor—and each tab—
+gets an independent in-memory game. It also detects storage copied by a
+duplicated tab and replaces the copied UUID before making a request. Inactive
+sessions expire after four hours.
 
 ### Game State
 
@@ -437,7 +449,16 @@ Open the Vite address shown in the terminal, normally:
 http://localhost:5173
 ```
 
-The backend's current CORS configuration allows requests from `http://localhost:5173`, so both applications must use their expected local ports unless the configuration is updated.
+The backend allows the local Vite origin and the repository's GitHub Pages
+origin by default. Override `CORS_ALLOWED_ORIGINS` when deploying from a fork or
+another hostname.
+
+## Production Deployment
+
+The repository includes a GitHub Pages workflow, an executable backend jar,
+and deployment templates for the existing `netricsports.us` Nginx server. See
+[`deploy/README.md`](deploy/README.md) for the deployment and verification
+commands.
 
 ## Development Commands
 
@@ -504,6 +525,13 @@ WSS-Project/
 
 All important game mutations occur in the Java backend. The frontend sends commands rather than directly modifying health, resources, scoring, map contents, or trader outcomes. This keeps game rules centralized and prevents the interface from becoming a second implementation of the domain logic.
 
+### Independent Browser Sessions
+
+The frontend sends a random per-tab session ID with every API request. The
+backend maps that ID to its own `GameState` and serializes concurrent requests
+within the same game, while requests for different games can run independently.
+Inactive sessions are removed automatically to bound memory usage.
+
 ### DTO-Based Responses
 
 `GameServer` converts terrain, items, traders, offers, player statistics, and game metadata into dedicated JSON-friendly response objects. This prevents the frontend from depending directly on the backend's internal class structure.
@@ -520,9 +548,8 @@ The React frontend separates map rendering, controls, statistics, guides, strate
 
 This project was completed as an academic team project and currently uses a development-oriented architecture. Potential improvements include:
 
-- Move the API base URL into environment configuration
 - Add persistent storage for users, scores, and saved games
-- Support independent game sessions instead of one global in-memory state
+- Preserve active games across backend restarts
 - Expand request validation and API error responses
 - Add broader automated frontend and backend test coverage
 - Refactor API logic into a dedicated frontend service layer
